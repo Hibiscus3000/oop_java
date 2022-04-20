@@ -6,7 +6,7 @@ import java.io.IOException;
 class Load extends OperationWithTextParam{
     @Override
     void execute(Context context, String[] args) {
-        numberOfArgsCheck(1);
+        numberOfArgsCheck(1,args.length);
         paramNameCheck(args[0]);
         FileWriter writer = null;
         try {
