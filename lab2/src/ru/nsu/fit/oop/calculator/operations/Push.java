@@ -6,6 +6,7 @@ import ru.nsu.fit.oop.calculator.exception.OperationException;
 import java.util.List;
 
 public class Push extends Operation{
+
     @Override
     public void execute(Context context, List<String> args) throws OperationException {
         this.operationName = getClass().getSimpleName();

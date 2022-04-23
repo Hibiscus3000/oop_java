@@ -11,7 +11,7 @@ public class CommandsParser {
         int i, argStart;
         String line;
         List<String> nameAndArgs;
-        while ((line = commandsReader.readLine()) != null) {
+        while (((line = commandsReader.readLine()) != null) && (0 != line.length())) {
             argStart = 0;
             nameAndArgs = new ArrayList<>();
             i = 0;
@@ -20,8 +20,10 @@ public class CommandsParser {
                     nameAndArgs.add(line.substring(argStart, i));
                     argStart = i + 1;
                 }
+                ++i;
             }
-            ++i;
+            if (argStart != i)
+                nameAndArgs.add(line.substring(argStart));
             commands.add(nameAndArgs);
         }
         return commands;

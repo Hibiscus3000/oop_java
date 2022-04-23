@@ -17,17 +17,21 @@ public class Calculator {
             List<List<String>> commands = parser.parseCommands(commandsReader);
             Context context = new Context();
             for (List<String> command : commands) {
-                Operation operation = OperationFactory.getInstance().getOperation(command.remove(0));
-                operation.execute(context,command);
+                try {
+                    Operation operation = OperationFactory.getInstance().getOperation(command.remove(0));
+                    operation.execute(context, command);
+                }
+                catch (OperationException exception) {
+                    if (null != exception.cause) {
+                        exception.cause.printStackTrace();
+                    }
+                    exception.printStackTrace();
+                }
             }
         }
         catch (IOException exception) {
             exception.printStackTrace();
         }
-        catch (OperationException exception) {
-            if (null != exception.cause)
-                System.err.println(exception.cause.getMessage());
-            System.err.println(exception.getMessage());
-        }
+
     }
 }

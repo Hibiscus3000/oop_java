@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) {
         try {
             BufferedReader commandsReader;
-            if (1 == args.length) {
+            if (0 == args.length) {
                 commandsReader = new BufferedReader(new InputStreamReader(System.in));
             }
             else {

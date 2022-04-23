@@ -33,6 +33,8 @@ public class OperationFactory {
         try {
             var opClass = Class.forName(config.getProperty(operationName));
             var constructor = opClass.getDeclaredConstructor();
+            if (!constructor.isAccessible())
+                constructor.setAccessible(true);
             return (Operation)constructor.newInstance();
         }
         catch (Throwable cause) {

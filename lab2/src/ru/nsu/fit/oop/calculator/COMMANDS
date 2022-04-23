@@ -1,0 +1,6 @@
+DEFINE a -4.5
+PUSH a
+PUSH 2.5
++
+ABS
+PRINT

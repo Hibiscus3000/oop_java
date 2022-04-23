@@ -15,7 +15,8 @@ public abstract class Operation {
                throw new WrongNumberOfArgs(operationName, args, expectedNumberOfArgs,realNumberOfArgs);
      }
 
-     public void numberOfStackValuesCheck(int realNumberOfStackValues, int expectedNumberOfStackValues) throws NotEnoughValuesInStack {
+     public void numberOfStackValuesCheck(int realNumberOfStackValues, int expectedNumberOfStackValues)
+             throws NotEnoughValuesInStack {
           if (expectedNumberOfStackValues > realNumberOfStackValues)
                throw new NotEnoughValuesInStack(expectedNumberOfStackValues,realNumberOfStackValues);
      }
