@@ -1,13 +1,24 @@
 package ru.nsu.fit.oop.calculator.exception;
 
-class OperationException extends Exception
+public class OperationException extends Exception
 {
     protected String operationName;
-    OperationException() {
+    public Throwable cause = null;
+
+    public OperationException() {
         super();
     }
-    OperationException(String operationName) {
+    public OperationException(String operationName) {
         this.operationName = operationName;
+    }
+    public OperationException(String operationName, Throwable cause) {
+        this.cause = cause;
+        this.operationName = operationName;
+    }
+
+    @Override
+    public String getMessage() {
+            return "Error during \"" + operationName + "\" execution appeared";
     }
 }
 

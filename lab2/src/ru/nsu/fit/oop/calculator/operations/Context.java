@@ -9,13 +9,18 @@ import java.util.Stack;
 public class Context {
     private Stack<Double> args = new Stack<>();
     private Map<String,Double> params = new HashMap<>();
+    private int numberOfValuesInStack = 0;
 
-    public void pushToStack(double value)
-    {
+    public void pushToStack(double value) {
         args.push(value);
+        ++numberOfValuesInStack;
     }
     public double popFromStack() {
+        --numberOfValuesInStack;
         return args.pop();
+    }
+    public double getFromStack() {
+        return args.peek();
     }
     public void defineNamedParam(String key, double value)
     {
@@ -25,5 +30,8 @@ public class Context {
         if (!params.containsKey(key))
             throw new NoDefinedParamWithGivenName(key);
         pushToStack(params.get(key));
+    }
+    public int getNumberOfValuesInStack() {
+        return numberOfValuesInStack;
     }
 }

@@ -1,16 +1,16 @@
 package ru.nsu.fit.oop.calculator.operations;
 
+import ru.nsu.fit.oop.calculator.exception.OperationException;
+
+import java.util.List;
+
 class Absolute extends Operation {
 
-    public Absolute(String[] args)
-    {
-        this.args = args;
-        this.operationName = "ABS";
-        this.expectedNumberOfArgs = 1;
-    }
     @Override
-    void execute(Context context) {
-        numberOfArgsCheck(args.length);
-        context.pushToStack(Math.abs(Double.parseDouble(args[0])));
+    public void execute(Context context, List<String> args) throws OperationException {
+        this.operationName = getClass().getSimpleName();
+        this.args = args;
+        numberOfStackValuesCheck(context.getNumberOfValuesInStack(),1);
+        context.pushToStack(Math.abs(context.popFromStack()));
     }
 }

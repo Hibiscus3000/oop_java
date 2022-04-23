@@ -1,10 +1,16 @@
 package ru.nsu.fit.oop.calculator.operations;
 
+import ru.nsu.fit.oop.calculator.exception.OperationException;
+
+import java.util.List;
+
 class Multiply extends Operation {
+
     @Override
-    void execute(Context context, String[] args) {
-        numberOfArgsCheck(args.length);
-        double arg1 = context.popFromStack(), arg2 = context.popFromStack();
-        context.pushToStack(arg1*arg2);
+    public void execute(Context context, List<String> args) throws OperationException {
+        this.operationName = getClass().getSimpleName();
+        this.args = args;
+        numberOfStackValuesCheck(context.getNumberOfValuesInStack(),2);
+        context.pushToStack(context.popFromStack() * context.popFromStack());
     }
 }

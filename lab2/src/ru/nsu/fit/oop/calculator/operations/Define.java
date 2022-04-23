@@ -1,17 +1,22 @@
 package ru.nsu.fit.oop.calculator.operations;
 
-class Define extends OperationWithTextParam
+import ru.nsu.fit.oop.calculator.exception.OperationException;
+
+import java.util.List;
+
+class Define extends Operation
 {
-    public Define(String[] args)
-    {
-        this.args = args;
-        this.operationName = "AVG";
-        this.expectedNumberOfArgs = 1;
-    }
+
     @Override
-    void execute(Context context, String[] args) {
-        numberOfArgsCheck(args.length);
-        paramNameCheck(args[0]);
-        context.defineNamedParam(args[0],Double.parseDouble(args[1]));
+    public void execute(Context context, List<String> args) throws OperationException {
+        this.operationName = getClass().getSimpleName();
+        this.args = args;
+        numberOfArgsCheck(args.size(),2);
+        try {
+            context.defineNamedParam(args.get(0), Double.parseDouble(args.get(1)));
+        }
+        catch (NumberFormatException cause) {
+            throw new OperationException(operationName,cause);
+        }
     }
 }

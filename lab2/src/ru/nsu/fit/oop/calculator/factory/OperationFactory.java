@@ -1,9 +1,9 @@
 package ru.nsu.fit.oop.calculator.factory;
 
+import ru.nsu.fit.oop.calculator.exception.OperationNotSupported;
 import ru.nsu.fit.oop.calculator.operations.Operation;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
 public class OperationFactory {
@@ -17,7 +17,7 @@ public class OperationFactory {
         config.load(stream);
     }
 
-    private static OperationFactory getInstance() throws IOException {
+    public static OperationFactory getInstance() throws IOException {
         if (null == instance)
             synchronized (OperationFactory.class) {
                 if (null == instance) {
@@ -27,10 +27,16 @@ public class OperationFactory {
         return instance;
     }
 
-    public Operation getOperation (String operationName) throws ClassNotFoundException, NoSuchMethodException,
-            InvocationTargetException, InstantiationException, IllegalAccessException {
-        var opClass = Class.forName(config.getProperty(operationName));
-        var constructor = opClass.getDeclaredConstructor();
-        return (Operation)constructor.newInstance();
+    public Operation getOperation (String operationName) throws OperationNotSupported {
+        if (!config.containsKey(operationName))
+            throw new OperationNotSupported(operationName);
+        try {
+            var opClass = Class.forName(config.getProperty(operationName));
+            var constructor = opClass.getDeclaredConstructor();
+            return (Operation)constructor.newInstance();
+        }
+        catch (Throwable cause) {
+            throw new OperationNotSupported(operationName, cause);
+        }
     }
 }

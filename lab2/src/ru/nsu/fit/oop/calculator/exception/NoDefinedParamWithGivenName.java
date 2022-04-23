@@ -1,15 +1,14 @@
 package ru.nsu.fit.oop.calculator.exception;
 
-public class NoDefinedParamWithGivenName extends Exception{
+public class NoDefinedParamWithGivenName extends OperationException{
     String paramName;
 
-    public NoDefinedParamWithGivenName() { super(); }
     public NoDefinedParamWithGivenName(String paramName) {
         this.paramName = paramName;
     }
 
     @Override
     public String getMessage() {
-        return new String("Name of this parameter wasn't defined: " + paramName);
+        return "Parameter with given name wasn't define " + paramName;
     }
 }

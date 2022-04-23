@@ -1,15 +1,18 @@
 package ru.nsu.fit.oop.calculator.operations;
 
+import ru.nsu.fit.oop.calculator.exception.OperationException;
+
+import java.util.List;
+
 class Divide extends Operation {
-    public Divide(String[] args)
-    {
-        this.args = args;
-        this.operationName = "/";
-        this.expectedNumberOfArgs = 1;
-    }
+
     @Override
-    void execute(Context context, String[] args) {
-        numberOfArgsCheck(args.length);
-        context.pushToStack(Double.parseDouble(args[0]) / Double.parseDouble(args[1]));
+    public void execute(Context context, List<String> args) throws OperationException {
+        this.operationName = getClass().getSimpleName();
+        this.args = args;
+        numberOfStackValuesCheck(context.getNumberOfValuesInStack(),2);
+        double divider = context.popFromStack();
+        double dividend = context.popFromStack();
+        context.pushToStack( dividend / divider );
     }
 }

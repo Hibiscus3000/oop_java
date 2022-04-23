@@ -1,19 +1,21 @@
 package ru.nsu.fit.oop.calculator.operations;
 
+import ru.nsu.fit.oop.calculator.exception.OperationException;
+
+import java.util.List;
+
 class Average extends Operation{
-    public Average(String[] args)
-    {
-        this.args = args;
-        this.operationName = "AVG";
-        this.expectedNumberOfArgs = 1;
-    }
     @Override
-    void execute(Context context, String[] args) {
-        numberOfArgsCheck(args.length);
-        int i,x = Integer.getInteger(args[0]);
-        double summ = 0;
+    public void execute(Context context, List<String> args) throws OperationException {
+        this.operationName = getClass().getSimpleName();
+        this.args = args;
+        numberOfArgsCheck(args.size(),1);
+        int x = Integer.parseInt(args.get(0));
+        numberOfStackValuesCheck(context.getNumberOfValuesInStack(),x);
+        double sum = 0;
+        int i;
         for (i = 0; i < x; ++i)
-            summ += context.popFromStack();
-        context.pushToStack(summ/x);
+            sum += context.popFromStack();
+        context.pushToStack(sum / x);
     }
 }
