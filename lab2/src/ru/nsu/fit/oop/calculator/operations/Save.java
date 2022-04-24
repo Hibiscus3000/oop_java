@@ -10,25 +10,33 @@ import java.util.List;
 
 public class Save extends Operation{
 
+    public Save() {
+        super();
+    }
+
     @Override
     public void execute(Context context, List<String> args) throws OperationException {
+        logger.entering(this.getClass().getName(),"execute");
         this.operationName = getClass().getSimpleName();
         this.args = args;
         numberOfArgsCheck(args.size(),1);
         PrintWriter writer = null;
         try {
-            writer = new PrintWriter(new BufferedWriter(new FileWriter(args.get(0))));
+            writer = new PrintWriter(new BufferedWriter(new FileWriter(args.get(1))));
             int i;
             for (i = 0; i < context.getNumberOfValuesInStack(); ++i)
                 writer.println(context.popFromStack());
         }
         catch (IOException cause)
         {
-            throw new OperationException(operationName,cause);
+            OperationException exception = new OperationException(operationName,cause);
+            logger.throwing(this.getClass().getSimpleName(),"execute",exception);
+            throw exception;
         }
         finally {
             if (null != writer)
                 writer.close();
+            logger.exiting(this.getClass().getName(),"execute");
         }
     }
 }
