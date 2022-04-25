@@ -29,7 +29,11 @@ public class Load extends Operation{
             while (null != (line = reader.readLine())) {
                 beginIndex = 0;
                 for (j = 0; j < line.length(); ++j) {
-                    if (Character.isWhitespace(line.charAt(j))) {
+                    if ((Character.isWhitespace(line.charAt(j))) || (j == line.length() - 1)) {
+                        if (j == line.length() - 1)
+                            args.set(1,line.substring(beginIndex,j + 1));
+                        else if (Character.isWhitespace(line.charAt(j)))
+                            args.set(1,line.substring(beginIndex,j));
                         push.execute(context,args);
                         beginIndex = j + 1;
                     }

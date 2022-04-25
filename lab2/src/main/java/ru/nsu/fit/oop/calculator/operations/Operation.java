@@ -35,13 +35,13 @@ public abstract class Operation {
           }
      }
 
-     protected void checkArg(String operationName,String arg) throws InappropriateArgException {
+     protected void checkArg(String arg, boolean isDouble) throws InappropriateArgException {
           int i;
           boolean pointAppeared = false;
           for (i = 0; i < arg.length(); ++i) {
-               if (Character.isDigit(arg.charAt(i)))
+               if (((0 == i) && ('-' == arg.charAt(i))) || (Character.isDigit(arg.charAt(i))))
                     continue;
-               if (('.' != arg.charAt(i)) || (pointAppeared))
+               if ((!isDouble) || ('.' != arg.charAt(i)) || (pointAppeared))
                     throw new InappropriateArgException(operationName,arg);
                if ('.' == arg.charAt(i))
                     pointAppeared = true;

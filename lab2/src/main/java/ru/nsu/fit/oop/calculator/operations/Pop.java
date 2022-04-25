@@ -15,7 +15,6 @@ public class Pop extends Operation{
         logger.entering(this.getClass().getName(),"execute");
         this.operationName = getClass().getSimpleName();
         this.args = args;
-        numberOfStackValuesCheck(context.getNumberOfValuesInStack(),1);
         context.popFromStack();
         logger.exiting(this.getClass().getName(),"execute");
     }

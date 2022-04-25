@@ -24,7 +24,8 @@ public class Save extends Operation{
         try {
             writer = new PrintWriter(new BufferedWriter(new FileWriter(args.get(1))));
             int i;
-            for (i = 0; i < context.getNumberOfValuesInStack(); ++i)
+            int numberOfValuesInStack = context.getNumberOfValuesInStack();
+            for (i = 0; i < numberOfValuesInStack; ++i)
                 writer.println(context.popFromStack());
         }
         catch (IOException cause)

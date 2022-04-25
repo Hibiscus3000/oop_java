@@ -24,7 +24,9 @@ class PlusTest {
         assertDoesNotThrow( () -> {
             plus.execute(context,args);
         });
-        assertEquals(15,context.popFromStack());
+        assertDoesNotThrow(() -> {
+            assertEquals(15,context.popFromStack());
+        });
     }
 
     @org.junit.jupiter.api.Test

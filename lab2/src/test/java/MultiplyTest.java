@@ -24,7 +24,9 @@ class MultiplyTest {
         assertDoesNotThrow( () -> {
             multiply.execute(context,args);
         });
-        assertEquals(-63,context.popFromStack());
+        assertDoesNotThrow(() -> {
+            assertEquals(-63,context.popFromStack());
+        });
     }
 
     @org.junit.jupiter.api.Test

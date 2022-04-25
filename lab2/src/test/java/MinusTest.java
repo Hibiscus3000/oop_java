@@ -24,7 +24,9 @@ class MinusTest {
             assertDoesNotThrow( () -> {
                 minus.execute(context,args);
             });
-            assertEquals(-101.25,context.popFromStack());
+            assertDoesNotThrow(() -> {
+                assertEquals(-101.25,context.popFromStack());
+            });
         }
 
         @org.junit.jupiter.api.Test

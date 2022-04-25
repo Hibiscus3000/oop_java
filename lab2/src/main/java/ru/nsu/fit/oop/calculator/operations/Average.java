@@ -16,7 +16,15 @@ public class Average extends Operation{
         this.operationName = getClass().getSimpleName();
         this.args = args;
         numberOfArgsCheck(args.size(),1);
-        int x = Integer.parseInt(args.get(1));
+        int x;
+        checkArg(args.get(1),false);
+        x = Integer.parseInt(args.get(1));
+        if (x <= 0) {
+            OperationException exception = new OperationException(operationName, "Argument for " +
+                    "\"Average\" should be greater than zero");
+            logger.throwing(this.getClass().getName(),"execute",exception);
+            throw exception;
+        }
         numberOfStackValuesCheck(context.getNumberOfValuesInStack(),x);
         double sum = 0;
         int i;

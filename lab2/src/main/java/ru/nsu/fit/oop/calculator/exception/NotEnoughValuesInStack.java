@@ -5,7 +5,6 @@ public class NotEnoughValuesInStack extends OperationException{
     private int realNumberOfValues;
     public NotEnoughValuesInStack(int expectedNumberOfValues, int realNumberOfValues)
     {
-
         this.realNumberOfValues = realNumberOfValues;
         this.expectedNumberOfValues = expectedNumberOfValues;
     }

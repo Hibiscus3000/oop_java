@@ -13,5 +13,6 @@ public class Comment extends Operation {
     @Override
     public void execute(Context context, List<String> args) throws OperationException {
         logger.entering(this.getClass().getName(),"execute");
+        logger.exiting(this.getClass().getName(),"execute");
     }
 }

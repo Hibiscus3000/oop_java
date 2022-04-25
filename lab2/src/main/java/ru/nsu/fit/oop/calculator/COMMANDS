@@ -1,6 +1,7 @@
 DEFINE a -4.5
 PUSH a
 PUSH 2.5
+# privet valera
 +
 ABS
 PRINT

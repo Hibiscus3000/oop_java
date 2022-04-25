@@ -12,6 +12,8 @@ public class InappropriateArgException extends OperationException{
         return "Inappropriate argument for \"" + operationName + "\" operation: \"" + arg + "\"" +
                 "\nAn argument for push operation should either be a double, or a pre-defined" +
                 " named parameter, thus should not start with a digit." +
-                "\nSecond argument for define should be a double.";
+                "\nSecond argument for define operation should be a double.\nArgument for " +
+                "average operation should be a number a number of stack values which from wich " +
+                "average will be taken from, therefor an integer.";
     }
 }

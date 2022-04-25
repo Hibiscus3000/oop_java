@@ -20,12 +20,14 @@ public class DefinePushAndPopTest {
         var pop = new Pop();
         assertEquals(0,context.getNumberOfValuesInStack());
         args.add("push");
-        args.add("2.5");
+        args.add("-2.5");
         assertDoesNotThrow(() -> {
             push.execute(context,args);
                 });
         assertEquals(1,context.getNumberOfValuesInStack());
-        assertEquals(2.5,context.getFromStack());
+        assertDoesNotThrow( () -> {
+            assertEquals(-2.5, context.getFromStack());
+        });
         assertDoesNotThrow(() -> {
             pop.execute(context,args);
         });
@@ -34,18 +36,24 @@ public class DefinePushAndPopTest {
             push.execute(context,args);
         });
         assertEquals(1,context.getNumberOfValuesInStack());
-        assertEquals(7.25,context.getFromStack());
+        assertDoesNotThrow( () -> {
+            assertEquals(7.25, context.getFromStack());
+        });
         args.set(1,"6");
         assertDoesNotThrow(() -> {
             push.execute(context,args);
         });
         assertEquals(2,context.getNumberOfValuesInStack());
-        assertEquals(6,context.getFromStack());
+        assertDoesNotThrow( () -> {
+            assertEquals(6, context.getFromStack());
+        });
         assertDoesNotThrow(() -> {
             pop.execute(context,args);
         });
         assertEquals(1,context.getNumberOfValuesInStack());
-        assertEquals(7.25,context.getFromStack());
+        assertDoesNotThrow( () -> {
+            assertEquals(7.25, context.getFromStack());
+        });
         assertDoesNotThrow(() -> {
             pop.execute(context,args);
         });
@@ -104,7 +112,7 @@ public class DefinePushAndPopTest {
         var push = new Push();
         var define = new Define();
         args.add("define");
-        args.add("f3");
+        args.add("f3-....");
         args.add("2.5");
         assertDoesNotThrow(() -> {
             define.execute(context,args);
@@ -113,7 +121,10 @@ public class DefinePushAndPopTest {
         assertDoesNotThrow(() -> {
             push.execute(context,args);
         });
-        assertEquals(2.5,context.getFromStack());
+        assertDoesNotThrow( () -> {
+            assertEquals(2.5,context.getFromStack());
+        });
+
     }
 
     @org.junit.jupiter.api.Test
@@ -127,6 +138,11 @@ public class DefinePushAndPopTest {
         assertThrows(InappropriateParameterName.class, () -> {
            define.execute(context,args);
         });
+        args.set(1,"-f");
+        assertThrows(InappropriateParameterName.class, () -> {
+            define.execute(context,args);
+        });
+
     }
 
     @org.junit.jupiter.api.Test

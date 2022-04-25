@@ -1,6 +1,7 @@
 package main.java.ru.nsu.fit.oop.calculator.operations;
 
 import main.java.ru.nsu.fit.oop.calculator.exception.NoDefinedParamWithGivenName;
+import main.java.ru.nsu.fit.oop.calculator.exception.NotEnoughValuesInStack;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,17 +10,18 @@ import java.util.Stack;
 public class Context {
     private Stack<Double> args = new Stack<>();
     private Map<String,Double> params = new HashMap<>();
-    private int numberOfValuesInStack = 0;
 
-    public void pushToStack(double value) {
+    public void pushToStack(double value){
         args.push(value);
-        ++numberOfValuesInStack;
     }
-    public double popFromStack() {
-        --numberOfValuesInStack;
+    public double popFromStack() throws NotEnoughValuesInStack {
+        if (0 == args.size())
+            throw new NotEnoughValuesInStack(1,0);
         return args.pop();
     }
-    public double getFromStack() {
+    public double getFromStack() throws NotEnoughValuesInStack {
+        if (0 == args.size())
+            throw new NotEnoughValuesInStack(1,0);
         return args.peek();
     }
     public void defineNamedParam(String key, double value)
@@ -32,6 +34,6 @@ public class Context {
         pushToStack(params.get(key));
     }
     public int getNumberOfValuesInStack() {
-        return numberOfValuesInStack;
+        return args.size();
     }
 }

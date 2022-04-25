@@ -18,9 +18,9 @@ public class Define extends Operation
         this.operationName = getClass().getSimpleName();
         this.args = args;
         numberOfArgsCheck(args.size(),2);
-        if (Character.isDigit(args.get(1).charAt(0)))
+        if ((Character.isDigit(args.get(1).charAt(0))) || ('-' == args.get(1).charAt(0)))
             throw new InappropriateParameterName(args.get(1));
-        checkArg(this.getClass().getSimpleName(),args.get(2));
+        checkArg(args.get(2),true);
         try {
             context.defineNamedParam(args.get(1), Double.parseDouble(args.get(2)));
         }

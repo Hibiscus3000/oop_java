@@ -12,6 +12,6 @@ public class InappropriateParameterName extends OperationException{
     @Override
     public String getMessage() {
         return "Inappropriate parameter name: \"" + paramName + "\"\n Parameter name shouldn't start" +
-                " with a digit.";
+                " with a digit or \"-\".";
     }
 }
