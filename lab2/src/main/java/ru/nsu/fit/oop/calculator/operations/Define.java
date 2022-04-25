@@ -29,6 +29,6 @@ public class Define extends Operation
             logger.throwing(this.getClass().getName(),"execute",exception);
             throw exception;
         }
-        logger.exiting(this.getClass().getName(),"execute");
+        logger.exiting(this.getClass().getName(),"execute",args.get(1));
     }
 }

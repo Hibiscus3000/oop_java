@@ -15,7 +15,7 @@ public class Pop extends Operation{
         logger.entering(this.getClass().getName(),"execute");
         this.operationName = getClass().getSimpleName();
         this.args = args;
-        context.popFromStack();
-        logger.exiting(this.getClass().getName(),"execute");
+        double poped = context.popFromStack();
+        logger.exiting(this.getClass().getName(),"execute",poped);
     }
 }

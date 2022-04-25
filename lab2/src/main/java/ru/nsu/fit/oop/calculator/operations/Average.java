@@ -31,6 +31,6 @@ public class Average extends Operation{
         for (i = 0; i < x; ++i)
             sum += context.popFromStack();
         context.pushToStack(sum / x);
-        logger.exiting(this.getClass().getName(),"execute");
+        logger.exiting(this.getClass().getName(),"execute",context.getFromStack());
     }
 }

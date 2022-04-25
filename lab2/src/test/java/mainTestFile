@@ -1,0 +1,22 @@
+define x1 15
+DEFINE x1 15
+PUSH x1
+PUSH 40
+DEFINE x3 -10.55
+PUSH x3
+PUSH x1
+PUSH x3
+ABS
+PRINT
+POP
++
+-
+*
+PUSH 533.25
+/
+PUSH 3
+PUSH 2.5
+AVG 2
+LOAD src\test\java\loadWithWhitespacesFile
+SAVE src\test\java\saveAndLoadTestFile
+# VALERA

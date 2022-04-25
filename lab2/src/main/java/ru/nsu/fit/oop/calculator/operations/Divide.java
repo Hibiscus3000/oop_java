@@ -19,6 +19,6 @@ public class Divide extends Operation {
         double divider = context.popFromStack();
         double dividend = context.popFromStack();
         context.pushToStack( dividend / divider );
-        logger.exiting(this.getClass().getName(),"execute");
+        logger.exiting(this.getClass().getName(),"execute",context.getFromStack());
     }
 }

@@ -41,12 +41,12 @@ class SaveAndLoadTest {
     }
 
     @org.junit.jupiter.api.Test
-    void loadWithSpaces() {
+    void loadWithWhitespaces() {
         var context = new Context();
         var load = new Load();
         var args = new ArrayList<String>();
         args.add("load");
-        args.add("src\\test\\java\\loadWithWhitespaces");
+        args.add("src\\test\\java\\loadWithWhitespacesFile");
         assertDoesNotThrow(() ->{
             load.execute(context,args);
         });

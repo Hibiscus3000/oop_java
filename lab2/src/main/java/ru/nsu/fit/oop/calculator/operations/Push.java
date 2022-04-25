@@ -31,6 +31,6 @@ public class Push extends Operation{
                 throw exception;
             }
         }
-        logger.exiting(this.getClass().getName(),"execute");
+        logger.exiting(this.getClass().getName(),"execute",context.getFromStack());
     }
 }

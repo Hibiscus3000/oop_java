@@ -17,6 +17,6 @@ public class Plus extends Operation{
         this.args = args;
         numberOfStackValuesCheck(context.getNumberOfValuesInStack(),2);
         context.pushToStack(context.popFromStack() + context.popFromStack());
-        logger.exiting(this.getClass().getName(),"execute");
+        logger.exiting(this.getClass().getName(),"execute",context.getFromStack());
     }
 }

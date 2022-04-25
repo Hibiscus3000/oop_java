@@ -17,6 +17,6 @@ public class Absolute extends Operation {
         this.args = args;
         numberOfStackValuesCheck(context.getNumberOfValuesInStack(),1);
         context.pushToStack(Math.abs(context.popFromStack()));
-        logger.exiting(this.getClass().getName(),"execute");
+        logger.exiting(this.getClass().getName(),"execute",context.getFromStack());
     }
 }

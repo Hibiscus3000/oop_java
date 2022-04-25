@@ -17,6 +17,6 @@ public class Print extends Operation{
         this.args = args;
         numberOfStackValuesCheck(context.getNumberOfValuesInStack(),1);
         System.out.println(context.getFromStack());
-        logger.exiting(this.getClass().getName(),"execute");
+        logger.exiting(this.getClass().getName(),"execute",context.getFromStack());
     }
 }
