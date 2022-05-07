@@ -1,6 +1,6 @@
-package ru.nsu.fit.oop.game.model.subject.unit.enemy;
+package ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy;
 
-import ru.nsu.fit.oop.game.model.subject.unit.Unit;
+import ru.nsu.fit.oop.game.model.entity.game_object.unit.Unit;
 
 public class Enemy extends Unit {
 

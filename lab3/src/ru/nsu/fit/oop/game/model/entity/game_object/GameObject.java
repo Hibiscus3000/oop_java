@@ -1,15 +1,17 @@
-package ru.nsu.fit.oop.game.model.subject;
+package ru.nsu.fit.oop.game.model.entity.game_object;
+
+import ru.nsu.fit.oop.game.model.entity.Entity;
 
 import java.awt.*;
 
-public class Subject {
+public class GameObject implements Entity {
     protected String name;
     protected double x;
     protected double y;
     protected final int squaredSize;
     protected double speed;
     protected boolean inGame = true;
-    public Subject(String name, double x, double y, int size, double speed) {
+    public GameObject(String name, double x, double y, int size, double speed) {
         this.name = name;
         setCoords(x,y);
         this.squaredSize = size;

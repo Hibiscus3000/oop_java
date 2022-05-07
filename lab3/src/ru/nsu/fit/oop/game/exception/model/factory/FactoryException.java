@@ -5,14 +5,14 @@ import ru.nsu.fit.oop.game.exception.model.ModelException;
 public class FactoryException extends ModelException {
 
         public FactoryException() {
-            super("factory exception");
+            super("Factory exception.");
         }
 
         public FactoryException(String msg) {
             super(msg);
         }
 
-        public FactoryException(String msg,Throwable cause) {
-            super(msg,cause);
+        public FactoryException(String name,Throwable cause) {
+            super("error in \"" + name + "\".",cause);
         }
 }
