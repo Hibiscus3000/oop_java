@@ -1,19 +1,13 @@
-package ru.nsu.fit.oop.game.model.unit;
+package ru.nsu.fit.oop.game.model.subject.unit;
 
 import ru.nsu.fit.oop.game.exception.model.UnitGenerationException;
 import ru.nsu.fit.oop.game.exception.model.factory.FactoryException;
-import ru.nsu.fit.oop.game.exception.model.factory.InvalidConfigException;
-import ru.nsu.fit.oop.game.exception.model.factory.weapon.InvalidRandomWeapon;
 import ru.nsu.fit.oop.game.model.weapon.WeaponFactory;
 
 public class Hero extends Unit{
 
-    public Hero(String name) throws UnitGenerationException {
-        this.name = name;
-        health = 40;
-        maxHealth = 40;
-        maxArmor = 10;
-        maxShield = 0;
+    public Hero(String name,int x, int y) throws UnitGenerationException {
+        super(name,x,y,10,10,1,40,0,0,10);
         try {
             WeaponFactory.getInstance().getRandomWeapon(1);
         } catch (FactoryException e) {

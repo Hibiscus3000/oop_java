@@ -19,7 +19,7 @@ public class View  extends JFrame {
 
         public StartupMenu() {
             setLayout(new GridLayout(4, 1, 20, 20));
-            setOpaque(true);
+            setOpaque(false);
             addButton("PLAY", new PLayAction());
             addButton("RECORDS", null);
             addButton("CREDITS", null);

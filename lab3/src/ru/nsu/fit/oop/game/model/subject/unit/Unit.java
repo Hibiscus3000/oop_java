@@ -1,18 +1,14 @@
-package ru.nsu.fit.oop.game.model.unit;
+package ru.nsu.fit.oop.game.model.subject.unit;
 
 import ru.nsu.fit.oop.game.model.ability.Abilitiy;
+import ru.nsu.fit.oop.game.model.subject.Subject;
 import ru.nsu.fit.oop.game.model.weapon.Weapon;
 
 import java.awt.*;
 import java.util.List;
 
-public class Unit {
+public class Unit extends Subject {
 
-    protected String name;
-    protected int x;
-    protected int y;
-    protected int sizeX;
-    protected int sizeY;
     protected int lives;
     protected int maxHealth;
     protected int health;
@@ -22,14 +18,10 @@ public class Unit {
     protected int maxShield;
     protected List<Weapon> weapons;
     protected List<Abilitiy> abilities;
-    protected boolean isAlive = true;
 
-    protected Unit(String name,int x, int y, int sizeX, int sizeY, int lives, int health,int armor,
-                   int shield) {
-        this.name = name;
-        setCoords(x,y);
-        this.sizeX = sizeX;
-        this.sizeY = sizeY;
+    protected Unit(String name,double x, double y, int size, double speed, int lives, int health,
+                   int armor, int shield) {
+        super(name, x, y,size,speed);
         this.lives = lives;
         this.health = health;
         this.maxHealth = health;
@@ -48,7 +40,7 @@ public class Unit {
         if (health <= 0) {
             --lives;
             if (-1 == lives)
-                isAlive = false;
+                inGame = false;
         }
     }
 
@@ -72,21 +64,4 @@ public class Unit {
             shield = 0;
     }
 
-    public void setCoords(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public void changeCoords(int shiftX, int shiftY) {
-        this.x -= shiftX;
-        this.y -= shiftY;
-    }
-
-    public Dimension getCoords() {
-        return new Dimension(x,y);
-    }
-
-    public boolean getLiveStatus() {
-        return isAlive;
-    }
 }
