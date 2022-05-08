@@ -21,8 +21,7 @@ public class GameField extends JComponent {
 
     public GameField(int windowSizeX, int windowSizeY, Model model) {
         setVisible(true);
-        setBackground(Color.WHITE);
-        setOpaque(true);
+        setOpaque(false);
         this.windowSizeX = windowSizeX;
         this.windowSizeY = windowSizeY;
         this.model = model;

@@ -2,11 +2,8 @@ package ru.nsu.fit.oop.game.model.factory.enemy;
 
 import ru.nsu.fit.oop.game.exception.model.factory.InvalidConfigException;
 import ru.nsu.fit.oop.game.exception.model.factory.InvalidRandomEntity;
-import ru.nsu.fit.oop.game.model.entity.Entity;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy.Enemy;
-import ru.nsu.fit.oop.game.model.entity.weapon.Weapon;
 import ru.nsu.fit.oop.game.model.factory.Factory;
-import ru.nsu.fit.oop.game.model.factory.weapon.WeaponFactory;
 
 import java.util.Random;
 

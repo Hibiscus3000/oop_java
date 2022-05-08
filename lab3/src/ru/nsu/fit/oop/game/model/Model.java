@@ -18,13 +18,18 @@ public class Model extends Observable {
     private Radix radix;
     private Timer fieldUpdateTimer;
     private Timer rest;
-    public Model(View view, int  sizeX, int sizeY) {
+
+    public Model(View view, int sizeX, int sizeY) {
         addObserver(view);
-        radix = new Radix(sizeX,sizeY);
+        radix = new Radix(sizeX, sizeY);
         rest = new Timer(5000, null);
         fieldUpdateTimer = new Timer(33, null);
         fieldUpdateTimer.addActionListener(e -> {
             radix.updateGameField();
+            if ((false == rest.isRunning()) && (0 == radix.getNumberOfEnemies()))
+                rest.restart();
+            if (false == radix.getHeroInGameStatus())
+                System.exit(1);
             setChanged();
             notifyObservers();
             clearChanged();
@@ -34,13 +39,18 @@ public class Model extends Observable {
     public void initGame(String name) {
         rest.addActionListener(e -> {
             try {
-                radix.setEnemies(WaveFactory.getInstance().getNextWave());
-            }
-            catch (FactoryException ex) {
+                rest.stop();
+                List<Enemy> enemies = WaveFactory.getInstance().getNextWave();
+                if (null != enemies)
+                    radix.setEnemies(enemies);
+                else
+                    System.exit(0);
+            } catch (FactoryException ex) {
                 ex.printStackTrace();
                 System.exit(1);
             }
         });
+        rest.start();
         try {
             radix.setHero(new Hero(name));
         } catch (UnitGenerationException e) {

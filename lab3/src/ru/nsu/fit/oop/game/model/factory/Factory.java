@@ -12,8 +12,8 @@ import java.util.Random;
 
 abstract public class Factory {
 
-    protected static List<Properties> configs = new ArrayList<>();
-    protected static Properties configsConfig = new Properties();
+    protected List<Properties> configs = new ArrayList<>();
+    protected Properties configsConfig = new Properties();
 
     public Factory(String configsConfigName) throws InvalidConfigException {
         String propertyName = null;
@@ -28,7 +28,7 @@ abstract public class Factory {
                 stream = this.getClass().getResourceAsStream(propertyName =
                         configsConfig.getProperty(Integer.valueOf(i).toString()));
                 if (null == stream)
-                    throw new InvalidConfigException(configsConfigName,this.getClass().getName());
+                    throw new InvalidConfigException(propertyName,this.getClass().getName());
                 nextConfig = new Properties();
                 nextConfig.load(stream);
                 configs.add(nextConfig);

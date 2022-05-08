@@ -11,6 +11,8 @@ import java.util.Observer;
 
 public class View  extends JFrame implements Observer {
 
+    private final int fieldSizeX;
+    private final int fieldSizeY;
     private final int windowSizeX;
     private final int windowSizeY;
     private Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -58,6 +60,8 @@ public class View  extends JFrame implements Observer {
         setLayout(new FlowLayout());
         windowSizeX = (int)(2 * toolkit.getScreenSize().getWidth()) / 3;
         windowSizeY = (int)(2 * toolkit.getScreenSize().getHeight()) / 3;
+        fieldSizeX = windowSizeX;
+        fieldSizeY = windowSizeY;
         Dimension size = new Dimension(windowSizeX,windowSizeY );
         setPreferredSize(size);
         startupMenu = new StartupMenu();
@@ -90,10 +94,11 @@ public class View  extends JFrame implements Observer {
     }
 
     private void initGame(String name) {
-        model = new Model(this,2500,1400);
+        model = new Model(this,fieldSizeX,fieldSizeY);
         gameField = new GameField(windowSizeX, windowSizeY, model);
         add(gameField);
         model.initGame(name);
+        getContentPane().setBackground(new Color(180,180,180));
         add(new HeroMover(model));
     }
 

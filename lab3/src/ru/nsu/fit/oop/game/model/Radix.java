@@ -14,15 +14,15 @@ import java.util.Random;
 
 public class Radix {
 
-    private int sizeX;
-    private int sizeY;
+    private int fieldSizeX;
+    private int fieldSizeY;
     private Hero hero;
     private List<Enemy> enemies;
     private volatile List<Shell> shells = new ArrayList<>();
 
     public Radix(int sizeX, int sizeY) {
-        this.sizeX = sizeX;
-        this.sizeY = sizeY;
+        this.fieldSizeX = sizeX;
+        this.fieldSizeY = sizeY;
     }
 
     public int getNumberOfEnemies() {
@@ -30,7 +30,7 @@ public class Radix {
     }
 
     public Dimension getFieldSize() {
-        return new Dimension(sizeX, sizeY);
+        return new Dimension(fieldSizeX, fieldSizeY);
     }
 
     public void setEnemies(List<Enemy> enemies) {
@@ -41,13 +41,14 @@ public class Radix {
 
     public void setHero(Hero hero) {
         this.hero = hero;
-        hero.setCoords(sizeX / 2 + new Random().nextDouble(100) - 50, sizeY / 2
+        hero.setCoords(fieldSizeX / 2 + new Random().nextDouble(100) - 50, fieldSizeY / 2
                 + new Random().nextDouble(100) - 50);
     }
 
     private void setEnemyCoords(Enemy enemy) {
-        enemy.setCoords(new Random().nextDouble(sizeX + 2 * enemy.getSize()),
-                new Random().nextDouble(sizeY - enemy.getRadius()));
+        enemy.setCoords(new Random().nextDouble(fieldSizeX - 2 * enemy.getRadius()) +
+                enemy.getRadius(), new Random().nextDouble(fieldSizeY - 2 *
+                enemy.getRadius()) + enemy.getRadius());
     }
 
     public void moveHero(double angle) {
@@ -68,13 +69,27 @@ public class Radix {
         }
     }
 
-    public void addShell(Shell shell) {
-        shells.add(shell);
+    public boolean getHeroInGameStatus() {
+        return hero.getInGameStatus();
     }
 
     public void updateGameField() {
-        // handle units!!!
+        handleEnemies();
         handleShells();
+    }
+
+    private void handleEnemies() {
+        if (null == enemies)
+            return;
+        int i = 0, size = enemies.size();
+        while (i < size) {
+            if (false == enemies.get(i).getInGameStatus()) {
+                enemies.remove(i);
+                --size;
+                continue;
+            }
+            ++i;
+        }
     }
 
     private void handleShells() {
@@ -96,8 +111,8 @@ public class Radix {
     }
 
     private void checkCollisions(Shell shell) {
-        if (shell.getX() <= 0 || shell.getX() >= sizeX || shell.getY() <= 0
-                || shell.getY() >= sizeY) {
+        if (shell.getX() <= 0 || shell.getX() >= fieldSizeX || shell.getY() <= 0
+                || shell.getY() >= fieldSizeY) {
             shell.setInGameFalse();
             return;
         }

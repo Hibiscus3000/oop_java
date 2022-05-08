@@ -2,7 +2,6 @@ package ru.nsu.fit.oop.game.model.factory.wave;
 
 import ru.nsu.fit.oop.game.exception.model.factory.FactoryException;
 import ru.nsu.fit.oop.game.exception.model.factory.InvalidConfigException;
-import ru.nsu.fit.oop.game.model.entity.game_object.unit.Unit;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy.Enemy;
 import ru.nsu.fit.oop.game.model.factory.Factory;
 import ru.nsu.fit.oop.game.model.factory.enemy.EnemyFactory;

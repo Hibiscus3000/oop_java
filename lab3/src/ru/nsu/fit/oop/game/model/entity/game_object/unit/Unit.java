@@ -26,9 +26,9 @@ public abstract class Unit extends GameObject {
     protected List<Weapon> weapons = new ArrayList<>();
     protected List<Abilitiy> abilities = new ArrayList<>();
 
-    protected Unit(String name, int size, double speed, int lives, int health,
+    protected Unit(String name, int radius, double speed, int lives, int health,
                    int armor, int shield) {
-        super(name,size,speed);
+        super(name,radius,speed);
         defaultSpeed = speed;
         this.lives = lives;
         this.health = health;

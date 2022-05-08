@@ -17,7 +17,7 @@ public class HeroMover extends JComponent {
         amap = getActionMap();
         mapMoveKey("W", "move forward", 270);
         mapMoveKey("A", "move left", 180);
-        mapMoveKey("S", "move backward", 180);
+        mapMoveKey("S", "move backward", 90);
         mapMoveKey("D", "move right", 0);
     }
 
