@@ -27,7 +27,7 @@ public class WaveFactory extends Factory {
             for (int i = 1; i < configs.get(currentWave).size() + 1; i++) {
                 for (int j = 0; j < Integer.parseInt(configs.get(currentWave).getProperty
                         (Integer.valueOf(i).toString())); ++j)
-                    enemies.add((Enemy) EnemyFactory.getInstance().getRandom(i));
+                    enemies.add(EnemyFactory.getInstance().getRandomEnemy(i));
             }
         }
         catch (FactoryException e) {

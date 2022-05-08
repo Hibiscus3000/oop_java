@@ -3,18 +3,22 @@ package ru.nsu.fit.oop.game.model.entity.game_object;
 import ru.nsu.fit.oop.game.model.entity.Entity;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 
 public class GameObject implements Entity {
     protected String name;
     protected double x;
     protected double y;
-    protected final int squaredSize;
+    protected final int radius;
+    protected final int squaredRadius;
+    protected final int size;
     protected double speed;
     protected boolean inGame = true;
-    public GameObject(String name, double x, double y, int size, double speed) {
+    public GameObject(String name, int radius, double speed) {
         this.name = name;
-        setCoords(x,y);
-        this.squaredSize = size;
+        this.size = 2 * radius;
+        this.radius = radius;
+        this.squaredRadius = radius*radius;
         this.speed = speed;
     }
 
@@ -22,10 +26,20 @@ public class GameObject implements Entity {
 
     public double getY() {return y;}
 
-    public int getSquaredSize() {return squaredSize;}
+    public int getRadius() {
+        return radius;
+    }
 
-    public Point getCoords() {
-        return new Point((int)x,(int)y);
+    public int getSquaredRadius() {
+        return squaredRadius;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public Point2D.Double getCoords() {
+        return new Point2D.Double(x,y);
     }
 
     public void setCoords(double x, double y) {
@@ -44,7 +58,7 @@ public class GameObject implements Entity {
     }
 
     public void move(double angle) {
-        changeCoords(Math.cos(angle) * speed, Math.sin(angle) * speed);
+        changeCoords(Math.cos(angle) * speed, -Math.sin(angle) * speed);
     }
 
     public boolean getInGameStatus() {

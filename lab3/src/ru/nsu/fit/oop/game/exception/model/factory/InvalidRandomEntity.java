@@ -11,7 +11,7 @@ public class InvalidRandomEntity extends FactoryException {
         super("Random entity generation failed, name of the factory: \"" + factoryName + "\".\n"
                 + "Number of entities of that level in config: " + propertySize + ".\n" +
                 "Number, that was  randomly generated: " + randomNumber + ".\n" +
-                "Level of entity required: " + level +
-                "Name of random entity" + nameOfRandomEntity + '.', cause);
+                "Level of entity required: " + level + ".\n" +
+                "Name of random entity: \"" + nameOfRandomEntity + "\".", cause);
     }
 }

@@ -4,6 +4,7 @@ import ru.nsu.fit.oop.game.model.ability.Abilitiy;
 import ru.nsu.fit.oop.game.model.entity.game_object.GameObject;
 import ru.nsu.fit.oop.game.model.entity.weapon.Weapon;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Unit extends GameObject {
@@ -16,12 +17,12 @@ public class Unit extends GameObject {
     protected int maxArmor;
     protected int shield;
     protected int maxShield;
-    protected List<Weapon> weapons;
-    protected List<Abilitiy> abilities;
+    protected List<Weapon> weapons = new ArrayList<>();
+    protected List<Abilitiy> abilities = new ArrayList<>();
 
-    protected Unit(String name,double x, double y, int size, double speed, int lives, int health,
+    protected Unit(String name, int size, double speed, int lives, int health,
                    int armor, int shield) {
-        super(name, x, y,size,speed);
+        super(name,size,speed);
         defaultSpeed = speed;
         this.lives = lives;
         this.health = health;

@@ -1,4 +1,10 @@
 package ru.nsu.fit.oop.game.model.entity.weapon.first_level;
 
-public class Bow {
+import ru.nsu.fit.oop.game.exception.model.shell.ShellNotFoundException;
+import ru.nsu.fit.oop.game.model.entity.weapon.Weapon;
+
+public class Bow extends Weapon {
+    protected Bow() throws ShellNotFoundException {
+        super(1000, "ru.nsu.fit.oop.game.model.entity.game_object.shell.Arrow");
+    }
 }

@@ -6,10 +6,10 @@ import ru.nsu.fit.oop.game.model.factory.weapon.WeaponFactory;
 
 public class Hero extends Unit{
 
-    public Hero(String name,double x, double y) throws UnitGenerationException {
-        super(name,x,y,10,1,1,40,0,0);
+    public Hero(String name) throws UnitGenerationException {
+        super(name,50,1,1,40,0,0);
         try {
-            WeaponFactory.getInstance().getRandom(1);
+            weapons.add(WeaponFactory.getInstance().getRandomWeapon(1));
         } catch (FactoryException e) {
             throw new UnitGenerationException(this.getClass().getSimpleName(),e);
         }

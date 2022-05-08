@@ -7,13 +7,13 @@ public class Shell extends GameObject {
     int damage;
     double angle;
 
-    public Shell(String name, double x, double y, int size, double speed, int damage) {
-        super(name, x, y,size, speed);
+    public Shell(String name, int size, double speed, int damage) {
+        super(name,size, speed);
         this.damage = damage;
     }
 
     public void move() {
-        changeCoords(Math.cos(angle) * speed,Math.sin(angle) * speed);
+        changeCoords(Math.cos(angle) * speed,-Math.sin(angle) * speed);
     }
 
     public int getDamage() {

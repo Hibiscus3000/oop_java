@@ -10,32 +10,33 @@ import java.lang.reflect.Constructor;
 
 public class Weapon implements Entity {
 
-    protected Timer reload;
+    protected Timer cooldown;
     protected boolean isReadyToBeUsed = true;
     String shellName;
-    Constructor<?> constructor;
+    Constructor<Shell> constructor;
 
-
-    protected Weapon(int reloadTimeMillis, String shellName) throws ShellNotFoundException {
+    protected Weapon(int cooldownTimeMillis, String shellName) throws ShellNotFoundException {
         try {
             this.shellName = shellName;
             var opClass = Class.forName(shellName);
-            this.constructor = opClass.getDeclaredConstructor();
+            this.constructor = (Constructor<Shell>)opClass.getDeclaredConstructor();
         } catch (Exception e) {
             throw new ShellNotFoundException(this.getClass().getName(),shellName,e);
         }
-        reload = new Timer(reloadTimeMillis, null);
-        reload.addActionListener(event -> {
+        cooldown = new Timer(cooldownTimeMillis, null);
+        cooldown.addActionListener(event -> {
             isReadyToBeUsed = true;
         });
     }
 
-    protected Shell use() throws ShellInstantiationException {
+    protected Shell use(double x, double y) throws ShellInstantiationException {
         if (false == isReadyToBeUsed)
             return null;
         isReadyToBeUsed = false;
         try {
-            return (Shell) constructor.newInstance();
+            Shell shell = constructor.newInstance();
+            shell.setCoords(x,y);
+            return shell;
         } catch (Exception e) {
             throw new ShellInstantiationException(this.getClass().getName(),shellName,e);
         }
