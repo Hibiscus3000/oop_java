@@ -1,5 +1,6 @@
 package ru.nsu.fit.oop.game.view;
 
+import ru.nsu.fit.oop.game.model.Model;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Hero;
 
 import javax.swing.*;
@@ -9,12 +10,12 @@ import java.awt.event.MouseMotionAdapter;
 
 public class HeroController extends JComponent{
 
-    Hero hero;
+    Model model;
     InputMap imap;
     ActionMap amap;
 
-    public HeroController(Hero hero) {
-        this.hero = hero;
+    public HeroController(Model model) {
+        this.model = model;
         imap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         amap = getActionMap();
         mapMoveKey("W","move forward",90);
@@ -36,7 +37,7 @@ public class HeroController extends JComponent{
         }
         @Override
         public void actionPerformed(ActionEvent e) {
-            hero.move(Math.toRadians(angle));
+            model.moveHero(Math.toRadians(angle));
         }
     }
 

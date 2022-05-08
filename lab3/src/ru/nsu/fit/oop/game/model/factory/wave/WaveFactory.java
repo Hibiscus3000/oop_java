@@ -19,10 +19,10 @@ public class WaveFactory extends Factory {
         super("waves.properties");
     }
 
-    public List<Unit> getNextWave() throws FactoryException {
+    public List<Enemy> getNextWave() throws FactoryException {
         if (currentWave == configs.size())
             return null;
-        List<Unit> enemies = new ArrayList<>();
+        List<Enemy> enemies = new ArrayList<>();
         try {
             for (int i = 1; i < configs.get(currentWave).size() + 1; i++) {
                 for (int j = 0; j < Integer.parseInt(configs.get(currentWave).getProperty

@@ -94,7 +94,7 @@ public class View  extends JFrame implements Observer {
         gameField = new GameField(windowSizeX, windowSizeY);
         add(gameField);
         model.initGame(name);
-        add(new HeroController(model.getHero()));
+        add(new HeroController(model));
     }
 
     @Override

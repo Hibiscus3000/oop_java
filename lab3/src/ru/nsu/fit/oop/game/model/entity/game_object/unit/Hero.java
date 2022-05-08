@@ -16,8 +16,5 @@ public class Hero extends Unit {
         }
     }
 
-    @Override
-    public void useWeapon(double angle) throws ShellInstantiationException {
-        radix.addHeroShell(weapons.get(currentWeaponNumber).use(angle, getX(), getY()));
-    }
+
 }

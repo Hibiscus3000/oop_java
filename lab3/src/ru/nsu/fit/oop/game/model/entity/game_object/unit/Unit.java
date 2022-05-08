@@ -77,5 +77,7 @@ public abstract class Unit extends GameObject {
             shield = 0;
     }
 
-    public abstract void useWeapon(double angle) throws ShellInstantiationException;
+    public void useWeapon(double angle) throws ShellInstantiationException {
+        radix.addShell(weapons.get(currentWeaponNumber).use(angle, getX(), getY()));
+    }
 }

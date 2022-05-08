@@ -34,22 +34,20 @@ public class GameField extends JComponent {
         if (null == gameObjectsInfo)
             return;
         Ellipse2D heroEllipse = new Ellipse2D.Double(
-                windowSizeX / 2 - gameObjectsInfo.getHeroes().get(0).getRadius(),
-                windowSizeY / 2 - gameObjectsInfo.getHeroes().get(0).getRadius() - 20,
-                gameObjectsInfo.getHeroes().get(0).getSize(),
-                gameObjectsInfo.getHeroes().get(0).getSize());
+                windowSizeX / 2 - gameObjectsInfo.getHero().getRadius(),
+                windowSizeY / 2 - gameObjectsInfo.getHero().getRadius() - 20,
+                gameObjectsInfo.getHero().getSize(),
+                gameObjectsInfo.getHero().getSize());
         g2d.draw(heroEllipse);
-        drawGameObjects(g2d,gameObjectsInfo.getEnemies());
-        drawGameObjects(g2d,gameObjectsInfo.getHeroShells());
-        drawGameObjects(g2d,gameObjectsInfo.getEnemyShells());
+        drawShellsAndEnemies(g2d);
     }
 
-    private void drawGameObjects(Graphics2D g2d,List<GameObject> gameObjectsList) {
-        if (null == gameObjectsList)
+    private void drawShellsAndEnemies(Graphics2D g2d) {
+        if (null == gameObjectsInfo.getShellsAndEnemies())
             return;
-        for (GameObject gameObject : gameObjectsList) {
+        for (GameObject gameObject : gameObjectsInfo.getShellsAndEnemies()) {
             if (checkOnScreen(gameObject.getCoords(),gameObject.getRadius(),
-                    gameObjectsInfo.getHeroes().get(0).getCoords())) {
+                    gameObjectsInfo.getHero().getCoords())) {
                 Ellipse2D enemyEllipse = new Ellipse2D.Double(gameObject.getX() - gameObject.getRadius(),
                         gameObject.getY() - gameObject.getRadius(), gameObject.getSize(),
                         gameObject.getSize());
