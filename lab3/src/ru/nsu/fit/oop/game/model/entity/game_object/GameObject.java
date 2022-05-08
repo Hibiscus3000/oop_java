@@ -53,12 +53,12 @@ public abstract class GameObject extends Entity {
     }
 
     public void changeCoords(double shiftX, double shiftY) {
-        this.x -= shiftX;
-        this.y -= shiftY;
+        this.x += shiftX;
+        this.y += shiftY;
     }
 
     public void move(double angle) {
-        changeCoords(Math.cos(angle) * speed, -Math.sin(angle) * speed);
+        changeCoords(Math.cos(angle) * speed, Math.sin(angle) * speed);
     }
 
     public boolean getInGameStatus() {

@@ -25,8 +25,10 @@ public abstract class Weapon extends Entity {
             throw new ShellNotFoundException(this.getClass().getName(),shellName,e);
         }
         cooldown = new Timer(cooldownTimeMillis, null);
+        cooldown.start();
         cooldown.addActionListener(event -> {
             isReadyToBeUsed = true;
+            cooldown.stop();
         });
     }
 
@@ -34,6 +36,7 @@ public abstract class Weapon extends Entity {
         if (false == isReadyToBeUsed)
             return null;
         isReadyToBeUsed = false;
+        cooldown.restart();
         try {
             return constructor.newInstance(angle,x,y);
         } catch (Exception e) {

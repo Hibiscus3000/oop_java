@@ -1,9 +1,11 @@
 package ru.nsu.fit.oop.game.model.entity.game_object.unit;
 
+import ru.nsu.fit.oop.game.exception.model.UnableToUseWeaponException;
 import ru.nsu.fit.oop.game.exception.model.shell.ShellInstantiationException;
 import ru.nsu.fit.oop.game.model.Radix;
 import ru.nsu.fit.oop.game.model.ability.Abilitiy;
 import ru.nsu.fit.oop.game.model.entity.game_object.GameObject;
+import ru.nsu.fit.oop.game.model.entity.game_object.shell.Shell;
 import ru.nsu.fit.oop.game.model.entity.weapon.Weapon;
 
 import java.util.ArrayList;
@@ -23,7 +25,6 @@ public abstract class Unit extends GameObject {
     protected int currentAbilityNumber;
     protected List<Weapon> weapons = new ArrayList<>();
     protected List<Abilitiy> abilities = new ArrayList<>();
-    protected Radix radix;
 
     protected Unit(String name, int size, double speed, int lives, int health,
                    int armor, int shield) {
@@ -38,10 +39,6 @@ public abstract class Unit extends GameObject {
         this.maxShield = shield;
         this.currentWeaponNumber = 0;
         this.currentAbilityNumber = 0;
-    }
-
-    public void setRadix(Radix radix) {
-        this.radix = radix;
     }
 
     public void changeHealth(int healthAmount) {
@@ -77,7 +74,11 @@ public abstract class Unit extends GameObject {
             shield = 0;
     }
 
-    public void useWeapon(double angle) throws ShellInstantiationException {
-        radix.addShell(weapons.get(currentWeaponNumber).use(angle, getX(), getY()));
+    public Shell useWeapon(double angle) throws UnableToUseWeaponException {
+        try {
+            return weapons.get(currentWeaponNumber).use(angle, getX(), getY());
+        } catch (ShellInstantiationException e) {
+            throw new UnableToUseWeaponException(this.name,e);
+        }
     }
 }

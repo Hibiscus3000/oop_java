@@ -91,10 +91,10 @@ public class View  extends JFrame implements Observer {
 
     private void initGame(String name) {
         model = new Model(this,2500,1400);
-        gameField = new GameField(windowSizeX, windowSizeY);
+        gameField = new GameField(windowSizeX, windowSizeY, model);
         add(gameField);
         model.initGame(name);
-        add(new HeroController(model));
+        add(new HeroMover(model));
     }
 
     @Override

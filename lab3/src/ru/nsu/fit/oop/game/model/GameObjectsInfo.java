@@ -19,10 +19,11 @@ public class GameObjectsInfo {
             }
         if (null != hero)
             this.hero = hero;
-        if (null != shells)
+        if (null != shells) {
             for (Shell heroShell : shells) {
                 this.shellsAndEnemies.add((GameObject) heroShell);
             }
+        }
     }
 
     public List<GameObject> getShellsAndEnemies() {

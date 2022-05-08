@@ -15,6 +15,4 @@ public class Hero extends Unit {
             throw new UnitGenerationException(this.getClass().getSimpleName(), e);
         }
     }
-
-
 }

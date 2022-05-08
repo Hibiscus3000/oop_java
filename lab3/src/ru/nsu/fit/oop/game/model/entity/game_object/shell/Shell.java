@@ -15,7 +15,7 @@ public class Shell extends GameObject {
     }
 
     public void move() {
-        changeCoords(Math.cos(angle) * speed, -Math.sin(angle) * speed);
+        changeCoords(Math.cos(angle) * speed, Math.sin(angle) * speed);
     }
 
     public int getDamage() {

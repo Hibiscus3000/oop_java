@@ -1,12 +1,16 @@
 package ru.nsu.fit.oop.game.model;
 
+import ru.nsu.fit.oop.game.exception.model.ModelException;
 import ru.nsu.fit.oop.game.exception.model.UnitGenerationException;
 import ru.nsu.fit.oop.game.exception.model.factory.FactoryException;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Hero;
+import ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy.Enemy;
 import ru.nsu.fit.oop.game.model.factory.wave.WaveFactory;
 import ru.nsu.fit.oop.game.view.View;
 
 import javax.swing.*;
+import java.awt.geom.Point2D;
+import java.util.List;
 import java.util.Observable;
 
 public class Model extends Observable {
@@ -48,6 +52,20 @@ public class Model extends Observable {
 
     public void moveHero(double angle) {
         radix.moveHero(angle);
+    }
+
+    public Point2D.Double getHeroCoords() {
+        return radix.getHeroCoords();
+    }
+
+
+    public void heroUseWeapon(double angle) {
+        try {
+            radix.heroUseWeapon(angle);
+        } catch (ModelException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
     public void setPause(boolean pause) {

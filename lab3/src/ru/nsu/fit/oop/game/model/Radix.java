@@ -1,10 +1,13 @@
 package ru.nsu.fit.oop.game.model;
 
+import ru.nsu.fit.oop.game.exception.model.ModelException;
+import ru.nsu.fit.oop.game.exception.model.UnableToUseWeaponException;
 import ru.nsu.fit.oop.game.model.entity.game_object.shell.Shell;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Hero;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy.Enemy;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -15,7 +18,7 @@ public class Radix {
     private int sizeY;
     private Hero hero;
     private List<Enemy> enemies;
-    private List<Shell> shells = new ArrayList<>();
+    private volatile List<Shell> shells = new ArrayList<>();
 
     public Radix(int sizeX, int sizeY) {
         this.sizeX = sizeX;
@@ -27,7 +30,7 @@ public class Radix {
     }
 
     public Dimension getFieldSize() {
-        return new Dimension(sizeX,sizeY);
+        return new Dimension(sizeX, sizeY);
     }
 
     public void setEnemies(List<Enemy> enemies) {
@@ -51,6 +54,20 @@ public class Radix {
         hero.move(angle);
     }
 
+    public Point2D.Double getHeroCoords() {
+        return new Point2D.Double(hero.getX(), hero.getY());
+    }
+
+    public void heroUseWeapon(double angle) throws ModelException {
+        try {
+            Shell shell = hero.useWeapon(angle);
+            if (null != shell)
+                shells.add(shell);
+        } catch (UnableToUseWeaponException e) {
+            throw new ModelException(e);
+        }
+    }
+
     public void addShell(Shell shell) {
         shells.add(shell);
     }
@@ -61,6 +78,8 @@ public class Radix {
     }
 
     private void handleShells() {
+        if (null == shells)
+            return;
         int i = 0, size = shells.size();
         while (i < size) {
             if (false == shells.get(i).getInGameStatus()) {
@@ -82,15 +101,16 @@ public class Radix {
             shell.setInGameFalse();
             return;
         }
-        for (Enemy enemy : enemies) {
-            if (shell.getSquaredRadius() + enemy.getSquaredRadius() > (shell.getX() - enemy.getX()) *
-                    (shell.getX() - enemy.getX()) + (shell.getY() - enemy.getY()) *
-                    (shell.getY() - enemy.getY())) {
-                enemy.changeHealth(shell.getDamage());
-                shell.setInGameFalse();
-                return;
+        if (null != enemies)
+            for (Enemy enemy : enemies) {
+                if (shell.getSquaredRadius() + enemy.getSquaredRadius() > (shell.getX() - enemy.getX()) *
+                        (shell.getX() - enemy.getX()) + (shell.getY() - enemy.getY()) *
+                        (shell.getY() - enemy.getY())) {
+                    enemy.changeHealth(shell.getDamage());
+                    shell.setInGameFalse();
+                    return;
+                }
             }
-        }
     }
 
     public GameObjectsInfo getGameObjectsInfo() {
