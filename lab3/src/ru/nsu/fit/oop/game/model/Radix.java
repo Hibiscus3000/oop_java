@@ -1,8 +1,10 @@
 package ru.nsu.fit.oop.game.model;
 
-import ru.nsu.fit.oop.game.model.entity.game_object.GameObject;
+import ru.nsu.fit.oop.game.exception.model.factory.InvalidConfigException;
 import ru.nsu.fit.oop.game.model.entity.game_object.shell.Shell;
+import ru.nsu.fit.oop.game.model.entity.game_object.unit.Hero;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Unit;
+import ru.nsu.fit.oop.game.model.factory.weapon.WeaponFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,14 +37,26 @@ public class Radix {
     public void setHeroes(List<Unit> heroes) {
         this.heroes = heroes;
         for (Unit hero : heroes) {
-            hero.setCoords(sizeX / 2 + new Random().nextDouble(100) - 100, sizeY / 2
-                    + new Random().nextDouble(100) - 100);
+            hero.setCoords(sizeX / 2 + new Random().nextDouble(100) - 50, sizeY / 2
+                    + new Random().nextDouble(100) - 50);
         }
     }
 
     private void setEnemyCoords(Unit enemy) {
         enemy.setCoords(new Random().nextDouble(sizeX + 2 * enemy.getSize()),
                 new Random().nextDouble(sizeY - enemy.getRadius()));
+    }
+
+    public void moveHero(double angle) {
+        heroes.get(0).move(angle);
+    }
+
+    public void addEnemyShell(Shell shell) {
+        enemyShells.add(shell);
+    }
+
+    public void addHeroShell(Shell shell) {
+        heroShells.add(shell);
     }
 
     public void updateGameField() {

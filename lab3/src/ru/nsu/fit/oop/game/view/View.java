@@ -1,7 +1,6 @@
 package ru.nsu.fit.oop.game.view;
 
 import ru.nsu.fit.oop.game.model.Model;
-import ru.nsu.fit.oop.game.model.Radix;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,10 +11,12 @@ import java.util.Observer;
 
 public class View  extends JFrame implements Observer {
 
-    Toolkit toolkit = Toolkit.getDefaultToolkit();
-    Model model;
-    StartupMenu startupMenu;
-    GameField gameField;
+    private final int windowSizeX;
+    private final int windowSizeY;
+    private Toolkit toolkit = Toolkit.getDefaultToolkit();
+    private Model model;
+    private StartupMenu startupMenu;
+    private GameField gameField;
 
     private class StartupMenu extends JPanel {
 
@@ -55,12 +56,13 @@ public class View  extends JFrame implements Observer {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("The Witcher 3: Wild Hunt");
         setLayout(new FlowLayout());
-        Dimension size = new Dimension((int)(2 * toolkit.getScreenSize().getWidth()) / 3,
-                (int)(2 * toolkit.getScreenSize().getHeight()) / 3);
+        windowSizeX = (int)(2 * toolkit.getScreenSize().getWidth()) / 3;
+        windowSizeY = (int)(2 * toolkit.getScreenSize().getHeight()) / 3;
+        Dimension size = new Dimension(windowSizeX,windowSizeY );
         setPreferredSize(size);
         startupMenu = new StartupMenu();
         add(startupMenu);
-        setResizable(true);
+        setResizable(false);
         setVisible(true);
         getContentPane().setBackground(new Color(30,150,10));
         pack();
@@ -88,18 +90,16 @@ public class View  extends JFrame implements Observer {
     }
 
     private void initGame(String name) {
-        gameField = new GameField((int)toolkit.getScreenSize().getWidth(),
-                (int)toolkit.getScreenSize().getHeight(),model.getGameObjectsInfo());
-        gameField.setVisible(true);
-        add(gameField);
-        getContentPane().setBackground(Color.WHITE);
         model = new Model(this,2500,1400);
+        gameField = new GameField(windowSizeX, windowSizeY);
+        add(gameField);
         model.initGame(name);
+        add(new HeroController(model.getHero()));
     }
 
     @Override
     public void update(Observable o, Object arg) {
-        Radix radix = (Radix)arg;
+        gameField.setGameObjectsInfo(model.getGameObjectsInfo());
         gameField.repaint();
     }
 }

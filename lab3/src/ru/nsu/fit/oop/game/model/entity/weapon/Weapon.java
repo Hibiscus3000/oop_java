@@ -8,7 +8,7 @@ import ru.nsu.fit.oop.game.model.entity.game_object.shell.Shell;
 import javax.swing.*;
 import java.lang.reflect.Constructor;
 
-public class Weapon implements Entity {
+public abstract class Weapon extends Entity {
 
     protected Timer cooldown;
     protected boolean isReadyToBeUsed = true;
@@ -19,7 +19,8 @@ public class Weapon implements Entity {
         try {
             this.shellName = shellName;
             var opClass = Class.forName(shellName);
-            this.constructor = (Constructor<Shell>)opClass.getDeclaredConstructor();
+            this.constructor = (Constructor<Shell>)opClass.getDeclaredConstructor(Double.class,
+                    Double.class,Double.class);
         } catch (Exception e) {
             throw new ShellNotFoundException(this.getClass().getName(),shellName,e);
         }
@@ -29,14 +30,12 @@ public class Weapon implements Entity {
         });
     }
 
-    protected Shell use(double x, double y) throws ShellInstantiationException {
+    public Shell use(double angle,double x, double y) throws ShellInstantiationException {
         if (false == isReadyToBeUsed)
             return null;
         isReadyToBeUsed = false;
         try {
-            Shell shell = constructor.newInstance();
-            shell.setCoords(x,y);
-            return shell;
+            return constructor.newInstance(angle,x,y);
         } catch (Exception e) {
             throw new ShellInstantiationException(this.getClass().getName(),shellName,e);
         }

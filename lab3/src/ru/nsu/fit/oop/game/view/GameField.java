@@ -11,13 +11,19 @@ import java.util.List;
 
 public class GameField extends JComponent {
 
-    private final int screenSizeX;
-    private final int screenSizeY;
+    private final int windowSizeX;
+    private final int windowSizeY;
     private GameObjectsInfo gameObjectsInfo;
 
-    public GameField(int screenSizeX, int screenSizeY, GameObjectsInfo gameObjectsInfo) {
-        this.screenSizeX = screenSizeX;
-        this.screenSizeY = screenSizeY;
+    public GameField(int windowSizeX, int windowSizeY) {
+        setVisible(true);
+        setBackground(Color.WHITE);
+        setOpaque(true);
+        this.windowSizeX = windowSizeX;
+        this.windowSizeY = windowSizeY;
+    }
+
+    public void setGameObjectsInfo(GameObjectsInfo gameObjectsInfo) {
         this.gameObjectsInfo = gameObjectsInfo;
     }
 
@@ -25,9 +31,11 @@ public class GameField extends JComponent {
     public void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D)g;
         super.paintComponent(g);
+        if (null == gameObjectsInfo)
+            return;
         Ellipse2D heroEllipse = new Ellipse2D.Double(
-                screenSizeX / 2 - gameObjectsInfo.getHeroes().get(0).getRadius(),
-                screenSizeY / 2 - gameObjectsInfo.getHeroes().get(0).getRadius(),
+                windowSizeX / 2 - gameObjectsInfo.getHeroes().get(0).getRadius(),
+                windowSizeY / 2 - gameObjectsInfo.getHeroes().get(0).getRadius() - 20,
                 gameObjectsInfo.getHeroes().get(0).getSize(),
                 gameObjectsInfo.getHeroes().get(0).getSize());
         g2d.draw(heroEllipse);
@@ -37,6 +45,8 @@ public class GameField extends JComponent {
     }
 
     private void drawGameObjects(Graphics2D g2d,List<GameObject> gameObjectsList) {
+        if (null == gameObjectsList)
+            return;
         for (GameObject gameObject : gameObjectsList) {
             if (checkOnScreen(gameObject.getCoords(),gameObject.getRadius(),
                     gameObjectsInfo.getHeroes().get(0).getCoords())) {
@@ -49,19 +59,19 @@ public class GameField extends JComponent {
     }
 
     private boolean checkOnScreen(Point2D.Double coords, int radius, Point2D.Double heroCoords) {
-        if (coords.getY() - radius > heroCoords.getY() + screenSizeY / 2)
+        if (coords.getY() - radius > heroCoords.getY() + windowSizeY / 2)
             return false;
-        if (coords.getX() - radius > heroCoords.getX() + screenSizeX / 2)
+        if (coords.getX() - radius > heroCoords.getX() + windowSizeX / 2)
             return false;
-        if (coords.getY() + radius < heroCoords.getY() - screenSizeY / 2)
+        if (coords.getY() + radius < heroCoords.getY() - windowSizeY / 2)
             return false;
-        if (coords.getX() + radius < heroCoords.getY() - screenSizeX / 2)
+        if (coords.getX() + radius < heroCoords.getY() - windowSizeX / 2)
             return false;
         return false;
     }
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(screenSizeX,screenSizeY);
+        return new Dimension(windowSizeX, windowSizeY);
     }
 }

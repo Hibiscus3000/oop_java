@@ -5,7 +5,7 @@ import ru.nsu.fit.oop.game.model.entity.Entity;
 import java.awt.*;
 import java.awt.geom.Point2D;
 
-public class GameObject implements Entity {
+public abstract class GameObject extends Entity {
     protected String name;
     protected double x;
     protected double y;

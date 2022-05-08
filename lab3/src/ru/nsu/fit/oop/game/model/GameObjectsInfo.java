@@ -14,20 +14,24 @@ public class GameObjectsInfo {
     private List<GameObject> enemyShells = new ArrayList<>();
     private List<GameObject> heroShells = new ArrayList<>();
 
-    public GameObjectsInfo(List<Unit> enemies,List<Unit> heroes,List<Shell> enemyShells,
+    public GameObjectsInfo(List<Unit> enemies, List<Unit> heroes, List<Shell> enemyShells,
                            List<Shell> heroShells) {
-        for (Unit enemy : enemies) {
-            this.enemies.add((GameObject) enemy);
-        }
-        for (Unit hero : heroes) {
-            this.heroes.add((GameObject) hero);
-        }
-        for (Shell heroShell : heroShells) {
-            this.heroShells.add((GameObject) heroShell);
-        }
-        for (Shell enemyShell : enemyShells) {
-            this.enemyShells.add((GameObject) enemyShells);
-        }
+        if (null != enemies)
+            for (Unit enemy : enemies) {
+                this.enemies.add((GameObject) enemy);
+            }
+        if (null != heroes)
+            for (Unit hero : heroes) {
+                this.heroes.add((GameObject) hero);
+            }
+        if (null != heroShells)
+            for (Shell heroShell : heroShells) {
+                this.heroShells.add((GameObject) heroShell);
+            }
+        if (null != enemyShells)
+            for (Shell enemyShell : enemyShells) {
+                this.enemyShells.add((GameObject) enemyShells);
+            }
     }
 
 

@@ -2,6 +2,7 @@ package ru.nsu.fit.oop.game.model;
 
 import ru.nsu.fit.oop.game.exception.model.UnitGenerationException;
 import ru.nsu.fit.oop.game.exception.model.factory.FactoryException;
+import ru.nsu.fit.oop.game.model.entity.game_object.shell.Shell;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Hero;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Unit;
 import ru.nsu.fit.oop.game.model.factory.wave.WaveFactory;
@@ -19,13 +20,12 @@ public class Model extends Observable {
     private Timer rest;
     public Model(View view, int  sizeX, int sizeY) {
         addObserver(view);
-        radix = new Radix(sizeX,sizeY);
         rest = new Timer(5000, null);
         fieldUpdateTimer = new Timer(33, null);
         fieldUpdateTimer.addActionListener(e -> {
             radix.updateGameField();
             setChanged();
-            notifyObservers(radix);
+            notifyObservers();
             clearChanged();
         });
     }
@@ -48,6 +48,11 @@ public class Model extends Observable {
             return;
         }
         radix.setHeroes(heroes);
+        fieldUpdateTimer.start();
+    }
+
+    public void moveHero(double angle) {
+        radix.moveHero(angle);
     }
 
     public void setPause(boolean pause) {
