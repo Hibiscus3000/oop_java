@@ -15,13 +15,17 @@ import java.util.Observable;
 
 public class Model extends Observable {
 
+    private final int fieldSizeX;
+    private final int fieldSizeY;
     private Radix radix;
     private Timer fieldUpdateTimer;
     private Timer rest;
+    private GameObjectsInfo gameObjectsInfo;
 
-    public Model(View view, int sizeX, int sizeY) {
+    public Model(View view, int fieldSizeX, int fieldSizeY) {
         addObserver(view);
-        radix = new Radix(sizeX, sizeY);
+        this.fieldSizeX = fieldSizeX;
+        this.fieldSizeY = fieldSizeY;
         rest = new Timer(5000, null);
         fieldUpdateTimer = new Timer(33, null);
         fieldUpdateTimer.addActionListener(e -> {
@@ -52,16 +56,16 @@ public class Model extends Observable {
         });
         rest.start();
         try {
-            radix.setHero(new Hero(name));
+            Hero hero = new Hero(name);
+            radix = new Radix(fieldSizeX, fieldSizeY);
+            radix.setHero(hero);
+            gameObjectsInfo = new GameObjectsInfo(hero);
+            radix.setGameObjectsInfo(gameObjectsInfo);
         } catch (UnitGenerationException e) {
             e.printStackTrace();
             System.exit(1);
         }
         fieldUpdateTimer.start();
-    }
-
-    public void moveHero(double angle) {
-        radix.moveHero(angle);
     }
 
     public Point2D.Double getHeroCoords() {
@@ -86,6 +90,6 @@ public class Model extends Observable {
     }
 
     public GameObjectsInfo getGameObjectsInfo() {
-        return radix.getGameObjectsInfo();
+        return gameObjectsInfo;
     }
 }

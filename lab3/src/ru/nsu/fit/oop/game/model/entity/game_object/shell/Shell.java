@@ -1,13 +1,14 @@
 package ru.nsu.fit.oop.game.model.entity.game_object.shell;
 
+import ru.nsu.fit.oop.game.model.entity.Damage;
 import ru.nsu.fit.oop.game.model.entity.game_object.GameObject;
 
 public class Shell extends GameObject {
 
-    int damage;
-    double angle;
+    private final Damage damage;
+    private final double angle;
 
-    public Shell(String name, int size, double speed, Double angle, Double x, Double y, int damage) {
+    public Shell(String name, int size, double speed, Double angle, Double x, Double y, Damage damage) {
         super(name, size, speed);
         setCoords(x,y);
         this.damage = damage;
@@ -15,11 +16,16 @@ public class Shell extends GameObject {
     }
 
     public void move() {
-        changeCoords(Math.cos(angle) * speed, Math.sin(angle) * speed);
+        changeCoords(Math.cos(angle) * gameObjectParams.getSpeed(),
+                Math.sin(angle) * gameObjectParams.getSpeed());
     }
 
-    public int getDamage() {
+    public Damage getDamage() {
         return damage;
+    }
+
+    public double getAngle() {
+        return angle;
     }
 
     public void setInGameFalse() {

@@ -1,6 +1,6 @@
 package ru.nsu.fit.oop.game.model;
 
-import ru.nsu.fit.oop.game.model.entity.game_object.GameObject;
+import ru.nsu.fit.oop.game.model.entity.game_object.GameObjectParams;
 import ru.nsu.fit.oop.game.model.entity.game_object.shell.Shell;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Hero;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy.Enemy;
@@ -10,27 +10,31 @@ import java.util.List;
 
 public class GameObjectsInfo {
 
-    private List<GameObject> shellsAndEnemies = new ArrayList<>();
-    private GameObject hero;
-    public GameObjectsInfo(List<Enemy> enemies, Hero hero, List<Shell> shells) {
+    private List<GameObjectParams> shellsAndEnemiesParams;
+    private GameObjectParams heroParams;
+
+    public GameObjectsInfo(Hero hero) {
+        heroParams = hero.getGameObjectParams();
+    }
+
+    public void renew(List<Enemy> enemies,  List<Shell> shells) {
+        shellsAndEnemiesParams = new ArrayList<>();
         if (null != enemies)
             for (Enemy enemy : enemies) {
-                this.shellsAndEnemies.add((GameObject) enemy);
+                this.shellsAndEnemiesParams.add(enemy.getGameObjectParams());
             }
-        if (null != hero)
-            this.hero = hero;
         if (null != shells) {
             for (Shell heroShell : shells) {
-                this.shellsAndEnemies.add((GameObject) heroShell);
+                this.shellsAndEnemiesParams.add(heroShell.getGameObjectParams());
             }
         }
     }
 
-    public List<GameObject> getShellsAndEnemies() {
-        return shellsAndEnemies;
+    public List<GameObjectParams> getShellsAndEnemies() {
+        return shellsAndEnemiesParams;
     }
 
-    public GameObject getHero() {
-        return hero;
+    public GameObjectParams getHeroParams() {
+        return heroParams;
     }
 }

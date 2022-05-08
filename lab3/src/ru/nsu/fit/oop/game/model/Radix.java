@@ -2,8 +2,10 @@ package ru.nsu.fit.oop.game.model;
 
 import ru.nsu.fit.oop.game.exception.model.ModelException;
 import ru.nsu.fit.oop.game.exception.model.UnableToUseWeaponException;
+import ru.nsu.fit.oop.game.model.entity.game_object.GameObject;
 import ru.nsu.fit.oop.game.model.entity.game_object.shell.Shell;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Hero;
+import ru.nsu.fit.oop.game.model.entity.game_object.unit.Unit;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy.Enemy;
 
 import java.awt.*;
@@ -19,6 +21,7 @@ public class Radix {
     private Hero hero;
     private List<Enemy> enemies;
     private volatile List<Shell> shells = new ArrayList<>();
+    private GameObjectsInfo gameObjectsInfo;
 
     public Radix(int sizeX, int sizeY) {
         this.fieldSizeX = sizeX;
@@ -76,6 +79,7 @@ public class Radix {
     public void updateGameField() {
         handleEnemies();
         handleShells();
+        gameObjectsInfo.renew(enemies,shells);
     }
 
     private void handleEnemies() {
@@ -111,8 +115,9 @@ public class Radix {
     }
 
     private void checkCollisions(Shell shell) {
-        if (shell.getX() <= 0 || shell.getX() >= fieldSizeX || shell.getY() <= 0
-                || shell.getY() >= fieldSizeY) {
+        if (shell.getGameObjectParams().getX() <= 0 || shell.getGameObjectParams().getX() >= fieldSizeX
+                || shell.getGameObjectParams().getY() <= 0 || shell.getGameObjectParams().getY() >=
+                fieldSizeY) {
             shell.setInGameFalse();
             return;
         }
@@ -121,14 +126,18 @@ public class Radix {
                 if (shell.getSquaredRadius() + enemy.getSquaredRadius() > (shell.getX() - enemy.getX()) *
                         (shell.getX() - enemy.getX()) + (shell.getY() - enemy.getY()) *
                         (shell.getY() - enemy.getY())) {
-                    enemy.changeHealth(shell.getDamage());
-                    shell.setInGameFalse();
+                    toDamage(shell,enemy);
                     return;
                 }
             }
     }
 
-    public GameObjectsInfo getGameObjectsInfo() {
-        return new GameObjectsInfo(enemies, hero, shells);
+    private void toDamage(Shell shell,Unit unit) {
+        unit.takeDamage(shell.getDamage(),shell.getAngle());
+        shell.setInGameFalse();
+    }
+
+    public void setGameObjectsInfo(GameObjectsInfo gameObjectsInfo) {
+        this.gameObjectsInfo  = gameObjectsInfo;
     }
 }

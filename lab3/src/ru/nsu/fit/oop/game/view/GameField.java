@@ -3,6 +3,7 @@ package ru.nsu.fit.oop.game.view;
 import ru.nsu.fit.oop.game.model.GameObjectsInfo;
 import ru.nsu.fit.oop.game.model.Model;
 import ru.nsu.fit.oop.game.model.entity.game_object.GameObject;
+import ru.nsu.fit.oop.game.model.entity.game_object.GameObjectParams;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +15,7 @@ import java.awt.geom.Point2D;
 
 public class GameField extends JComponent {
 
-    Model model;
+    private Model model;
     private final int windowSizeX;
     private final int windowSizeY;
     private GameObjectsInfo gameObjectsInfo;
@@ -71,10 +72,10 @@ public class GameField extends JComponent {
         if (null == gameObjectsInfo)
             return;
         Ellipse2D heroEllipse = new Ellipse2D.Double(
-                windowSizeX / 2 - gameObjectsInfo.getHero().getRadius(),
-                windowSizeY / 2 - gameObjectsInfo.getHero().getRadius(),
-                gameObjectsInfo.getHero().getSize(),
-                gameObjectsInfo.getHero().getSize());
+                windowSizeX / 2 - gameObjectsInfo.getHeroParams().getRadius(),
+                windowSizeY / 2 - gameObjectsInfo.getHeroParams().getRadius(),
+                gameObjectsInfo.getHeroParams().getSize(),
+                gameObjectsInfo.getHeroParams().getSize());
         g2d.draw(heroEllipse);
         drawShellsAndEnemies(g2d);
     }
@@ -82,16 +83,16 @@ public class GameField extends JComponent {
     private void drawShellsAndEnemies(Graphics2D g2d) {
         if (null == gameObjectsInfo.getShellsAndEnemies())
             return;
-        for (GameObject gameObject : gameObjectsInfo.getShellsAndEnemies()) {
-            if (checkOnScreen(gameObject.getCoords(), gameObject.getSize(),
-                    gameObjectsInfo.getHero().getCoords())) {
+        for (GameObjectParams gameObjectParams : gameObjectsInfo.getShellsAndEnemies()) {
+            if (checkOnScreen(gameObjectParams.getCoords(), gameObjectParams.getSize(),
+                    gameObjectsInfo.getHeroParams().getCoords())) {
                 Ellipse2D objectEllipse = new Ellipse2D.Double(
-                        gameObject.getX() + windowSizeX / 2 - gameObjectsInfo.getHero().getX()
-                                - gameObject.getRadius(),
-                        gameObject.getY() + windowSizeY / 2 - gameObjectsInfo.getHero().getY()
-                                - gameObject.getRadius(),
-                        gameObject.getSize(),
-                        gameObject.getSize());
+                        gameObjectParams.getX() + windowSizeX / 2 -
+                                gameObjectsInfo.getHeroParams().getX() - gameObjectParams.getRadius(),
+                        gameObjectParams.getY() + windowSizeY / 2 -
+                                gameObjectsInfo.getHeroParams().getY() - gameObjectParams.getRadius(),
+                        gameObjectParams.getSize(),
+                        gameObjectParams.getSize());
                 g2d.draw(objectEllipse);
             }
         }

@@ -4,6 +4,7 @@ import ru.nsu.fit.oop.game.exception.model.UnableToUseWeaponException;
 import ru.nsu.fit.oop.game.exception.model.shell.ShellInstantiationException;
 import ru.nsu.fit.oop.game.model.Radix;
 import ru.nsu.fit.oop.game.model.ability.Abilitiy;
+import ru.nsu.fit.oop.game.model.entity.Damage;
 import ru.nsu.fit.oop.game.model.entity.game_object.GameObject;
 import ru.nsu.fit.oop.game.model.entity.game_object.shell.Shell;
 import ru.nsu.fit.oop.game.model.entity.weapon.Weapon;
@@ -80,5 +81,16 @@ public abstract class Unit extends GameObject {
         } catch (ShellInstantiationException e) {
             throw new UnableToUseWeaponException(this.name,e);
         }
+    }
+
+    protected void move(double angle,double impact) {
+        changeCoords(Math.cos(angle) * impact, Math.sin(angle) * impact);
+    }
+
+    public void takeDamage(Damage damage, double angle) {
+        changeHealth(-damage.getHealthDamage());
+        changeShield(-damage.getShieldDamage());
+        changeArmor(-damage.getArmorDamage());
+        move(angle,damage.getImpact());
     }
 }

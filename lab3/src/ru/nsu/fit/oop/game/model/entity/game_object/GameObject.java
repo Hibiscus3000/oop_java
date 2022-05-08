@@ -7,58 +7,57 @@ import java.awt.geom.Point2D;
 
 public abstract class GameObject extends Entity {
     protected String name;
-    protected double x;
-    protected double y;
-    protected final int radius;
-    protected final int squaredRadius;
-    protected final int size;
-    protected double speed;
+    protected final GameObjectParams gameObjectParams;
     protected boolean inGame = true;
+
     public GameObject(String name, int radius, double speed) {
         this.name = name;
-        this.size = 2 * radius;
-        this.radius = radius;
-        this.squaredRadius = radius*radius;
-        this.speed = speed;
+        gameObjectParams = new GameObjectParams(name,radius,speed);
     }
 
-    public double getX() {return x;}
+    public double getX() {
+        return gameObjectParams.getX();
+    }
 
-    public double getY() {return y;}
+    public double getY() {
+        return gameObjectParams.getY();
+    }
 
     public int getRadius() {
-        return radius;
+        return gameObjectParams.getRadius();
     }
 
     public int getSquaredRadius() {
-        return squaredRadius;
+        return gameObjectParams.getSquaredRadius();
     }
 
     public int getSize() {
-        return size;
+        return gameObjectParams.getSize();
     }
 
     public Point2D.Double getCoords() {
-        return new Point2D.Double(x,y);
+        return gameObjectParams.getCoords();
+    }
+
+    public GameObjectParams getGameObjectParams() {
+        return gameObjectParams;
     }
 
     public void setCoords(double x, double y) {
-        this.x = x;
-        this.y = y;
+        gameObjectParams.setCoords(x,y);
     }
 
     public void setCoords(Point coords) {
-        this.x = coords.x;
-        this.y = coords.y;
+        gameObjectParams.setCoords(coords);
     }
 
     public void changeCoords(double shiftX, double shiftY) {
-        this.x += shiftX;
-        this.y += shiftY;
+        gameObjectParams.changeCoords(shiftX,shiftY);
     }
 
     public void move(double angle) {
-        changeCoords(Math.cos(angle) * speed, Math.sin(angle) * speed);
+        changeCoords(Math.cos(angle) * gameObjectParams.getSpeed(),
+                Math.sin(angle) * gameObjectParams.getSpeed());
     }
 
     public boolean getInGameStatus() {

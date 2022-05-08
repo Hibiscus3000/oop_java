@@ -1,18 +1,18 @@
 package ru.nsu.fit.oop.game.view;
 
-import ru.nsu.fit.oop.game.model.Model;
+import ru.nsu.fit.oop.game.model.GameObjectsInfo;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class HeroMover extends JComponent {
 
-    Model model;
-    InputMap imap;
-    ActionMap amap;
+    private GameObjectsInfo gameObjectsInfo;
+    private InputMap imap;
+    private ActionMap amap;
 
-    public HeroMover(Model model) {
-        this.model = model;
+    public HeroMover(GameObjectsInfo gameObjectsInfo) {
+        this.gameObjectsInfo = gameObjectsInfo;
         imap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         amap = getActionMap();
         mapMoveKey("W", "move forward", 270);
@@ -36,7 +36,7 @@ public class HeroMover extends JComponent {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            model.moveHero(Math.toRadians(angle));
+            gameObjectsInfo.getHeroParams().move(Math.toRadians(angle));
         }
     }
 
