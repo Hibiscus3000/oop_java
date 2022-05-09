@@ -99,7 +99,7 @@ public class View  extends JFrame implements Observer {
         add(gameField);
         model.initGame(name);
         getContentPane().setBackground(new Color(180,180,180));
-        add(new HeroMover(model.getGameObjectsInfo()));
+        add(new HeroMover(model));
     }
 
     @Override

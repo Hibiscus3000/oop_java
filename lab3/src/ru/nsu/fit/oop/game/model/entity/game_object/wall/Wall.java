@@ -9,29 +9,26 @@ public class Wall extends GameObject {
     private final double endX;
     private final double endY;
     private final double thickness;
-    protected boolean inGame;
+    private final double normalAngle;
 
     public Wall(double startX, double startY, double endX, double endY, double thickness) {
-        super("wall",0,0);
-        this.setCoords(startX,startY);
+        super("wall", 0, 0);
+        this.setCoords(startX, startY);
         this.endX = endX;
         this.endY = endY;
         this.thickness = thickness;
         double x = endX - getX();
         double y = endY - getY();
         if (0 == x) {
-            if (y > 0)
-                angle = (Math.PI / 2);
-            else
-                angle = (Math.PI / 2);
+            angle = (Math.PI / 2);
         }
-        if (x > 0) {
+        else if (x > 0) {
             angle = Math.atan(y / x);
-        } else if (y >= 0) {
+        } else if (y > 0) {
             angle = (Math.PI + Math.atan(y / x));
-        } else if (y < 0) {
-            angle = (-Math.PI + Math.atan(y / x));
-        }
+        } else
+            angle = 0;
+        normalAngle = angle - Math.PI / 2;
     }
 
     public Point2D.Double getStartPoint() {
@@ -46,7 +43,7 @@ public class Wall extends GameObject {
         return thickness;
     }
 
-    public boolean getInGame() {
-        return inGame;
+    public double getNormalAngle() {
+        return normalAngle;
     }
 }

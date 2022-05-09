@@ -73,6 +73,9 @@ public class Model extends Observable {
         return radix.getHeroCoords();
     }
 
+    public void moveHero(double angle) {
+        radix.moveHero(angle);
+    }
 
     public void heroUseWeapon(double angle) {
         try {

@@ -58,6 +58,10 @@ public abstract class GameObject extends Entity {
         gameObjectParams.setCoords(coords);
     }
 
+    public void setAngle(double angle) {
+        this.angle = angle;
+    }
+
     public void changeCoords(double shiftX, double shiftY) {
         gameObjectParams.changeCoords(shiftX,shiftY);
     }

@@ -16,7 +16,7 @@ public class GameWalls {
         defaultThicknessForUBW = 4;
         walls.add(new Wall(0,0,fieldSizeX,0,defaultThicknessForUBW));
         walls.add(new Wall(0,0,0,fieldSizeY,defaultThicknessForUBW));
-        walls.add(new Wall(fieldSizeX,fieldSizeY,fieldSizeX,0,defaultThicknessForUBW));
+        walls.add(new Wall(fieldSizeX,0,fieldSizeX,fieldSizeY,defaultThicknessForUBW));
         walls.add(new Wall(fieldSizeX,fieldSizeY,0,fieldSizeY,defaultThicknessForUBW));
         Properties config = new Properties();
         var stream = this.getClass().getResourceAsStream("wall.properties");
@@ -30,7 +30,7 @@ public class GameWalls {
         }
         for (int i = 0; i < config.size() / 6; ++i) {
             walls.add(new BreakableWall(
-                    Integer.parseInt(config.getProperty(Integer.valueOf(10 * i + 1).toString())),
+                    Integer.parseInt(config.getProperty(Integer.valueOf(10 * i).toString())),
                     Integer.parseInt(config.getProperty(Integer.valueOf(10 * i + 1).toString())),
                     Integer.parseInt(config.getProperty(Integer.valueOf(10 * i + 2).toString())),
                     Integer.parseInt(config.getProperty(Integer.valueOf(10 * i + 3).toString())),
@@ -61,5 +61,13 @@ public class GameWalls {
 
     public Wall getWall(int index) {
         return walls.get(index);
+    }
+
+    public boolean getWallInGameStatus(int index) {
+        return walls.get(index).getInGameStatus();
+    }
+
+    public void removeWall(int index) {
+        walls.remove(index);
     }
 }

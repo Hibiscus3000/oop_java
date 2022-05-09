@@ -42,24 +42,26 @@ public class Radix {
 
     public void setEnemies(List<Enemy> enemies) {
         this.enemies = enemies;
-        for (Enemy enemy : enemies)
+        for (Enemy enemy : enemies) {
             setEnemyCoords(enemy);
+            while (null != checkCollisions(enemy))
+                setEnemyCoords(enemy);
+        }
     }
 
     public void setHero(Hero hero) {
         this.hero = hero;
         hero.setCoords(fieldSizeX / 2 + new Random().nextDouble(100) - 50, fieldSizeY / 2
                 + new Random().nextDouble(100) - 50);
+        while (null != checkCollisions(hero))
+            hero.setCoords(fieldSizeX / 2 + new Random().nextDouble(100) - 50, fieldSizeY / 2
+                    + new Random().nextDouble(100) - 50);
     }
 
     private void setEnemyCoords(Enemy enemy) {
         enemy.setCoords(new Random().nextDouble(fieldSizeX - 2 * enemy.getRadius()) +
                 enemy.getRadius(), new Random().nextDouble(fieldSizeY - 2 *
                 enemy.getRadius()) + enemy.getRadius());
-    }
-
-    public void moveHero(double angle) {
-        hero.move(angle);
     }
 
     public Point2D.Double getHeroCoords() {
@@ -76,14 +78,35 @@ public class Radix {
         }
     }
 
+    public void moveHero(double angle) {
+        hero.move(angle);
+        if (null != checkCollisions(hero))
+            hero.move(angle + Math.PI);
+    }
+
     public boolean getHeroInGameStatus() {
         return hero.getInGameStatus();
     }
 
     public void updateGameField() {
+        handleWalls();
         handleEnemies();
         handleShells();
         gameObjectsInfo.renew(enemies, shells);
+    }
+
+    private void handleWalls() {
+        if (null == gameWalls)
+            return;
+        int i = 0, size = gameWalls.getWallsNumber();
+        while (i < size) {
+            if (false == gameWalls.getWallInGameStatus(i)) {
+                gameWalls.removeWall(i);
+                --size;
+                continue;
+            }
+            ++i;
+        }
     }
 
     private void handleEnemies() {
@@ -131,48 +154,52 @@ public class Radix {
     private Wall checkCollisionsWithWalls(GameObject gameObject) {
         if (null != gameWalls) {
             for (int i = 0; i < gameWalls.getWallsNumber(); ++i) {
-                if (Math.abs(gameObject.getX() - gameWalls.getWallStartPoint(i).getX()) >
-                        Math.abs(gameWalls.getWallStartPoint(i).getX() -
-                                gameWalls.getWallEndPoint(i).getX()) && 0 !=
-                        (gameWalls.getWallStartPoint(i).getX() -
-                                gameWalls.getWallEndPoint(i).getX())) {
+                if (0 == gameWalls.getWallStartPoint(i).getX() - gameWalls.getWallEndPoint(i).getX()) {
+                        if (Math.abs(gameWalls.getWallStartPoint(i).getX() - gameObject.getX()) <=
+                        gameObject.getRadius() + gameWalls.getWallThickness(i) / 2) {
+                            return gameWalls.getWall(i);
+                        }
+                        else
+                            continue;
+                }
+                if (0 == gameWalls.getWallStartPoint(i).getY() - gameWalls.getWallEndPoint(i).getY()) {
+                    if (Math.abs(gameWalls.getWallStartPoint(i).getY() - gameObject.getY()) <=
+                            gameObject.getRadius() + gameWalls.getWallThickness(i) / 2) {
+                        return gameWalls.getWall(i);
+                    }
+                    else
+                        continue;
+                }
+                double xMax = (gameWalls.getWallEndPoint(i).getX() > gameWalls.getWallStartPoint(i).getX())
+                        ? gameWalls.getWallEndPoint(i).getX() : gameWalls.getWallStartPoint(i).getX();
+                double xMin = (gameWalls.getWallEndPoint(i).getX() > gameWalls.getWallStartPoint(i).getX())
+                        ? gameWalls.getWallStartPoint(i).getX() : gameWalls.getWallEndPoint(i).getX();
+                if (gameObject.getY() + gameObject.getRadius() - gameWalls.getWallStartPoint(i).getY() < 0) {
                     continue;
                 }
-                if (Math.abs(gameObject.getX() - gameWalls.getWallEndPoint(i).getX()) >
-                        Math.abs(gameWalls.getWallStartPoint(i).getX() -
-                                gameWalls.getWallEndPoint(i).getX()) && 0 !=
-                        (gameWalls.getWallStartPoint(i).getX() -
-                                gameWalls.getWallEndPoint(i).getX())) {
+                if (gameWalls.getWallEndPoint(i).getY() - gameObject.getY() + gameObject.getRadius() < 0) {
                     continue;
                 }
-                if (Math.abs(gameObject.getY() - gameWalls.getWallStartPoint(i).getY()) >
-                        Math.abs(gameWalls.getWallStartPoint(i).getY() -
-                                gameWalls.getWallEndPoint(i).getY()) && 0 !=
-                        (gameWalls.getWallStartPoint(i).getY() -
-                                gameWalls.getWallEndPoint(i).getY())) {
+                if (gameObject.getX() + gameObject.getRadius() - xMin < 0) {
                     continue;
                 }
-                if (Math.abs(gameObject.getY() - gameWalls.getWallEndPoint(i).getY()) >
-                        Math.abs(gameWalls.getWallStartPoint(i).getY() -
-                                gameWalls.getWallEndPoint(i).getY()) && 0 !=
-                        (gameWalls.getWallStartPoint(i).getY() -
-                                gameWalls.getWallEndPoint(i).getY())) {
+                if (xMax - gameObject.getX() + gameObject.getRadius() < 0) {
                     continue;
                 }
-                if ((0 != gameWalls.getWallStartPoint(i).getX() -
-                        gameWalls.getWallEndPoint(i).getX()) && (gameObject.getRadius() + gameWalls.getWallThickness(i)
-                        / 2 < Math.abs((gameObject.getX() - gameWalls.getWallStartPoint(i).getX()) *
-                        Math.tan(gameWalls.getWallAngle(i)) - (gameObject.getY() -
-                        gameWalls.getWallStartPoint(i).getY())))) {
-                    continue;
+                if (gameWalls.getWallAngle(i) > Math.PI / 2) {
+                    if (Math.abs((xMax - gameObject.getX()) * Math.sin(Math.PI - gameWalls.getWallAngle(i)) -
+                            (gameObject.getY() - gameWalls.getWallStartPoint(i).getY()) * Math.cos(Math.PI -
+                                    gameWalls.getWallAngle(i))) <= gameObject.getRadius() +
+                            gameWalls.getWallThickness(i) / 2) {
+                        return gameWalls.getWall(i);
+                    }
                 }
-                if (0 == gameWalls.getWallStartPoint(i).getX() -
-                        gameWalls.getWallEndPoint(i).getX() && (gameObject.getRadius() +
-                        gameWalls.getWallThickness(i) / 2 < Math.abs(gameObject.getX() -
-                        gameWalls.getWallStartPoint(i).getX()))) {
-                    continue;
+                else if (Math.abs((gameObject.getX() - xMin) * Math.sin(gameWalls.getWallAngle(i)) -
+                        (gameObject.getY() - gameWalls.getWallStartPoint(i).getY()) *
+                                Math.cos(gameWalls.getWallAngle(i))) <= gameObject.getRadius() +
+                        gameWalls.getWallThickness(i) / 2) {
+                    return gameWalls.getWall(i);
                 }
-                return gameWalls.getWall(i);
             }
         }
         return null;
@@ -191,7 +218,7 @@ public class Radix {
             }
         if ((gameObject.getRadius() + hero.getRadius()) * (gameObject.getRadius() + hero.getRadius())
                 >= Math.pow(gameObject.getX() - hero.getX(), 2) +
-                Math.pow(gameObject.getY() - hero.getY(), 2)) {
+                Math.pow(gameObject.getY() - hero.getY(), 2) && gameObject != hero) {
             return hero;
         }
         return null;
@@ -199,7 +226,11 @@ public class Radix {
 
     private void toDamage(Shell shell, GameObject gameObject) {
         gameObject.takeDamage(shell.getDamage(), shell.getAngle());
-        shell.setInGameFalse();
+        try {
+            shell.bounce(((Wall) gameObject).getNormalAngle());
+        } catch (ClassCastException e) {
+            shell.setInGameFalse();
+        }
     }
 
     public void setGameObjectsInfo(GameObjectsInfo gameObjectsInfo) {
