@@ -6,6 +6,7 @@ import ru.nsu.fit.oop.game.exception.model.factory.FactoryException;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Hero;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy.Enemy;
 import ru.nsu.fit.oop.game.model.factory.wave.WaveFactory;
+import ru.nsu.fit.oop.game.model.wall.GameWalls;
 import ru.nsu.fit.oop.game.view.View;
 
 import javax.swing.*;
@@ -57,9 +58,10 @@ public class Model extends Observable {
         rest.start();
         try {
             Hero hero = new Hero(name);
-            radix = new Radix(fieldSizeX, fieldSizeY);
+            GameWalls gameWalls = new GameWalls(fieldSizeX, fieldSizeY);
+            radix = new Radix(fieldSizeX, fieldSizeY,gameWalls);
             radix.setHero(hero);
-            gameObjectsInfo = new GameObjectsInfo(hero);
+            gameObjectsInfo = new GameObjectsInfo(hero,gameWalls);
             radix.setGameObjectsInfo(gameObjectsInfo);
         } catch (UnitGenerationException e) {
             e.printStackTrace();

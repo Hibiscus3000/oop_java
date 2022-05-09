@@ -2,11 +2,11 @@ package ru.nsu.fit.oop.game.model;
 
 import ru.nsu.fit.oop.game.exception.model.ModelException;
 import ru.nsu.fit.oop.game.exception.model.UnableToUseWeaponException;
-import ru.nsu.fit.oop.game.model.entity.game_object.GameObject;
 import ru.nsu.fit.oop.game.model.entity.game_object.shell.Shell;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Hero;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Unit;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy.Enemy;
+import ru.nsu.fit.oop.game.model.wall.GameWalls;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -18,14 +18,16 @@ public class Radix {
 
     private int fieldSizeX;
     private int fieldSizeY;
+    private GameWalls gameWalls;
     private Hero hero;
     private List<Enemy> enemies;
     private volatile List<Shell> shells = new ArrayList<>();
     private GameObjectsInfo gameObjectsInfo;
 
-    public Radix(int sizeX, int sizeY) {
-        this.fieldSizeX = sizeX;
-        this.fieldSizeY = sizeY;
+    public Radix(int fieldSizeX, int fieldSizeY,GameWalls gameWalls) {
+        this.fieldSizeX = fieldSizeX;
+        this.fieldSizeY = fieldSizeY;
+        gameWalls = gameWalls;
     }
 
     public int getNumberOfEnemies() {

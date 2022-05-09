@@ -2,7 +2,6 @@ package ru.nsu.fit.oop.game.view;
 
 import ru.nsu.fit.oop.game.model.GameObjectsInfo;
 import ru.nsu.fit.oop.game.model.Model;
-import ru.nsu.fit.oop.game.model.entity.game_object.GameObject;
 import ru.nsu.fit.oop.game.model.entity.game_object.GameObjectParams;
 
 import javax.swing.*;
@@ -11,6 +10,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 
 public class GameField extends JComponent {
@@ -19,6 +19,7 @@ public class GameField extends JComponent {
     private final int windowSizeX;
     private final int windowSizeY;
     private GameObjectsInfo gameObjectsInfo;
+    private BasicStroke basicStroke = new BasicStroke(2.0f);
 
     public GameField(int windowSizeX, int windowSizeY, Model model) {
         setVisible(true);
@@ -44,11 +45,9 @@ public class GameField extends JComponent {
             }
             if (x > 0) {
                 model.heroUseWeapon(Math.atan(y / x));
-            }
-            else if (y >= 0) {
+            } else if (y >= 0) {
                 model.heroUseWeapon(Math.PI + Math.atan(y / x));
-            }
-            else if (y < 0) {
+            } else if (y < 0) {
                 model.heroUseWeapon(-Math.PI + Math.atan(y / x));
             }
         }
@@ -76,8 +75,29 @@ public class GameField extends JComponent {
                 windowSizeY / 2 - gameObjectsInfo.getHeroParams().getRadius(),
                 gameObjectsInfo.getHeroParams().getSize(),
                 gameObjectsInfo.getHeroParams().getSize());
+        drawWalls(g2d);
+        g2d.setStroke(basicStroke);
         g2d.draw(heroEllipse);
         drawShellsAndEnemies(g2d);
+    }
+
+    private void drawWalls(Graphics2D g2d) {
+        for (int i = 0; i < gameObjectsInfo.getUnbreakableWallsNumber(); ++i) {
+            g2d.setStroke(new BasicStroke((float) gameObjectsInfo.getUnbreakableWallThickness(i)));
+            g2d.draw(new Line2D.Double(gameObjectsInfo.getUnbreakableWallStartPoint(i).getX() +
+                    windowSizeX / 2 - gameObjectsInfo.getHeroParams().getX(),
+                    gameObjectsInfo.getUnbreakableWallStartPoint(i).getY() + windowSizeY / 2 -
+                            gameObjectsInfo.getHeroParams().getY(),
+                    gameObjectsInfo.getUnbreakableWallEndPoint(i).getX() + windowSizeX / 2 -
+                            gameObjectsInfo.getHeroParams().getX(),
+                    gameObjectsInfo.getUnbreakableWallEndPoint(i).getY() + windowSizeY / 2 -
+                            gameObjectsInfo.getHeroParams().getY()));
+        }
+        /*for (int i = 0; i < gameObjectsInfo.getBreakableWallsNumber(); ++i) {
+            g2d.setStroke(new BasicStroke((float)gameObjectsInfo.getBreakableWallThickness(i)));
+            g2d.draw(new Line2D.Double(gameObjectsInfo.getBreakableWallStartPoint(i),
+                    gameObjectsInfo.getBreakableWallEndPoint(i)));
+        }*/
     }
 
     private void drawShellsAndEnemies(Graphics2D g2d) {
