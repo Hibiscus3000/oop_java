@@ -12,35 +12,39 @@ public abstract class Weapon extends Entity {
 
     protected Timer cooldown;
     protected boolean isReadyToBeUsed = true;
-    String shellName;
-    Constructor<Shell> constructor;
+    protected String shellName;
+    protected Constructor<Shell> constructor;
+    protected final int shellRadius;
 
     protected Weapon(int cooldownTimeMillis, String shellName) throws ShellNotFoundException {
         try {
             this.shellName = shellName;
             var opClass = Class.forName(shellName);
-            this.constructor = (Constructor<Shell>)opClass.getDeclaredConstructor(Double.class,
-                    Double.class,Double.class);
+            constructor = (Constructor<Shell>) opClass.getDeclaredConstructor(Double.class,
+                    Double.class, Double.class);
+            shellRadius = constructor.newInstance(Double.valueOf(0), Double.valueOf(0),
+                    Double.valueOf(0)).getRadius();
         } catch (Exception e) {
-            throw new ShellNotFoundException(this.getClass().getName(),shellName,e);
+            throw new ShellNotFoundException(this.getClass().getName(), shellName, e);
         }
         cooldown = new Timer(cooldownTimeMillis, null);
-        cooldown.start();
         cooldown.addActionListener(event -> {
             isReadyToBeUsed = true;
             cooldown.stop();
         });
+        cooldown.start();
     }
 
-    public Shell use(double angle,double x, double y) throws ShellInstantiationException {
+    public Shell use(double angle, double radius, double x, double y) throws ShellInstantiationException {
         if (false == isReadyToBeUsed)
             return null;
         isReadyToBeUsed = false;
         cooldown.restart();
         try {
-            return constructor.newInstance(angle,x,y);
+            return constructor.newInstance(angle, Math.cos(angle) * (radius + shellRadius) + x,
+                    Math.sin(angle) * (radius + shellRadius) + y);
         } catch (Exception e) {
-            throw new ShellInstantiationException(this.getClass().getName(),shellName,e);
+            throw new ShellInstantiationException(this.getClass().getName(), shellName, e);
         }
     }
 

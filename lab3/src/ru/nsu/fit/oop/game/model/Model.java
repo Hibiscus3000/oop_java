@@ -1,12 +1,11 @@
 package ru.nsu.fit.oop.game.model;
 
 import ru.nsu.fit.oop.game.exception.model.ModelException;
-import ru.nsu.fit.oop.game.exception.model.UnitGenerationException;
 import ru.nsu.fit.oop.game.exception.model.factory.FactoryException;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Hero;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy.Enemy;
 import ru.nsu.fit.oop.game.model.factory.wave.WaveFactory;
-import ru.nsu.fit.oop.game.model.wall.GameWalls;
+import ru.nsu.fit.oop.game.model.entity.game_object.wall.GameWalls;
 import ru.nsu.fit.oop.game.view.View;
 
 import javax.swing.*;
@@ -63,7 +62,7 @@ public class Model extends Observable {
             radix.setHero(hero);
             gameObjectsInfo = new GameObjectsInfo(hero,gameWalls);
             radix.setGameObjectsInfo(gameObjectsInfo);
-        } catch (UnitGenerationException e) {
+        } catch (ModelException e) {
             e.printStackTrace();
             System.exit(1);
         }

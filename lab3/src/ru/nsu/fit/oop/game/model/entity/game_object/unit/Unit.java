@@ -2,7 +2,6 @@ package ru.nsu.fit.oop.game.model.entity.game_object.unit;
 
 import ru.nsu.fit.oop.game.exception.model.UnableToUseWeaponException;
 import ru.nsu.fit.oop.game.exception.model.shell.ShellInstantiationException;
-import ru.nsu.fit.oop.game.model.Radix;
 import ru.nsu.fit.oop.game.model.ability.Abilitiy;
 import ru.nsu.fit.oop.game.model.entity.Damage;
 import ru.nsu.fit.oop.game.model.entity.game_object.GameObject;
@@ -77,13 +76,14 @@ public abstract class Unit extends GameObject {
 
     public Shell useWeapon(double angle) throws UnableToUseWeaponException {
         try {
-            return weapons.get(currentWeaponNumber).use(angle, getX(), getY());
+            return weapons.get(currentWeaponNumber).use(angle, getRadius(),getX(),getY());
         } catch (ShellInstantiationException e) {
             throw new UnableToUseWeaponException(this.name,e);
         }
     }
 
     protected void move(double angle,double impact) {
+        this.angle = angle;
         changeCoords(Math.cos(angle) * impact, Math.sin(angle) * impact);
     }
 

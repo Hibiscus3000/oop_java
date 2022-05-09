@@ -2,11 +2,11 @@ package ru.nsu.fit.oop.game.model.entity.game_object.shell;
 
 import ru.nsu.fit.oop.game.model.entity.Damage;
 import ru.nsu.fit.oop.game.model.entity.game_object.GameObject;
+import ru.nsu.fit.oop.game.model.entity.game_object.unit.Unit;
 
 public class Shell extends GameObject {
 
     private final Damage damage;
-    private final double angle;
 
     public Shell(String name, int size, double speed, Double angle, Double x, Double y, Damage damage) {
         super(name, size, speed);
@@ -22,10 +22,6 @@ public class Shell extends GameObject {
 
     public Damage getDamage() {
         return damage;
-    }
-
-    public double getAngle() {
-        return angle;
     }
 
     public void setInGameFalse() {

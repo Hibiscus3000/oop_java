@@ -4,7 +4,7 @@ import ru.nsu.fit.oop.game.model.entity.game_object.GameObjectParams;
 import ru.nsu.fit.oop.game.model.entity.game_object.shell.Shell;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Hero;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy.Enemy;
-import ru.nsu.fit.oop.game.model.wall.GameWalls;
+import ru.nsu.fit.oop.game.model.entity.game_object.wall.GameWalls;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -41,36 +41,20 @@ public class GameObjectsInfo {
         return heroParams;
     }
 
-    public Point2D.Double getUnbreakableWallStartPoint(int index) {
-        return gameWalls.getUnbreakableWallStartPoint(index);
+    public Point2D.Double getWallStartPoint(int index) {
+        return gameWalls.getWallStartPoint(index);
     }
 
-    public Point2D.Double getUnbreakableWallEndPoint(int index) {
-        return gameWalls.getUnbreakableWallEndPoint(index);
+    public Point2D.Double getWallEndPoint(int index) {
+        return gameWalls.getWallEndPoint(index);
     }
 
-    public double getUnbreakableWallThickness(int index) {
-        return gameWalls.getUnbreakableWallThickness(index);
+    public double getWallThickness(int index) {
+        return gameWalls.getWallThickness(index);
     }
 
-    public int getUnbreakableWallsNumber() {
-        return gameWalls.getUnbreakableWallsNumber();
-    }
-
-    public Point2D.Double getBreakableWallStartPoint(int index) {
-        return gameWalls.getBreakableWallStartPoint(index);
-    }
-
-    public Point2D.Double getBreakableWallEndPoint(int index) {
-        return gameWalls.getBreakableWallEndPoint(index);
-    }
-
-    public double getBreakableWallThickness(int index) {
-        return gameWalls.getBreakableWallThickness(index);
-    }
-
-    public int getBreakableWallsNumber() {
-        return gameWalls.getBreakableWallsNumber();
+    public int getWallsNumber() {
+        return gameWalls.getWallsNumber();
     }
 
 }

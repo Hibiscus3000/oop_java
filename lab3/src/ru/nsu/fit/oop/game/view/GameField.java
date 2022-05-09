@@ -82,22 +82,18 @@ public class GameField extends JComponent {
     }
 
     private void drawWalls(Graphics2D g2d) {
-        for (int i = 0; i < gameObjectsInfo.getUnbreakableWallsNumber(); ++i) {
-            g2d.setStroke(new BasicStroke((float) gameObjectsInfo.getUnbreakableWallThickness(i)));
-            g2d.draw(new Line2D.Double(gameObjectsInfo.getUnbreakableWallStartPoint(i).getX() +
+        for (int i = 0; i < gameObjectsInfo.getWallsNumber(); ++i) {
+            g2d.setStroke(new BasicStroke((float) gameObjectsInfo.getWallThickness(i)));
+            g2d.draw(new Line2D.Double(gameObjectsInfo.getWallStartPoint(i).getX() +
                     windowSizeX / 2 - gameObjectsInfo.getHeroParams().getX(),
-                    gameObjectsInfo.getUnbreakableWallStartPoint(i).getY() + windowSizeY / 2 -
+                    gameObjectsInfo.getWallStartPoint(i).getY() + windowSizeY / 2 -
                             gameObjectsInfo.getHeroParams().getY(),
-                    gameObjectsInfo.getUnbreakableWallEndPoint(i).getX() + windowSizeX / 2 -
+                    gameObjectsInfo.getWallEndPoint(i).getX() + windowSizeX / 2 -
                             gameObjectsInfo.getHeroParams().getX(),
-                    gameObjectsInfo.getUnbreakableWallEndPoint(i).getY() + windowSizeY / 2 -
+                    gameObjectsInfo.getWallEndPoint(i).getY() + windowSizeY / 2 -
                             gameObjectsInfo.getHeroParams().getY()));
         }
-        /*for (int i = 0; i < gameObjectsInfo.getBreakableWallsNumber(); ++i) {
-            g2d.setStroke(new BasicStroke((float)gameObjectsInfo.getBreakableWallThickness(i)));
-            g2d.draw(new Line2D.Double(gameObjectsInfo.getBreakableWallStartPoint(i),
-                    gameObjectsInfo.getBreakableWallEndPoint(i)));
-        }*/
+
     }
 
     private void drawShellsAndEnemies(Graphics2D g2d) {

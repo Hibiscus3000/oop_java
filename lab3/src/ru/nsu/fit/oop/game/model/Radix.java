@@ -2,11 +2,13 @@ package ru.nsu.fit.oop.game.model;
 
 import ru.nsu.fit.oop.game.exception.model.ModelException;
 import ru.nsu.fit.oop.game.exception.model.UnableToUseWeaponException;
+import ru.nsu.fit.oop.game.model.entity.game_object.GameObject;
 import ru.nsu.fit.oop.game.model.entity.game_object.shell.Shell;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Hero;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Unit;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy.Enemy;
-import ru.nsu.fit.oop.game.model.wall.GameWalls;
+import ru.nsu.fit.oop.game.model.entity.game_object.wall.GameWalls;
+import ru.nsu.fit.oop.game.model.entity.game_object.wall.Wall;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -19,15 +21,15 @@ public class Radix {
     private int fieldSizeX;
     private int fieldSizeY;
     private GameWalls gameWalls;
-    private Hero hero;
+    private volatile Hero hero;
     private List<Enemy> enemies;
     private volatile List<Shell> shells = new ArrayList<>();
     private GameObjectsInfo gameObjectsInfo;
 
-    public Radix(int fieldSizeX, int fieldSizeY,GameWalls gameWalls) {
+    public Radix(int fieldSizeX, int fieldSizeY, GameWalls gameWalls) {
         this.fieldSizeX = fieldSizeX;
         this.fieldSizeY = fieldSizeY;
-        gameWalls = gameWalls;
+        this.gameWalls = gameWalls;
     }
 
     public int getNumberOfEnemies() {
@@ -81,7 +83,7 @@ public class Radix {
     public void updateGameField() {
         handleEnemies();
         handleShells();
-        gameObjectsInfo.renew(enemies,shells);
+        gameObjectsInfo.renew(enemies, shells);
     }
 
     private void handleEnemies() {
@@ -112,34 +114,95 @@ public class Radix {
         }
         for (Shell shell : shells) {
             shell.move();
-            checkCollisions(shell);
+            GameObject collided = checkCollisions(shell);
+            if (null != collided) {
+                toDamage(shell, collided);
+            }
         }
     }
 
-    private void checkCollisions(Shell shell) {
-        if (shell.getGameObjectParams().getX() <= 0 || shell.getGameObjectParams().getX() >= fieldSizeX
-                || shell.getGameObjectParams().getY() <= 0 || shell.getGameObjectParams().getY() >=
-                fieldSizeY) {
-            shell.setInGameFalse();
-            return;
+    private GameObject checkCollisions(GameObject gameObject) {
+        GameObject collided;
+        if (null != (collided = checkCollisionsWithWalls(gameObject)))
+            return collided;
+        return checkCollisionsWithUnits(gameObject);
+    }
+
+    private Wall checkCollisionsWithWalls(GameObject gameObject) {
+        if (null != gameWalls) {
+            for (int i = 0; i < gameWalls.getWallsNumber(); ++i) {
+                if (Math.abs(gameObject.getX() - gameWalls.getWallStartPoint(i).getX()) >
+                        Math.abs(gameWalls.getWallStartPoint(i).getX() -
+                                gameWalls.getWallEndPoint(i).getX()) && 0 !=
+                        (gameWalls.getWallStartPoint(i).getX() -
+                                gameWalls.getWallEndPoint(i).getX())) {
+                    continue;
+                }
+                if (Math.abs(gameObject.getX() - gameWalls.getWallEndPoint(i).getX()) >
+                        Math.abs(gameWalls.getWallStartPoint(i).getX() -
+                                gameWalls.getWallEndPoint(i).getX()) && 0 !=
+                        (gameWalls.getWallStartPoint(i).getX() -
+                                gameWalls.getWallEndPoint(i).getX())) {
+                    continue;
+                }
+                if (Math.abs(gameObject.getY() - gameWalls.getWallStartPoint(i).getY()) >
+                        Math.abs(gameWalls.getWallStartPoint(i).getY() -
+                                gameWalls.getWallEndPoint(i).getY()) && 0 !=
+                        (gameWalls.getWallStartPoint(i).getY() -
+                                gameWalls.getWallEndPoint(i).getY())) {
+                    continue;
+                }
+                if (Math.abs(gameObject.getY() - gameWalls.getWallEndPoint(i).getY()) >
+                        Math.abs(gameWalls.getWallStartPoint(i).getY() -
+                                gameWalls.getWallEndPoint(i).getY()) && 0 !=
+                        (gameWalls.getWallStartPoint(i).getY() -
+                                gameWalls.getWallEndPoint(i).getY())) {
+                    continue;
+                }
+                if ((0 != gameWalls.getWallStartPoint(i).getX() -
+                        gameWalls.getWallEndPoint(i).getX()) && (gameObject.getRadius() + gameWalls.getWallThickness(i)
+                        / 2 < Math.abs((gameObject.getX() - gameWalls.getWallStartPoint(i).getX()) *
+                        Math.tan(gameWalls.getWallAngle(i)) - (gameObject.getY() -
+                        gameWalls.getWallStartPoint(i).getY())))) {
+                    continue;
+                }
+                if (0 == gameWalls.getWallStartPoint(i).getX() -
+                        gameWalls.getWallEndPoint(i).getX() && (gameObject.getRadius() +
+                        gameWalls.getWallThickness(i) / 2 < Math.abs(gameObject.getX() -
+                        gameWalls.getWallStartPoint(i).getX()))) {
+                    continue;
+                }
+                return gameWalls.getWall(i);
+            }
         }
+        return null;
+    }
+
+    private Unit checkCollisionsWithUnits(GameObject gameObject) {
         if (null != enemies)
             for (Enemy enemy : enemies) {
-                if (shell.getSquaredRadius() + enemy.getSquaredRadius() > (shell.getX() - enemy.getX()) *
-                        (shell.getX() - enemy.getX()) + (shell.getY() - enemy.getY()) *
-                        (shell.getY() - enemy.getY())) {
-                    toDamage(shell,enemy);
-                    return;
+                if (gameObject == enemy)
+                    continue;
+                if ((gameObject.getRadius() + enemy.getRadius()) * (gameObject.getRadius() + enemy.getRadius())
+                        >= Math.pow(gameObject.getX() - enemy.getX(), 2) +
+                        Math.pow(gameObject.getY() - enemy.getY(), 2)) {
+                    return enemy;
                 }
             }
+        if ((gameObject.getRadius() + hero.getRadius()) * (gameObject.getRadius() + hero.getRadius())
+                >= Math.pow(gameObject.getX() - hero.getX(), 2) +
+                Math.pow(gameObject.getY() - hero.getY(), 2)) {
+            return hero;
+        }
+        return null;
     }
 
-    private void toDamage(Shell shell,Unit unit) {
-        unit.takeDamage(shell.getDamage(),shell.getAngle());
+    private void toDamage(Shell shell, GameObject gameObject) {
+        gameObject.takeDamage(shell.getDamage(), shell.getAngle());
         shell.setInGameFalse();
     }
 
     public void setGameObjectsInfo(GameObjectsInfo gameObjectsInfo) {
-        this.gameObjectsInfo  = gameObjectsInfo;
+        this.gameObjectsInfo = gameObjectsInfo;
     }
 }

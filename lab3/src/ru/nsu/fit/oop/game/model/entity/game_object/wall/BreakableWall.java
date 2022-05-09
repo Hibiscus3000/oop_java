@@ -1,8 +1,9 @@
-package ru.nsu.fit.oop.game.model.wall;
+package ru.nsu.fit.oop.game.model.entity.game_object.wall;
+
+import ru.nsu.fit.oop.game.model.entity.Damage;
 
 public class BreakableWall extends Wall{
 
-    private boolean inGame;
     private int armor;
 
     public BreakableWall(int startX, int startY, int endX, int endY, double thickness,int armor) {
@@ -10,13 +11,11 @@ public class BreakableWall extends Wall{
         this.armor = armor;
     }
 
-    public void takeDamage(int damage) {
-        armor -= damage;
+    @Override
+    public void takeDamage(Damage damage,double angle) {
+        armor -= damage.getArmorDamage();
         if (armor <= 0)
             inGame = false;
     }
 
-    public boolean getInGame() {
-        return inGame;
-    }
 }
