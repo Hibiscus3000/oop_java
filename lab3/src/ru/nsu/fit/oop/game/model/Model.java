@@ -27,7 +27,7 @@ public class Model extends Observable {
         this.fieldSizeX = fieldSizeX;
         this.fieldSizeY = fieldSizeY;
         rest = new Timer(3500, null);
-        fieldUpdateTimer = new Timer(33, null);
+        fieldUpdateTimer = new Timer(20, null);
         fieldUpdateTimer.addActionListener(e -> {
             radix.updateGameField();
             if ((false == rest.isRunning()) && (0 == gameObjectsInfo.getNumberOfEnemies()))

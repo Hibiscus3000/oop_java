@@ -8,7 +8,7 @@ import ru.nsu.fit.oop.game.model.entity.weapon.Weapon;
 public class Hero extends Unit {
 
     public Hero(String name) throws UnitGenerationException {
-        super(name, 30, 4, 0, 400, 0, 0);
+        super(name, 30, 4, 0, 1000, 0, 0);
         try {
             weapons.add((Weapon) WeaponFactory.getInstance().getRandomEntity(1));
         } catch (FactoryException e) {

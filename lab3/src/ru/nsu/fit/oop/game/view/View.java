@@ -60,8 +60,8 @@ public class View  extends JFrame implements Observer {
         setLayout(new FlowLayout());
         windowSizeX = (int)(2 * toolkit.getScreenSize().getWidth()) / 3;
         windowSizeY = (int)(2 * toolkit.getScreenSize().getHeight()) / 3;
-        fieldSizeX = 2 * windowSizeX;
-        fieldSizeY = 2 * windowSizeY;
+        fieldSizeX = 1200;
+        fieldSizeY = 800;
         Dimension size = new Dimension(windowSizeX,windowSizeY );
         setPreferredSize(size);
         startupMenu = new StartupMenu();
