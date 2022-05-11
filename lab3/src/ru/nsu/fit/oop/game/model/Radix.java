@@ -8,12 +8,10 @@ import ru.nsu.fit.oop.game.model.entity.game_object.unit.Hero;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Unit;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy.Enemy;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy.EnemyFrameProduction;
-import ru.nsu.fit.oop.game.model.entity.game_object.wall.GameWalls;
 import ru.nsu.fit.oop.game.model.entity.game_object.wall.Wall;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -21,20 +19,13 @@ public class Radix {
 
     private int fieldSizeX;
     private int fieldSizeY;
-    private GameWalls gameWalls;
-    private volatile Hero hero;
-    private List<Enemy> enemies;
-    private volatile List<Shell> shells = new ArrayList<>();
     private GameObjectsInfo gameObjectsInfo;
 
-    public Radix(int fieldSizeX, int fieldSizeY, GameWalls gameWalls) {
+    public Radix(int fieldSizeX, int fieldSizeY, GameObjectsInfo gameObjectsInfo) {
         this.fieldSizeX = fieldSizeX;
         this.fieldSizeY = fieldSizeY;
-        this.gameWalls = gameWalls;
-    }
-
-    public int getNumberOfEnemies() {
-        return enemies.size();
+        this.gameObjectsInfo = gameObjectsInfo;
+        setHeroCoords();
     }
 
     public Dimension getFieldSize() {
@@ -42,7 +33,7 @@ public class Radix {
     }
 
     public void setEnemies(List<Enemy> enemies) {
-        this.enemies = enemies;
+        gameObjectsInfo.setEnemies(enemies);
         for (Enemy enemy : enemies) {
             setEnemyCoords(enemy);
             while (null != checkCollisions(enemy))
@@ -50,13 +41,12 @@ public class Radix {
         }
     }
 
-    public void setHero(Hero hero) {
-        this.hero = hero;
-        hero.setCoords(fieldSizeX / 2 + new Random().nextDouble(100) - 50, fieldSizeY / 2
-                + new Random().nextDouble(100) - 50);
-        while (null != checkCollisions(hero))
-            hero.setCoords(fieldSizeX / 2 + new Random().nextDouble(100) - 50, fieldSizeY / 2
-                    + new Random().nextDouble(100) - 50);
+    public void setHeroCoords() {
+        gameObjectsInfo.getHero().setCoords(fieldSizeX / 2 + new Random().nextDouble(100) - 50,
+                fieldSizeY / 2 + new Random().nextDouble(100) - 50);
+        while (null != checkCollisions(gameObjectsInfo.getHero()))
+            gameObjectsInfo.getHero().setCoords(fieldSizeX / 2 + new Random().nextDouble(100)
+                    - 50, fieldSizeY / 2 + new Random().nextDouble(100) - 50);
     }
 
     private void setEnemyCoords(Enemy enemy) {
@@ -66,43 +56,42 @@ public class Radix {
     }
 
     public Point2D.Double getHeroCoords() {
-        return new Point2D.Double(hero.getX(), hero.getY());
+        return new Point2D.Double(gameObjectsInfo.getHero().getX(), gameObjectsInfo.getHero().getY());
     }
 
     public void heroUseWeapon(double angle) throws ModelException {
         try {
-            Shell shell = hero.useWeapon(angle);
+            Shell shell = gameObjectsInfo.getHero().useWeapon(angle);
             if (null != shell)
-                shells.add(shell);
+                gameObjectsInfo.addShell(shell);
         } catch (UnableToUseWeaponException e) {
             throw new ModelException(e);
         }
     }
 
     public void moveHero(double angle) {
-        hero.move(angle);
-        if (null != checkCollisions(hero))
-            hero.move(angle + Math.PI);
+        gameObjectsInfo.getHero().move(angle);
+        if (null != checkCollisions(gameObjectsInfo.getHero()))
+            gameObjectsInfo.getHero().move(angle + Math.PI);
     }
 
     public boolean getHeroInGameStatus() {
-        return hero.getInGameStatus();
+        return gameObjectsInfo.getHero().getInGameStatus();
     }
 
     public void updateGameField() {
         handleWalls();
         handleEnemies();
         handleShells();
-        gameObjectsInfo.renew(enemies, shells);
     }
 
     private void handleWalls() {
-        if (null == gameWalls)
+        if (null == gameObjectsInfo.getWalls())
             return;
-        int i = 0, size = gameWalls.getWallsNumber();
+        int i = 0, size = gameObjectsInfo.getWalls().getWallsNumber();
         while (i < size) {
-            if (false == gameWalls.getWallInGameStatus(i)) {
-                gameWalls.removeWall(i);
+            if (false == gameObjectsInfo.getWalls().getWallInGameStatus(i)) {
+                gameObjectsInfo.getWalls().removeWall(i);
                 --size;
                 continue;
             }
@@ -111,22 +100,22 @@ public class Radix {
     }
 
     private void handleEnemies() {
-        if (null == enemies)
+        if (null == gameObjectsInfo.getEnemies())
             return;
-        int i = 0, size = enemies.size();
+        int i = 0, size = gameObjectsInfo.getEnemies().size();
         while (i < size) {
-            if (false == enemies.get(i).getInGameStatus()) {
-                enemies.remove(i);
+            if (false == gameObjectsInfo.getEnemies().get(i).getInGameStatus()) {
+                gameObjectsInfo.getEnemies().remove(i);
                 --size;
                 continue;
             }
             ++i;
         }
         try {
-            for (Enemy enemy : enemies) {
+            for (Enemy enemy : gameObjectsInfo.getEnemies()) {
                 EnemyFrameProduction enemyFrameProduction = enemy.enemyFrameTurn(gameObjectsInfo);
                 if (null != enemyFrameProduction.getShell())
-                    shells.add(enemyFrameProduction.getShell());
+                    gameObjectsInfo.addShell(enemyFrameProduction.getShell());
                 if (null != checkCollisions(enemy)) {
                     enemy.move(enemy.getAngle() + Math.PI);
                 }
@@ -138,18 +127,18 @@ public class Radix {
     }
 
     private void handleShells() {
-        if (null == shells)
+        if (null == gameObjectsInfo.getShells())
             return;
-        int i = 0, size = shells.size();
+        int i = 0, size = gameObjectsInfo.getShells().size();
         while (i < size) {
-            if (false == shells.get(i).getInGameStatus()) {
-                shells.remove(i);
+            if (false == gameObjectsInfo.getShells().get(i).getInGameStatus()) {
+                gameObjectsInfo.getShells().remove(i);
                 --size;
                 continue;
             }
             ++i;
         }
-        for (Shell shell : shells) {
+        for (Shell shell : gameObjectsInfo.getShells()) {
             shell.move();
             GameObject collided = checkCollisions(shell);
             if (null != collided) {
@@ -166,32 +155,32 @@ public class Radix {
     }
 
     private Wall checkCollisionsWithWalls(GameObject gameObject) {
-        if (null != gameWalls) {
-            for (int i = 0; i < gameWalls.getWallsNumber(); ++i) {
-                if (0 == gameWalls.getWallStartPoint(i).getX() - gameWalls.getWallEndPoint(i).getX()) {
-                        if (Math.abs(gameWalls.getWallStartPoint(i).getX() - gameObject.getX()) <=
-                        gameObject.getRadius() + gameWalls.getWallThickness(i) / 2) {
-                            return gameWalls.getWall(i);
+        if (null != gameObjectsInfo.getWalls()) {
+            for (int i = 0; i < gameObjectsInfo.getWallsNumber(); ++i) {
+                if (0 == gameObjectsInfo.getWallStartPoint(i).getX() - gameObjectsInfo.getWallEndPoint(i).getX()) {
+                        if (Math.abs(gameObjectsInfo.getWallStartPoint(i).getX() - gameObject.getX()) <=
+                        gameObject.getRadius() + gameObjectsInfo.getWallThickness(i) / 2) {
+                            return gameObjectsInfo.getWall(i);
                         }
                         else
                             continue;
                 }
-                if (0 == gameWalls.getWallStartPoint(i).getY() - gameWalls.getWallEndPoint(i).getY()) {
-                    if (Math.abs(gameWalls.getWallStartPoint(i).getY() - gameObject.getY()) <=
-                            gameObject.getRadius() + gameWalls.getWallThickness(i) / 2) {
-                        return gameWalls.getWall(i);
+                if (0 == gameObjectsInfo.getWallStartPoint(i).getY() - gameObjectsInfo.getWallEndPoint(i).getY()) {
+                    if (Math.abs(gameObjectsInfo.getWallStartPoint(i).getY() - gameObject.getY()) <=
+                            gameObject.getRadius() + gameObjectsInfo.getWallThickness(i) / 2) {
+                        return gameObjectsInfo.getWall(i);
                     }
                     else
                         continue;
                 }
-                double xMax = (gameWalls.getWallEndPoint(i).getX() > gameWalls.getWallStartPoint(i).getX())
-                        ? gameWalls.getWallEndPoint(i).getX() : gameWalls.getWallStartPoint(i).getX();
-                double xMin = (gameWalls.getWallEndPoint(i).getX() > gameWalls.getWallStartPoint(i).getX())
-                        ? gameWalls.getWallStartPoint(i).getX() : gameWalls.getWallEndPoint(i).getX();
-                if (gameObject.getY() + gameObject.getRadius() - gameWalls.getWallStartPoint(i).getY() < 0) {
+                double xMax = (gameObjectsInfo.getWallEndPoint(i).getX() > gameObjectsInfo.getWallStartPoint(i).getX())
+                        ? gameObjectsInfo.getWallEndPoint(i).getX() : gameObjectsInfo.getWallStartPoint(i).getX();
+                double xMin = (gameObjectsInfo.getWallEndPoint(i).getX() > gameObjectsInfo.getWallStartPoint(i).getX())
+                        ? gameObjectsInfo.getWallStartPoint(i).getX() : gameObjectsInfo.getWallEndPoint(i).getX();
+                if (gameObject.getY() + gameObject.getRadius() - gameObjectsInfo.getWallStartPoint(i).getY() < 0) {
                     continue;
                 }
-                if (gameWalls.getWallEndPoint(i).getY() - gameObject.getY() + gameObject.getRadius() < 0) {
+                if (gameObjectsInfo.getWallEndPoint(i).getY() - gameObject.getY() + gameObject.getRadius() < 0) {
                     continue;
                 }
                 if (gameObject.getX() + gameObject.getRadius() - xMin < 0) {
@@ -200,19 +189,19 @@ public class Radix {
                 if (xMax - gameObject.getX() + gameObject.getRadius() < 0) {
                     continue;
                 }
-                if (gameWalls.getWallAngle(i) > Math.PI / 2) {
-                    if (Math.abs((xMax - gameObject.getX()) * Math.sin(Math.PI - gameWalls.getWallAngle(i)) -
-                            (gameObject.getY() - gameWalls.getWallStartPoint(i).getY()) * Math.cos(Math.PI -
-                                    gameWalls.getWallAngle(i))) <= gameObject.getRadius() +
-                            gameWalls.getWallThickness(i) / 2) {
-                        return gameWalls.getWall(i);
+                if (gameObjectsInfo.getWallAngle(i) > Math.PI / 2) {
+                    if (Math.abs((xMax - gameObject.getX()) * Math.sin(Math.PI - gameObjectsInfo.getWallAngle(i)) -
+                            (gameObject.getY() - gameObjectsInfo.getWallStartPoint(i).getY()) * Math.cos(Math.PI -
+                                    gameObjectsInfo.getWallAngle(i))) <= gameObject.getRadius() +
+                            gameObjectsInfo.getWallThickness(i) / 2) {
+                        return gameObjectsInfo.getWall(i);
                     }
                 }
-                else if (Math.abs((gameObject.getX() - xMin) * Math.sin(gameWalls.getWallAngle(i)) -
-                        (gameObject.getY() - gameWalls.getWallStartPoint(i).getY()) *
-                                Math.cos(gameWalls.getWallAngle(i))) <= gameObject.getRadius() +
-                        gameWalls.getWallThickness(i) / 2) {
-                    return gameWalls.getWall(i);
+                else if (Math.abs((gameObject.getX() - xMin) * Math.sin(gameObjectsInfo.getWallAngle(i)) -
+                        (gameObject.getY() - gameObjectsInfo.getWallStartPoint(i).getY()) *
+                                Math.cos(gameObjectsInfo.getWallAngle(i))) <= gameObject.getRadius() +
+                        gameObjectsInfo.getWallThickness(i) / 2) {
+                    return gameObjectsInfo.getWall(i);
                 }
             }
         }
@@ -220,8 +209,8 @@ public class Radix {
     }
 
     private Unit checkCollisionsWithUnits(GameObject gameObject) {
-        if (null != enemies)
-            for (Enemy enemy : enemies) {
+        if (null != gameObjectsInfo.getEnemies())
+            for (Enemy enemy : gameObjectsInfo.getEnemies()) {
                 if (gameObject == enemy)
                     continue;
                 if ((gameObject.getRadius() + enemy.getRadius()) * (gameObject.getRadius() + enemy.getRadius())
@@ -230,10 +219,11 @@ public class Radix {
                     return enemy;
                 }
             }
-        if ((gameObject.getRadius() + hero.getRadius()) * (gameObject.getRadius() + hero.getRadius())
-                >= Math.pow(gameObject.getX() - hero.getX(), 2) +
-                Math.pow(gameObject.getY() - hero.getY(), 2) && gameObject != hero) {
-            return hero;
+        if ((gameObject.getRadius() + gameObjectsInfo.getHero().getRadius()) * (gameObject.getRadius()
+                + gameObjectsInfo.getHero().getRadius()) >= Math.pow(gameObject.getX() -
+                gameObjectsInfo.getHero().getX(), 2) + Math.pow(gameObject.getY() - gameObjectsInfo.getHero().getY(),
+                2) && gameObject != gameObjectsInfo.getHero()) {
+            return gameObjectsInfo.getHero();
         }
         return null;
     }
@@ -245,9 +235,5 @@ public class Radix {
         } catch (ClassCastException e) {
             shell.setInGameFalse();
         }
-    }
-
-    public void setGameObjectsInfo(GameObjectsInfo gameObjectsInfo) {
-        this.gameObjectsInfo = gameObjectsInfo;
     }
 }

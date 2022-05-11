@@ -8,71 +8,73 @@ import java.awt.geom.Point2D;
 
 public abstract class GameObject implements Entity {
 
-    protected String name;
-    protected final GameObjectParams gameObjectParams;
+    protected final String name;
+    protected double x;
+    protected double y;
+    protected final int radius;
+    protected final int squaredRadius;
+    protected final int size;
+    protected double speed;
+    protected double angle;
     protected boolean inGame = true;
 
     public GameObject(String name, int radius, double speed) {
         this.name = name;
-        gameObjectParams = new GameObjectParams(name,radius,speed);
+        this.radius = radius;
+        squaredRadius = radius*radius;
+        size = 2*radius;
+        this.speed =speed;
     }
 
     public double getSpeed() {
-        return gameObjectParams.getSpeed();
+        return speed;
     }
 
     public double getX() {
-        return gameObjectParams.getX();
+        return x;
     }
 
     public double getY() {
-        return gameObjectParams.getY();
+        return y;
     }
 
     public int getRadius() {
-        return gameObjectParams.getRadius();
+        return radius;
     }
 
     public int getSquaredRadius() {
-        return gameObjectParams.getSquaredRadius();
+        return squaredRadius;
     }
 
     public int getSize() {
-        return gameObjectParams.getSize();
+        return size;
     }
 
     public double getAngle() {
-        return gameObjectParams.getAngle();
+        return angle;
     }
 
     public Point2D.Double getCoords() {
-        return gameObjectParams.getCoords();
-    }
-
-    public GameObjectParams getGameObjectParams() {
-        return gameObjectParams;
+        return new Point2D.Double(x,y);
     }
 
     public void setCoords(double x, double y) {
-        gameObjectParams.setCoords(x,y);
-    }
-
-    public void setCoords(Point coords) {
-        gameObjectParams.setCoords(coords);
+        this.x = x;
+        this.y = y;
     }
 
     public void setAngle(double angle) {
-        gameObjectParams.setAngle(angle);
+        this.angle = angle;
     }
 
     public void changeCoords(double shiftX, double shiftY) {
-        gameObjectParams.changeCoords(shiftX,shiftY);
+        x += shiftX;
+        y += shiftY;
     }
 
     public void move(double angle) {
-        gameObjectParams.setAngle(angle);
-        changeCoords(Math.cos(angle) * gameObjectParams.getSpeed(),
-                Math.sin(angle) * gameObjectParams.getSpeed());
+        this.angle = angle;
+        changeCoords(Math.cos(angle) * speed, Math.sin(angle) * speed);
     }
 
     public void takeDamage(Damage damage, double angle) {}

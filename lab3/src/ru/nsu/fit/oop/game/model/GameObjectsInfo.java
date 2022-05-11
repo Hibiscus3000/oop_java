@@ -1,10 +1,10 @@
 package ru.nsu.fit.oop.game.model;
 
-import ru.nsu.fit.oop.game.model.entity.game_object.GameObjectParams;
 import ru.nsu.fit.oop.game.model.entity.game_object.shell.Shell;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Hero;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy.Enemy;
 import ru.nsu.fit.oop.game.model.entity.game_object.wall.GameWalls;
+import ru.nsu.fit.oop.game.model.entity.game_object.wall.Wall;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -12,39 +12,49 @@ import java.util.List;
 
 public class GameObjectsInfo {
 
-    private List<GameObjectParams> shellsParams;
-    private List<GameObjectParams> enemiesParams;
-    private GameObjectParams heroParams;
+    private volatile List<Shell> shells = new ArrayList<>();
+    private List<Enemy> enemies;
+    private volatile Hero hero;
     private GameWalls gameWalls;
     public GameObjectsInfo(Hero hero, GameWalls gameWalls) {
-        heroParams = hero.getGameObjectParams();
+        this.hero = hero;
         this.gameWalls = gameWalls;
     }
 
-    public void renew(List<Enemy> enemies,  List<Shell> shells) {
-        shellsParams = new ArrayList<>();
-        enemiesParams = new ArrayList<>();
-        if (null != enemies)
-            for (Enemy enemy : enemies) {
-                this.enemiesParams.add(enemy.getGameObjectParams());
-            }
-        if (null != shells) {
-            for (Shell shell : shells) {
-                this.shellsParams.add(shell.getGameObjectParams());
-            }
-        }
+    public void setEnemies(List<Enemy> enemies) {
+        this.enemies = enemies;
     }
 
-    public List<GameObjectParams> getShellsParams() {
-        return shellsParams;
+    public void addShell(Shell shell) {
+        shells.add(shell);
     }
 
-    public List<GameObjectParams> getEnemiesParams() {
-        return enemiesParams;
+    public void removeShell(int i) {
+        shells.remove(i);
     }
 
-    public GameObjectParams getHeroParams() {
-        return heroParams;
+    public void removeEnemy(int i) {
+        enemies.remove(i);
+    }
+
+    public List<Shell> getShells() {
+        return shells;
+    }
+
+    public List<Enemy> getEnemies() {
+        return enemies;
+    }
+
+    public GameWalls getWalls() {
+        return gameWalls;
+    }
+
+    public int getNumberOfEnemies() {
+        return enemies.size();
+    }
+
+    public Hero getHero() {
+        return hero;
     }
 
     public Point2D.Double getWallStartPoint(int index) {
@@ -59,8 +69,16 @@ public class GameObjectsInfo {
         return gameWalls.getWallThickness(index);
     }
 
+    public double getWallAngle(int index) {
+        return gameWalls.getWallAngle(index);
+    }
+
     public int getWallsNumber() {
         return gameWalls.getWallsNumber();
+    }
+
+    public Wall getWall(int i) {
+        return gameWalls.getWall(i);
     }
 
 }

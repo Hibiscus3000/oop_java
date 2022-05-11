@@ -26,11 +26,11 @@ public class Model extends Observable {
         addObserver(view);
         this.fieldSizeX = fieldSizeX;
         this.fieldSizeY = fieldSizeY;
-        rest = new Timer(500, null);
+        rest = new Timer(3500, null);
         fieldUpdateTimer = new Timer(33, null);
         fieldUpdateTimer.addActionListener(e -> {
             radix.updateGameField();
-            if ((false == rest.isRunning()) && (0 == radix.getNumberOfEnemies()))
+            if ((false == rest.isRunning()) && (0 == gameObjectsInfo.getNumberOfEnemies()))
                 rest.restart();
             if (false == radix.getHeroInGameStatus())
                 System.exit(1);
@@ -58,10 +58,8 @@ public class Model extends Observable {
         try {
             Hero hero = new Hero(name);
             GameWalls gameWalls = new GameWalls(fieldSizeX, fieldSizeY);
-            radix = new Radix(fieldSizeX, fieldSizeY,gameWalls);
-            radix.setHero(hero);
             gameObjectsInfo = new GameObjectsInfo(hero,gameWalls);
-            radix.setGameObjectsInfo(gameObjectsInfo);
+            radix = new Radix(fieldSizeX, fieldSizeY,gameObjectsInfo);
         } catch (ModelException e) {
             e.printStackTrace();
             System.exit(1);

@@ -31,8 +31,8 @@ public class Shell extends GameObject {
     }
 
     public void move() {
-        changeCoords(Math.cos(getAngle()) * gameObjectParams.getSpeed(),
-                Math.sin(getAngle()) * gameObjectParams.getSpeed());
+        changeCoords(Math.cos(getAngle()) * speed,
+                Math.sin(getAngle()) * speed);
     }
 
     public void setInGameFalse() {

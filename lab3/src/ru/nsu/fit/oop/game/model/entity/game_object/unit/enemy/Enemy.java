@@ -3,7 +3,9 @@ package ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy;
 import ru.nsu.fit.oop.game.exception.model.UnableToUseWeaponException;
 import ru.nsu.fit.oop.game.exception.model.factory.FactoryException;
 import ru.nsu.fit.oop.game.model.GameObjectsInfo;
-import ru.nsu.fit.oop.game.model.entity.game_object.GameObjectParams;
+import ru.nsu.fit.oop.game.model.entity.game_object.GameObject;
+import ru.nsu.fit.oop.game.model.entity.game_object.shell.Shell;
+import ru.nsu.fit.oop.game.model.entity.game_object.unit.Hero;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Unit;
 import ru.nsu.fit.oop.game.model.factory.weapon.WeaponFactory;
 import ru.nsu.fit.oop.game.model.entity.weapon.Weapon;
@@ -36,19 +38,18 @@ public abstract class Enemy extends Unit {
 
     public EnemyFrameProduction enemyFrameTurn(GameObjectsInfo gameObjectsInfo) throws UnableToUseWeaponException {
         EnemyFrameProduction enemyFrameProduction = new EnemyFrameProduction();
-        double heroRelativeAngle = getRelativeAngle(this.getGameObjectParams(),
-                gameObjectsInfo.getHeroParams());
-        move(heroRelativeAngle, gameObjectsInfo.getHeroParams(), gameObjectsInfo.getShellsParams());
+        double heroRelativeAngle = getRelativeAngle(this, gameObjectsInfo.getHero());
+        move(heroRelativeAngle, gameObjectsInfo.getHero(), gameObjectsInfo.getShells());
         if (weapons.get(getCurrentWeaponNumber()).getIsReadyToUseStatus())
             enemyFrameProduction.setShell(useWeapon(heroRelativeAngle));
         return enemyFrameProduction;
     }
 
-    private void move(double heroRelativeAngle, GameObjectParams heroParams, List<GameObjectParams> shellsParams) {
+    private void move(double heroRelativeAngle, Hero hero, List<Shell> shellsParams) {
         double dodgeAngle = 0;
         int counterClockWiseRotation = 0,clockWiseRotation = 0;
-        for (GameObjectParams shell : shellsParams) {
-            double shellRelativeAngle = getRelativeAngle(this.getGameObjectParams(),shell);
+        for (Shell shell : shellsParams) {
+            double shellRelativeAngle = getRelativeAngle(this,shell);
             if (shell.getAngle() * shellRelativeAngle <= 0 && Math.pow(Math.sin(shell.getAngle() - shellRelativeAngle), 2) < Math.pow(getRadius() +
                     shell.getRadius(), 2) / (Math.pow(getX() - shell.getX(), 2) + Math.pow(getY() -
                     shell.getY(), 2))) {
@@ -64,16 +65,16 @@ public abstract class Enemy extends Unit {
             preferredDistance = defaultPreferredDistance;
         else
             preferredDistance = saveDistance;
-        if (Math.pow(heroParams.getX() - getX(), 2) + Math.pow(heroParams.getY() -
-                getY(), 2) > Math.pow(preferredDistance + getRadius() + getSpeed() + heroParams.getSpeed() +
-                heroParams.getRadius(), 2)) {
+        if (Math.pow(hero.getX() - getX(), 2) + Math.pow(hero.getY() -
+                getY(), 2) > Math.pow(preferredDistance + getRadius() + getSpeed() + hero.getSpeed() +
+                hero.getRadius(), 2)) {
             move(heroRelativeAngle);
-        } else if (Math.pow(heroParams.getX() - getX(), 2) + Math.pow(heroParams.getY() - getY(), 2) <
-                Math.pow(preferredDistance + getRadius() + heroParams.getRadius(), 2))
+        } else if (Math.pow(hero.getX() - getX(), 2) + Math.pow(hero.getY() - getY(), 2) <
+                Math.pow(preferredDistance + getRadius() + hero.getRadius(), 2))
             move(heroRelativeAngle + Math.PI);
     }
 
-    private double getRelativeAngle(GameObjectParams gameObject, GameObjectParams relativeGameObject) {
+    private double getRelativeAngle(GameObject gameObject, GameObject relativeGameObject) {
         double x = relativeGameObject.getX() - gameObject.getX();
         double y = relativeGameObject.getY() - gameObject.getY();
         double angle;

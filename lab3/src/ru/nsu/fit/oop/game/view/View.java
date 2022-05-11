@@ -56,7 +56,7 @@ public class View  extends JFrame implements Observer {
 
     public View() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setTitle("The Witcher 3: Wild Hunt");
+        setTitle("Krosh-Bobosh");
         setLayout(new FlowLayout());
         windowSizeX = (int)(2 * toolkit.getScreenSize().getWidth()) / 3;
         windowSizeY = (int)(2 * toolkit.getScreenSize().getHeight()) / 3;

@@ -1,6 +1,5 @@
 package ru.nsu.fit.oop.game.view;
 
-import ru.nsu.fit.oop.game.model.GameObjectsInfo;
 import ru.nsu.fit.oop.game.model.Model;
 
 import javax.swing.*;
