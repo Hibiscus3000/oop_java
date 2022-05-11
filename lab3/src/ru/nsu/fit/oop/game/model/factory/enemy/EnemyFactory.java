@@ -24,22 +24,4 @@ public class EnemyFactory extends Factory {
             }
         return instance;
     }
-
-    public Enemy getRandomEnemy(int level) throws InvalidRandomEntity {
-        Class randClass = null;
-        String Name;
-        int randomNumber = -1, propertySize = -1;
-        try {
-            propertySize = configs.get(level - 1).size();
-            randomNumber = new Random().nextInt(propertySize);
-            randClass = Class.forName(configs.get(level - 1).getProperty(Integer.
-                    valueOf(randomNumber).toString()));
-            var constructor = randClass.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            return (Enemy) constructor.newInstance();
-        } catch (Exception e) {
-            throw new InvalidRandomEntity(level,propertySize,this.getClass().getName(),randomNumber,
-                    randClass.getName(),e);
-        }
-    }
 }

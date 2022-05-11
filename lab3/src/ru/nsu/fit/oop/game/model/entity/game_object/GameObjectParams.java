@@ -11,6 +11,7 @@ public class GameObjectParams {
     private final int squaredRadius;
     private final int size;
     private double speed;
+    protected double angle;
 
     GameObjectParams(String name, int radius, double speed) {
         this.name = name;
@@ -58,6 +59,10 @@ public class GameObjectParams {
         this.y = coords.y;
     }
 
+    public void setAngle(double angle) {
+        this.angle = angle;
+    }
+
     public void changeCoords(double shiftX, double shiftY) {
         this.x += shiftX;
         this.y += shiftY;
@@ -65,6 +70,10 @@ public class GameObjectParams {
 
     public double getSpeed() {
         return speed;
+    }
+
+    public double getAngle() {
+        return angle;
     }
 
     public void move(double angle) {

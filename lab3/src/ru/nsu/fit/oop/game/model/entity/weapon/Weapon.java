@@ -8,7 +8,7 @@ import ru.nsu.fit.oop.game.model.entity.game_object.shell.Shell;
 import javax.swing.*;
 import java.lang.reflect.Constructor;
 
-public abstract class Weapon extends Entity {
+public abstract class Weapon implements Entity {
 
     protected Timer cooldown;
     protected boolean isReadyToBeUsed = true;
@@ -46,6 +46,10 @@ public abstract class Weapon extends Entity {
         } catch (Exception e) {
             throw new ShellInstantiationException(this.getClass().getName(), shellName, e);
         }
+    }
+
+    public boolean getIsReadyToUseStatus() {
+        return isReadyToBeUsed;
     }
 
 }

@@ -1,6 +1,6 @@
 package ru.nsu.fit.oop.game.model.entity.game_object.shell;
 
-import ru.nsu.fit.oop.game.model.entity.Damage;
+import ru.nsu.fit.oop.game.model.entity.weapon.Damage;
 import ru.nsu.fit.oop.game.model.entity.game_object.GameObject;
 
 public class Shell extends GameObject {
@@ -14,7 +14,7 @@ public class Shell extends GameObject {
         this.bounces = bounces;
         setCoords(x,y);
         this.damage = damage;
-        this.angle = angle;
+        setAngle(angle);
     }
 
     public Damage getDamage() {
@@ -23,7 +23,7 @@ public class Shell extends GameObject {
 
     public void bounce(double normalAngle) {
         --bounces;
-        angle = 2 * normalAngle - angle + Math.PI;
+        setAngle(2 * normalAngle - getAngle() + Math.PI);
         if (-1 == bounces) {
             inGame = false;
             return;
@@ -31,8 +31,8 @@ public class Shell extends GameObject {
     }
 
     public void move() {
-        changeCoords(Math.cos(angle) * gameObjectParams.getSpeed(),
-                Math.sin(angle) * gameObjectParams.getSpeed());
+        changeCoords(Math.cos(getAngle()) * gameObjectParams.getSpeed(),
+                Math.sin(getAngle()) * gameObjectParams.getSpeed());
     }
 
     public void setInGameFalse() {

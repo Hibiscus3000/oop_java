@@ -1,6 +1,7 @@
 package ru.nsu.fit.oop.game.model.factory;
 
 import ru.nsu.fit.oop.game.exception.model.factory.InvalidConfigException;
+import ru.nsu.fit.oop.game.exception.model.factory.InvalidEntity;
 import ru.nsu.fit.oop.game.exception.model.factory.InvalidRandomEntity;
 import ru.nsu.fit.oop.game.model.entity.Entity;
 
@@ -38,4 +39,33 @@ abstract public class Factory {
         }
     }
 
+    public Entity getRandomEntity(int level) throws InvalidRandomEntity {
+        Class randClass = null;
+        String Name;
+        int randomNumber = -1, propertySize = -1;
+        try {
+            propertySize = configs.get(level - 1).size();
+            randomNumber = new Random().nextInt(propertySize);
+            randClass = Class.forName(configs.get(level - 1).getProperty(Integer.
+                    valueOf(randomNumber).toString()));
+            var constructor = randClass.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            return (Entity) constructor.newInstance();
+        } catch (Exception e) {
+            throw new InvalidRandomEntity(level,propertySize,this.getClass().getName(),randomNumber,
+                     randClass.getName(),e);
+        }
+    }
+
+    public Entity getEntity(String entityName) throws InvalidEntity {
+        try {
+            var weaponClass = Class.forName(entityName);
+            var constructor = weaponClass.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            return (Entity) constructor.newInstance();
+        } catch (Exception e) {
+            throw new InvalidEntity(getClass().getName(),entityName,e);
+        }
+
+    }
 }

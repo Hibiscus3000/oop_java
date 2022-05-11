@@ -20,15 +20,15 @@ public class Wall extends GameObject {
         double x = endX - getX();
         double y = endY - getY();
         if (0 == x) {
-            angle = (Math.PI / 2);
+            setAngle(Math.PI / 2);
         }
         else if (x > 0) {
-            angle = Math.atan(y / x);
+            setAngle(Math.atan(y / x));
         } else if (y > 0) {
-            angle = (Math.PI + Math.atan(y / x));
+            setAngle(Math.PI + Math.atan(y / x));
         } else
-            angle = 0;
-        normalAngle = angle - Math.PI / 2;
+            setAngle(0);
+        normalAngle = getAngle() - Math.PI / 2;
     }
 
     public Point2D.Double getStartPoint() {

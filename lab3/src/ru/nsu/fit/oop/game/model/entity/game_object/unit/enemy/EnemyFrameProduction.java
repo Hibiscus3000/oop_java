@@ -6,11 +6,11 @@ public class EnemyFrameProduction {
 
     private Shell shell;
 
-    public EnemyFrameProduction(Shell shell) {
-        this.shell = shell;
-    }
-
     public Shell getShell() {
         return shell;
+    }
+
+    public void setShell(Shell shell) {
+        this.shell = shell;
     }
 }

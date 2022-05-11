@@ -1,4 +1,4 @@
-package ru.nsu.fit.oop.game.model.entity;
+package ru.nsu.fit.oop.game.model.entity.weapon;
 
 public class Damage {
 

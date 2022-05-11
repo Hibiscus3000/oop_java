@@ -7,6 +7,6 @@ public class UnitGenerationException extends ModelException{
     }
 
     public UnitGenerationException(String name,Throwable cause) {
-        super("Failed to generate unit \"" + name + ".\"",cause);
+        super("Failed to generate unit \"" + name + "\".",cause);
     }
 }

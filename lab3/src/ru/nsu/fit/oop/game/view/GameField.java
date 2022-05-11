@@ -43,11 +43,11 @@ public class GameField extends JComponent {
                 else
                     model.heroUseWeapon(Math.PI / 2);
             }
-            if (x > 0) {
+            else if (x > 0) {
                 model.heroUseWeapon(Math.atan(y / x));
             } else if (y >= 0) {
                 model.heroUseWeapon(Math.PI + Math.atan(y / x));
-            } else if (y < 0) {
+            } else {
                 model.heroUseWeapon(-Math.PI + Math.atan(y / x));
             }
         }
@@ -97,18 +97,31 @@ public class GameField extends JComponent {
     }
 
     private void drawShellsAndEnemies(Graphics2D g2d) {
-        if (null == gameObjectsInfo.getShellsAndEnemies())
+        if (null == gameObjectsInfo.getEnemiesParams())
             return;
-        for (GameObjectParams gameObjectParams : gameObjectsInfo.getShellsAndEnemies()) {
-            if (checkOnScreen(gameObjectParams.getCoords(), gameObjectParams.getSize(),
+        for (GameObjectParams enemyParams : gameObjectsInfo.getEnemiesParams()) {
+            if (checkOnScreen(enemyParams.getCoords(), enemyParams.getSize(),
                     gameObjectsInfo.getHeroParams().getCoords())) {
                 Ellipse2D objectEllipse = new Ellipse2D.Double(
-                        gameObjectParams.getX() + windowSizeX / 2 -
-                                gameObjectsInfo.getHeroParams().getX() - gameObjectParams.getRadius(),
-                        gameObjectParams.getY() + windowSizeY / 2 -
-                                gameObjectsInfo.getHeroParams().getY() - gameObjectParams.getRadius(),
-                        gameObjectParams.getSize(),
-                        gameObjectParams.getSize());
+                        enemyParams.getX() + windowSizeX / 2 -
+                                gameObjectsInfo.getHeroParams().getX() - enemyParams.getRadius(),
+                        enemyParams.getY() + windowSizeY / 2 -
+                                gameObjectsInfo.getHeroParams().getY() - enemyParams.getRadius(),
+                        enemyParams.getSize(),
+                        enemyParams.getSize());
+                g2d.draw(objectEllipse);
+            }
+        }
+        for (GameObjectParams shellParams : gameObjectsInfo.getShellsParams()) {
+            if (checkOnScreen(shellParams.getCoords(), shellParams.getSize(),
+                    gameObjectsInfo.getHeroParams().getCoords())) {
+                Ellipse2D objectEllipse = new Ellipse2D.Double(
+                        shellParams.getX() + windowSizeX / 2 -
+                                gameObjectsInfo.getHeroParams().getX() - shellParams.getRadius(),
+                        shellParams.getY() + windowSizeY / 2 -
+                                gameObjectsInfo.getHeroParams().getY() - shellParams.getRadius(),
+                        shellParams.getSize(),
+                        shellParams.getSize());
                 g2d.draw(objectEllipse);
             }
         }

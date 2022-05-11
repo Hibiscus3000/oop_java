@@ -1,21 +1,24 @@
 package ru.nsu.fit.oop.game.model.entity.game_object;
 
-import ru.nsu.fit.oop.game.model.entity.Damage;
 import ru.nsu.fit.oop.game.model.entity.Entity;
+import ru.nsu.fit.oop.game.model.entity.weapon.Damage;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
 
-public abstract class GameObject extends Entity {
+public abstract class GameObject implements Entity {
 
     protected String name;
     protected final GameObjectParams gameObjectParams;
     protected boolean inGame = true;
-    protected double angle;
 
     public GameObject(String name, int radius, double speed) {
         this.name = name;
         gameObjectParams = new GameObjectParams(name,radius,speed);
+    }
+
+    public double getSpeed() {
+        return gameObjectParams.getSpeed();
     }
 
     public double getX() {
@@ -39,7 +42,7 @@ public abstract class GameObject extends Entity {
     }
 
     public double getAngle() {
-        return angle;
+        return gameObjectParams.getAngle();
     }
 
     public Point2D.Double getCoords() {
@@ -59,7 +62,7 @@ public abstract class GameObject extends Entity {
     }
 
     public void setAngle(double angle) {
-        this.angle = angle;
+        gameObjectParams.setAngle(angle);
     }
 
     public void changeCoords(double shiftX, double shiftY) {
@@ -67,7 +70,7 @@ public abstract class GameObject extends Entity {
     }
 
     public void move(double angle) {
-        this.angle = angle;
+        gameObjectParams.setAngle(angle);
         changeCoords(Math.cos(angle) * gameObjectParams.getSpeed(),
                 Math.sin(angle) * gameObjectParams.getSpeed());
     }

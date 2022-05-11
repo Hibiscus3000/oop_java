@@ -26,7 +26,7 @@ public class Model extends Observable {
         addObserver(view);
         this.fieldSizeX = fieldSizeX;
         this.fieldSizeY = fieldSizeY;
-        rest = new Timer(5000, null);
+        rest = new Timer(500, null);
         fieldUpdateTimer = new Timer(33, null);
         fieldUpdateTimer.addActionListener(e -> {
             radix.updateGameField();

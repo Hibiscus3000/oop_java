@@ -7,6 +7,7 @@ import ru.nsu.fit.oop.game.model.entity.game_object.shell.Shell;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Hero;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Unit;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy.Enemy;
+import ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy.EnemyFrameProduction;
 import ru.nsu.fit.oop.game.model.entity.game_object.wall.GameWalls;
 import ru.nsu.fit.oop.game.model.entity.game_object.wall.Wall;
 
@@ -120,6 +121,19 @@ public class Radix {
                 continue;
             }
             ++i;
+        }
+        try {
+            for (Enemy enemy : enemies) {
+                EnemyFrameProduction enemyFrameProduction = enemy.enemyFrameTurn(gameObjectsInfo);
+                if (null != enemyFrameProduction.getShell())
+                    shells.add(enemyFrameProduction.getShell());
+                if (null != checkCollisions(enemy)) {
+                    enemy.move(enemy.getAngle() + Math.PI);
+                }
+            }
+        } catch (UnableToUseWeaponException e) {
+            e.printStackTrace();
+            System.exit(1);
         }
     }
 

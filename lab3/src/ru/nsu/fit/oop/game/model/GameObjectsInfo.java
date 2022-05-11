@@ -12,7 +12,8 @@ import java.util.List;
 
 public class GameObjectsInfo {
 
-    private List<GameObjectParams> shellsAndEnemiesParams;
+    private List<GameObjectParams> shellsParams;
+    private List<GameObjectParams> enemiesParams;
     private GameObjectParams heroParams;
     private GameWalls gameWalls;
     public GameObjectsInfo(Hero hero, GameWalls gameWalls) {
@@ -21,20 +22,25 @@ public class GameObjectsInfo {
     }
 
     public void renew(List<Enemy> enemies,  List<Shell> shells) {
-        shellsAndEnemiesParams = new ArrayList<>();
+        shellsParams = new ArrayList<>();
+        enemiesParams = new ArrayList<>();
         if (null != enemies)
             for (Enemy enemy : enemies) {
-                this.shellsAndEnemiesParams.add(enemy.getGameObjectParams());
+                this.enemiesParams.add(enemy.getGameObjectParams());
             }
         if (null != shells) {
-            for (Shell heroShell : shells) {
-                this.shellsAndEnemiesParams.add(heroShell.getGameObjectParams());
+            for (Shell shell : shells) {
+                this.shellsParams.add(shell.getGameObjectParams());
             }
         }
     }
 
-    public List<GameObjectParams> getShellsAndEnemies() {
-        return shellsAndEnemiesParams;
+    public List<GameObjectParams> getShellsParams() {
+        return shellsParams;
+    }
+
+    public List<GameObjectParams> getEnemiesParams() {
+        return enemiesParams;
     }
 
     public GameObjectParams getHeroParams() {
