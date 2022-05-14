@@ -57,6 +57,10 @@ public class GameObjectsInfo {
         return hero;
     }
 
+    public double getWallNormalAngle(int index) {
+        return gameWalls.getWallNormalAngle(index);
+    }
+
     public Point2D.Double getWallStartPoint(int index) {
         return gameWalls.getWallStartPoint(index);
     }

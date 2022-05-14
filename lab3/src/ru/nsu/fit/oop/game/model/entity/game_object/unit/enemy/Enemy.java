@@ -38,10 +38,10 @@ public abstract class Enemy extends Unit {
 
     public EnemyFrameProduction enemyFrameTurn(GameObjectsInfo gameObjectsInfo) throws UnableToUseWeaponException {
         EnemyFrameProduction enemyFrameProduction = new EnemyFrameProduction();
-        double heroRelativeAngle = getRelativeAngle(this, gameObjectsInfo.getHero());
+        /*double heroRelativeAngle = getRelativeAngle(this, gameObjectsInfo.getHero());
         move(heroRelativeAngle, gameObjectsInfo.getHero(), gameObjectsInfo.getShells());
-        if (weapons.get(getCurrentWeaponNumber()).getIsReadyToUseStatus())
-            enemyFrameProduction.setShell(useWeapon(heroRelativeAngle));
+        if (weapons.get(currentWeaponNumber).getIsReadyToUseStatus())
+            enemyFrameProduction.setShell(useWeapon(heroRelativeAngle));*/
         return enemyFrameProduction;
     }
 

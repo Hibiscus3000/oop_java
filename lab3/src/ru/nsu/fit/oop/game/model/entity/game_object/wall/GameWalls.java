@@ -13,7 +13,7 @@ public class GameWalls {
     private final double defaultThicknessForUBW;
 
     public GameWalls(int fieldSizeX, int fieldSizeY) throws InvalidConfigException {
-        defaultThicknessForUBW = 4;
+        defaultThicknessForUBW = 10;
         walls.add(new Wall(0,0,fieldSizeX,0,defaultThicknessForUBW));
         walls.add(new Wall(0,0,0,fieldSizeY,defaultThicknessForUBW));
         walls.add(new Wall(fieldSizeX,0,fieldSizeX,fieldSizeY,defaultThicknessForUBW));
@@ -57,6 +57,10 @@ public class GameWalls {
 
     public double getWallAngle(int index) {
         return walls.get(index).getAngle();
+    }
+
+    public double getWallNormalAngle(int index) {
+        return walls.get(index).getNormalAngle();
     }
 
     public Wall getWall(int index) {
