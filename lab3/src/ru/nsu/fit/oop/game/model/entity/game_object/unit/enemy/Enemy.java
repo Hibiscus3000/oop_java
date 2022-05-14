@@ -3,7 +3,6 @@ package ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy;
 import ru.nsu.fit.oop.game.exception.model.UnableToUseWeaponException;
 import ru.nsu.fit.oop.game.exception.model.factory.FactoryException;
 import ru.nsu.fit.oop.game.model.GameObjectsInfo;
-import ru.nsu.fit.oop.game.model.entity.game_object.GameObject;
 import ru.nsu.fit.oop.game.model.entity.game_object.shell.Shell;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Hero;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Unit;
@@ -12,16 +11,21 @@ import ru.nsu.fit.oop.game.model.entity.weapon.Weapon;
 
 import java.util.List;
 
+import static ru.nsu.fit.oop.game.model.Geometry.*;
+
 public abstract class Enemy extends Unit {
 
     protected double preferredDistance;
     protected double saveDistance;
     protected double defaultPreferredDistance;
+    protected final double squaredAggressionRange;
+    protected boolean movedOnFrame;
 
-    protected Enemy(String name, int radius, double speed, double preferredDistance,double saveDistance,
-                    int lives, int health, int armor, int shield, String weaponName)
+    protected Enemy(String name, int radius, double speed, double preferredDistance, double saveDistance,
+                    double aggressionRange, int lives, int health, int armor, int shield, String weaponName)
             throws FactoryException {
         super(name, radius, speed, lives, health, armor, shield);
+        squaredAggressionRange = aggressionRange * aggressionRange;
         this.preferredDistance = preferredDistance;
         defaultPreferredDistance = preferredDistance;
         this.saveDistance = saveDistance;
@@ -29,27 +33,60 @@ public abstract class Enemy extends Unit {
     }
 
     protected Enemy(String name, int radius, double speed, double preferredDistance, double saveDistance,
-                    int lives, int health, int armor, int shield) {
+                    double aggressionRange, int lives, int health, int armor, int shield) {
         super(name, radius, speed, lives, health, armor, shield);
+        squaredAggressionRange = aggressionRange * aggressionRange;
         this.preferredDistance = preferredDistance;
         defaultPreferredDistance = preferredDistance;
         this.saveDistance = saveDistance;
     }
 
     public EnemyFrameProduction enemyFrameTurn(GameObjectsInfo gameObjectsInfo) throws UnableToUseWeaponException {
+        if (getSquaredRelativeDistance(this.getCoords(), gameObjectsInfo.getHero().getCoords()) >
+                squaredAggressionRange)
+            return null;
+        double heroRelativeAngle = getRelativeAngle(this.getCoords(), gameObjectsInfo.getHero().getCoords());
+        if (true == handleWalls(gameObjectsInfo, heroRelativeAngle))
+            return null;
         EnemyFrameProduction enemyFrameProduction = new EnemyFrameProduction();
-        /*double heroRelativeAngle = getRelativeAngle(this, gameObjectsInfo.getHero());
         move(heroRelativeAngle, gameObjectsInfo.getHero(), gameObjectsInfo.getShells());
         if (weapons.get(currentWeaponNumber).getIsReadyToUseStatus())
-            enemyFrameProduction.setShell(useWeapon(heroRelativeAngle));*/
+            enemyFrameProduction.setShell(useWeapon(heroRelativeAngle));
         return enemyFrameProduction;
     }
 
-    private void move(double heroRelativeAngle, Hero hero, List<Shell> shellsParams) {
-        double dodgeAngle = 0;
-        int counterClockWiseRotation = 0,clockWiseRotation = 0;
-        for (Shell shell : shellsParams) {
-            double shellRelativeAngle = getRelativeAngle(this,shell);
+    private boolean handleWalls(GameObjectsInfo gameObjectsInfo, double heroRelativeAngle) {
+        for (int i = 0; i < gameObjectsInfo.getWallsNumber(); ++i) {
+            if (true == twoLinePartsIntersect(gameObjectsInfo.getHero().getCoords(), this.getCoords(), heroRelativeAngle,
+                    gameObjectsInfo.getWallStartPoint(i), gameObjectsInfo.getWallEndPoint(i),
+                    gameObjectsInfo.getWallAngle(i))) {
+                double distBetweenWallAndEnemy = getDistanceBetweenWallAndGameObject(gameObjectsInfo.getWall(i),
+                        this);
+                if (distBetweenWallAndEnemy > size) {
+                    move(heroRelativeAngle);
+                    return true;
+                }
+                move(getSquaredRelativeDistance(this.getCoords(), gameObjectsInfo.getWallEndPoint(i)) <
+                        getSquaredRelativeDistance(this.getCoords(), gameObjectsInfo.getWallStartPoint(i))
+                        ? gameObjectsInfo.getWallAngle(i) : gameObjectsInfo.getWallAngle(i) + Math.PI);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void move(double heroRelativeAngle, Hero hero, List<Shell> shells) {
+        movedOnFrame = false;
+        dodge(shells);
+        if (true == movedOnFrame)
+            return;
+        saveDistance(heroRelativeAngle, hero);
+    }
+
+    private void dodge(List<Shell> shells) {
+        double dodgeAngle;
+        for (Shell shell : shells) {
+            double shellRelativeAngle = getRelativeAngle(this.getCoords(), shell.getCoords());
             if (shell.getAngle() * shellRelativeAngle <= 0 && Math.pow(Math.sin(shell.getAngle() - shellRelativeAngle), 2) < Math.pow(getRadius() +
                     shell.getRadius(), 2) / (Math.pow(getX() - shell.getX(), 2) + Math.pow(getY() -
                     shell.getY(), 2))) {
@@ -58,9 +95,13 @@ public abstract class Enemy extends Unit {
                 else
                     dodgeAngle = Math.PI / 2;
                 move(shell.getAngle() + dodgeAngle);
+                movedOnFrame = true;
                 return;
             }
         }
+    }
+
+    private void saveDistance(double heroRelativeAngle, Hero hero) {
         if (health >= maxHealth / 2)
             preferredDistance = defaultPreferredDistance;
         else
@@ -74,22 +115,5 @@ public abstract class Enemy extends Unit {
             move(heroRelativeAngle + Math.PI);
     }
 
-    private double getRelativeAngle(GameObject gameObject, GameObject relativeGameObject) {
-        double x = relativeGameObject.getX() - gameObject.getX();
-        double y = relativeGameObject.getY() - gameObject.getY();
-        double angle;
-        if (0 == x) {
-            if (y > 0)
-                angle = Math.PI / 2;
-            else
-                angle = Math.PI / 2;
-        } else if (x > 0) {
-            angle = Math.atan(y / x);
-        } else if (y >= 0) {
-            angle = Math.PI + Math.atan(y / x);
-        } else {
-            angle = -Math.PI + Math.atan(y / x);
-        }
-        return angle;
-    }
+
 }

@@ -15,6 +15,8 @@ import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.Random;
 
+import static ru.nsu.fit.oop.game.model.Geometry.getDistanceBetweenWallAndGameObject;
+
 public class Radix {
 
     private int fieldSizeX;
@@ -114,8 +116,10 @@ public class Radix {
         try {
             for (Enemy enemy : gameObjectsInfo.getEnemies()) {
                 EnemyFrameProduction enemyFrameProduction = enemy.enemyFrameTurn(gameObjectsInfo);
-                if (null != enemyFrameProduction.getShell())
-                    gameObjectsInfo.addShell(enemyFrameProduction.getShell());
+                if (null != enemyFrameProduction) {
+                    if (null != enemyFrameProduction.getShell())
+                        gameObjectsInfo.addShell(enemyFrameProduction.getShell());
+                }
                 if (null != checkCollisions(enemy)) {
                     enemy.move(enemy.getAngle() + Math.PI);
                 }
@@ -161,13 +165,8 @@ public class Radix {
                         ? gameObjectsInfo.getWallEndPoint(i).getX() : gameObjectsInfo.getWallStartPoint(i).getX();
                 double xMin = (gameObjectsInfo.getWallEndPoint(i).getX() > gameObjectsInfo.getWallStartPoint(i).getX())
                         ? gameObjectsInfo.getWallStartPoint(i).getX() : gameObjectsInfo.getWallEndPoint(i).getX();
-                double distBetweenWallAndObj = (gameObjectsInfo.getWallAngle(i) > Math.PI / 2) ?
-                        Math.abs((xMax - gameObject.getX()) * Math.sin(gameObjectsInfo.getWallAngle(i)) -
-                                (-gameObject.getY() + gameObjectsInfo.getWallStartPoint(i).getY()) * Math.cos(
-                                        gameObjectsInfo.getWallAngle(i))) :
-                        Math.abs((gameObject.getX() - xMin) * Math.sin(gameObjectsInfo.getWallAngle(i)) -
-                                (gameObject.getY() - gameObjectsInfo.getWallStartPoint(i).getY()) *
-                                        Math.cos(gameObjectsInfo.getWallAngle(i)));
+                double distBetweenWallAndObj = getDistanceBetweenWallAndGameObject(gameObjectsInfo.getWall(i),
+                        gameObject);
                 if (gameObject.getY() + gameObjectsInfo.getWallThickness(i) / 2 + gameObject.getRadius() *
                         Math.abs(Math.sin(gameObjectsInfo.getWallNormalAngle(i))) -
                         gameObjectsInfo.getWallStartPoint(i).getY() < 0) {
@@ -186,15 +185,6 @@ public class Radix {
                         gameObjectsInfo.getWallThickness(i) / 2 < 0) {
                     continue;
                 }
-                /*double countWallThickness = ((xMax - gameObject.getX() - gameObject.getRadius() - gameObjectsInfo.getWallThickness(i)
-                        * Math.abs(Math.cos(gameObjectsInfo.getWallNormalAnngle(i))) < 0 || gameObject.getX()
-                        + gameObject.getRadius() - xMin - gameObjectsInfo.getWallThickness(i)
-                        * Math.abs(Math.cos(gameObjectsInfo.getWallNormalAnngle(i))) < 0) && (gameObjectsInfo.getWallEndPoint(i).getY()
-                        - gameObject.getY() + gameObject.getRadius()- gameObjectsInfo.getWallThickness(i)
-                        * Math.abs(Math.sin(gameObjectsInfo.getWallNormalAnngle(i))) < 0 || gameObject.getY() + gameObject.getRadius()
-                        - gameObjectsInfo.getWallStartPoint(i).getY() - gameObjectsInfo.getWallThickness(i)
-                        * Math.abs(Math.sin(gameObjectsInfo.getWallNormalAnngle(i))) < 0)) ? -4*gameObjectsInfo.getWallThickness(i) :
-                        gameObjectsInfo.getWallThickness(i);*/
                 if (distBetweenWallAndObj <= gameObject.getRadius() + gameObjectsInfo.getWallThickness(i) / 2) {
                     return gameObjectsInfo.getWall(i);
                 }
