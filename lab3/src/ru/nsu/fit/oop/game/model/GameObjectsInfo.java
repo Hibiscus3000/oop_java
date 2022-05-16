@@ -5,6 +5,7 @@ import ru.nsu.fit.oop.game.model.entity.game_object.unit.Hero;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy.Enemy;
 import ru.nsu.fit.oop.game.model.entity.game_object.wall.GameWalls;
 import ru.nsu.fit.oop.game.model.entity.game_object.wall.Wall;
+import ru.nsu.fit.oop.game.model.entity.game_object.wall.WallPart;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -37,6 +38,10 @@ public class GameObjectsInfo {
         enemies.remove(i);
     }
 
+    public void removeWall(int i) {
+        gameWalls.remove(i);
+    }
+
     public List<Shell> getShells() {
         return shells;
     }
@@ -55,10 +60,6 @@ public class GameObjectsInfo {
 
     public Hero getHero() {
         return hero;
-    }
-
-    public double getWallNormalAngle(int index) {
-        return gameWalls.getWallNormalAngle(index);
     }
 
     public Point2D.Double getWallStartPoint(int index) {
@@ -81,8 +82,27 @@ public class GameObjectsInfo {
         return gameWalls.getWallsNumber();
     }
 
-    public Wall getWall(int i) {
-        return gameWalls.getWall(i);
+    public Point2D.Double getWallPartStartPoint(int index, int partIndex) {
+        return gameWalls.getWallPartStartPoint(index,partIndex);
     }
 
+    public Point2D.Double getWallPartEndPoint(int index, int partIndex) {
+        return gameWalls.getWallPartEndPoint(index,partIndex);
+    }
+
+    public Wall getWall(int index) {
+        return gameWalls.getWall(index);
+    }
+
+    public WallPart getWallPart(int index, int partIndex) {
+        return gameWalls.getWallPart(index,partIndex);
+    }
+
+    public double getWallPartNormalAngle(int index, int partIndex) {
+        return gameWalls.getWallPartNormalAngle(index,partIndex);
+    }
+
+    public double getWallPartAngle(int index, int partIndex) {
+        return gameWalls.getWallPartAngle(index,partIndex);
+    }
 }

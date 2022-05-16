@@ -104,8 +104,19 @@ public class GameField extends JComponent {
     }
 
     private void drawWalls(Graphics2D g2d) {
+        g2d.setStroke(new BasicStroke((float) 1));
         for (int i = 0; i < gameObjectsInfo.getWallsNumber(); ++i) {
-            g2d.setStroke(new BasicStroke((float) gameObjectsInfo.getWallThickness(i)));
+            for (int j = 0; j < 4; ++j) {
+                g2d.draw(new Line2D.Double(gameObjectsInfo.getWallPartStartPoint(i, j).getX() +
+                        windowSizeX / 2 - gameObjectsInfo.getHero().getX(),
+                        gameObjectsInfo.getWallPartStartPoint(i, j).getY() + windowSizeY / 2 -
+                                gameObjectsInfo.getHero().getY(),
+                        gameObjectsInfo.getWallPartEndPoint(i, j).getX() + windowSizeX / 2 -
+                                gameObjectsInfo.getHero().getX(),
+                        gameObjectsInfo.getWallPartEndPoint(i, j).getY() + windowSizeY / 2 -
+                                gameObjectsInfo.getHero().getY()));
+            }
+            /*g2d.setStroke(new BasicStroke((float) gameObjectsInfo.getWallThickness(i)));
             g2d.draw(new Line2D.Double(gameObjectsInfo.getWallStartPoint(i).getX() +
                     windowSizeX / 2 - gameObjectsInfo.getHero().getX(),
                     gameObjectsInfo.getWallStartPoint(i).getY() + windowSizeY / 2 -
@@ -113,9 +124,8 @@ public class GameField extends JComponent {
                     gameObjectsInfo.getWallEndPoint(i).getX() + windowSizeX / 2 -
                             gameObjectsInfo.getHero().getX(),
                     gameObjectsInfo.getWallEndPoint(i).getY() + windowSizeY / 2 -
-                            gameObjectsInfo.getHero().getY()));
+                            gameObjectsInfo.getHero().getY()));*/
         }
-
     }
 
     private void drawShells(Graphics2D g2d) {

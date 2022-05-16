@@ -14,10 +14,10 @@ public class GameWalls {
 
     public GameWalls(int fieldSizeX, int fieldSizeY) throws InvalidConfigException {
         defaultThicknessForUBW = 10;
-        walls.add(new Wall(0,0,fieldSizeX,0,defaultThicknessForUBW));
-        walls.add(new Wall(0,0,0,fieldSizeY,defaultThicknessForUBW));
-        walls.add(new Wall(fieldSizeX,0,fieldSizeX,fieldSizeY,defaultThicknessForUBW));
-        walls.add(new Wall(fieldSizeX,fieldSizeY,0,fieldSizeY,defaultThicknessForUBW));
+        walls.add(new Wall(0,0,0,fieldSizeX,0,defaultThicknessForUBW,0));
+        walls.add(new Wall(1,0,0,0,fieldSizeY,defaultThicknessForUBW,0));
+        walls.add(new Wall(2,fieldSizeX,0,fieldSizeX,fieldSizeY,defaultThicknessForUBW,0));
+        walls.add(new Wall(3,fieldSizeX,fieldSizeY,0,fieldSizeY,defaultThicknessForUBW,0));
         Properties config = new Properties();
         var stream = this.getClass().getResourceAsStream("wall.properties");
         if (null == stream)
@@ -29,7 +29,7 @@ public class GameWalls {
             throw new InvalidConfigException("wall.properties",this.getClass().getName(),e);
         }
         for (int i = 0; i < config.size() / 6; ++i) {
-            walls.add(new BreakableWall(
+            walls.add(new Wall(4 + i,
                     Integer.parseInt(config.getProperty(Integer.valueOf(10 * i).toString())),
                     Integer.parseInt(config.getProperty(Integer.valueOf(10 * i + 1).toString())),
                     Integer.parseInt(config.getProperty(Integer.valueOf(10 * i + 2).toString())),
@@ -40,15 +40,23 @@ public class GameWalls {
     }
 
     public Point2D.Double getWallStartPoint(int index) {
-        return walls.get(index).getStartPoint();
+        return walls.get(index).getCoords();
     }
 
     public Point2D.Double getWallEndPoint(int index) {
         return walls.get(index).getEndPoint();
     }
 
+    public Point2D.Double getWallPartStartPoint(int index, int partIndex) {
+        return walls.get(index).getWallPartStartPoint(partIndex);
+    }
+
+    public Point2D.Double getWallPartEndPoint(int index, int partIndex) {
+        return walls.get(index).getWallPartEndPoint(partIndex);
+    }
+
     public double getWallThickness(int index) {
-        return walls.get(index).getWallThickness();
+        return walls.get(index).getThickness();
     }
 
     public int getWallsNumber() {
@@ -59,19 +67,28 @@ public class GameWalls {
         return walls.get(index).getAngle();
     }
 
-    public double getWallNormalAngle(int index) {
-        return walls.get(index).getNormalAngle();
+
+    public double getWallPartAngle(int index, int partIndex) {
+        return walls.get(index).getWallPartAngle(partIndex);
+    }
+
+    public double getWallPartNormalAngle(int index, int partIndex) {
+        return walls.get(index).getWallPartNormalAngle(partIndex);
     }
 
     public Wall getWall(int index) {
         return walls.get(index);
     }
 
+    public WallPart getWallPart(int index, int partIndex) {
+        return walls.get(index).getWallPart(partIndex);
+    }
+
     public boolean getWallInGameStatus(int index) {
         return walls.get(index).getInGameStatus();
     }
 
-    public void removeWall(int index) {
+    public void remove(int index) {
         walls.remove(index);
     }
 }

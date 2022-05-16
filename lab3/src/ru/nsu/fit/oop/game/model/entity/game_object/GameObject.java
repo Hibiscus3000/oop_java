@@ -3,7 +3,6 @@ package ru.nsu.fit.oop.game.model.entity.game_object;
 import ru.nsu.fit.oop.game.model.entity.Entity;
 import ru.nsu.fit.oop.game.model.entity.weapon.Damage;
 
-import java.awt.*;
 import java.awt.geom.Point2D;
 
 public abstract class GameObject implements Entity {

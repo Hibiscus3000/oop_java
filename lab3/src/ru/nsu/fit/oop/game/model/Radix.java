@@ -4,17 +4,18 @@ import ru.nsu.fit.oop.game.exception.model.ModelException;
 import ru.nsu.fit.oop.game.exception.model.UnableToUseWeaponException;
 import ru.nsu.fit.oop.game.model.entity.game_object.GameObject;
 import ru.nsu.fit.oop.game.model.entity.game_object.shell.Shell;
-import ru.nsu.fit.oop.game.model.entity.game_object.unit.Hero;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Unit;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy.Enemy;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy.EnemyFrameProduction;
 import ru.nsu.fit.oop.game.model.entity.game_object.wall.Wall;
+import ru.nsu.fit.oop.game.model.entity.game_object.wall.WallPart;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.Random;
 
+import static ru.nsu.fit.oop.game.model.Geometry.LinePartAndCircleIntersect;
 import static ru.nsu.fit.oop.game.model.Geometry.getDistanceBetweenWallAndGameObject;
 
 public class Radix {
@@ -92,8 +93,9 @@ public class Radix {
             return;
         int i = 0, size = gameObjectsInfo.getWalls().getWallsNumber();
         while (i < size) {
+            gameObjectsInfo.getWall(i).countAbsorbedDamage();
             if (false == gameObjectsInfo.getWalls().getWallInGameStatus(i)) {
-                gameObjectsInfo.getWalls().removeWall(i);
+                gameObjectsInfo.removeWall(i);
                 --size;
                 continue;
             }
@@ -107,13 +109,13 @@ public class Radix {
         int i = 0, size = gameObjectsInfo.getEnemies().size();
         while (i < size) {
             if (false == gameObjectsInfo.getEnemies().get(i).getInGameStatus()) {
-                gameObjectsInfo.getEnemies().remove(i);
+                gameObjectsInfo.removeEnemy(i);
                 --size;
                 continue;
             }
             ++i;
         }
-        try {
+        /*try {
             for (Enemy enemy : gameObjectsInfo.getEnemies()) {
                 EnemyFrameProduction enemyFrameProduction = enemy.enemyFrameTurn(gameObjectsInfo);
                 if (null != enemyFrameProduction) {
@@ -127,7 +129,7 @@ public class Radix {
         } catch (UnableToUseWeaponException e) {
             e.printStackTrace();
             System.exit(1);
-        }
+        }*/
     }
 
     private void handleShells() {
@@ -136,7 +138,7 @@ public class Radix {
         int i = 0, size = gameObjectsInfo.getShells().size();
         while (i < size) {
             if (false == gameObjectsInfo.getShells().get(i).getInGameStatus()) {
-                gameObjectsInfo.getShells().remove(i);
+                gameObjectsInfo.removeShell(i);
                 --size;
                 continue;
             }
@@ -158,35 +160,15 @@ public class Radix {
         return checkCollisionsWithUnits(gameObject);
     }
 
-    private Wall checkCollisionsWithWalls(GameObject gameObject) {
+    private WallPart checkCollisionsWithWalls(GameObject gameObject) {
         if (null != gameObjectsInfo.getWalls()) {
             for (int i = 0; i < gameObjectsInfo.getWallsNumber(); ++i) {
-                double xMax = (gameObjectsInfo.getWallEndPoint(i).getX() > gameObjectsInfo.getWallStartPoint(i).getX())
-                        ? gameObjectsInfo.getWallEndPoint(i).getX() : gameObjectsInfo.getWallStartPoint(i).getX();
-                double xMin = (gameObjectsInfo.getWallEndPoint(i).getX() > gameObjectsInfo.getWallStartPoint(i).getX())
-                        ? gameObjectsInfo.getWallStartPoint(i).getX() : gameObjectsInfo.getWallEndPoint(i).getX();
-                double distBetweenWallAndObj = getDistanceBetweenWallAndGameObject(gameObjectsInfo.getWall(i),
-                        gameObject);
-                if (gameObject.getY() + gameObjectsInfo.getWallThickness(i) / 2 + gameObject.getRadius() *
-                        Math.abs(Math.sin(gameObjectsInfo.getWallNormalAngle(i))) -
-                        gameObjectsInfo.getWallStartPoint(i).getY() < 0) {
-                    continue;
-                }
-                if (gameObjectsInfo.getWallEndPoint(i).getY() + gameObjectsInfo.getWallThickness(i) / 2 +
-                        gameObject.getRadius() * Math.abs(Math.sin(gameObjectsInfo.getWallNormalAngle(i))) -
-                        gameObject.getY() < 0) {
-                    continue;
-                }
-                if (gameObject.getX() + gameObject.getRadius() * Math.cos(gameObjectsInfo.getWallNormalAngle(i))
-                        + gameObjectsInfo.getWallThickness(i) / 2 - xMin < 0) {
-                    continue;
-                }
-                if (xMax - gameObject.getX() + gameObject.getRadius() * Math.cos(gameObjectsInfo.getWallNormalAngle(i)) +
-                        gameObjectsInfo.getWallThickness(i) / 2 < 0) {
-                    continue;
-                }
-                if (distBetweenWallAndObj <= gameObject.getRadius() + gameObjectsInfo.getWallThickness(i) / 2) {
-                    return gameObjectsInfo.getWall(i);
+                for (int j = 0; j < 4; ++j) {
+                    if (LinePartAndCircleIntersect(gameObjectsInfo.getWallPartStartPoint(i,j),
+                            gameObjectsInfo.getWallPartEndPoint(i,j),gameObjectsInfo.getWallPartAngle(i,j),
+                            gameObject.getCoords(),gameObject.getRadius())) {
+                        return gameObjectsInfo.getWallPart(i,j);
+                    }
                 }
             }
         }
@@ -214,11 +196,13 @@ public class Radix {
     }
 
     private void toDamage(Shell shell, GameObject gameObject) {
-        gameObject.takeDamage(shell.getDamage(), shell.getAngle());
         try {
-            shell.bounce(((Wall) gameObject).getNormalAngle());
+            shell.bounce(((WallPart) gameObject).getNormalAngle(),((WallPart) gameObject).getParentWallNumber());
         } catch (ClassCastException e) {
             shell.setInGameFalse();
+        }
+        finally {
+            gameObject.takeDamage(shell.getDamage(), shell.getAngle());
         }
     }
 }

@@ -57,19 +57,21 @@ public abstract class Enemy extends Unit {
 
     private boolean handleWalls(GameObjectsInfo gameObjectsInfo, double heroRelativeAngle) {
         for (int i = 0; i < gameObjectsInfo.getWallsNumber(); ++i) {
-            if (true == twoLinePartsIntersect(gameObjectsInfo.getHero().getCoords(), this.getCoords(), heroRelativeAngle,
-                    gameObjectsInfo.getWallStartPoint(i), gameObjectsInfo.getWallEndPoint(i),
-                    gameObjectsInfo.getWallAngle(i))) {
-                double distBetweenWallAndEnemy = getDistanceBetweenWallAndGameObject(gameObjectsInfo.getWall(i),
-                        this);
-                if (distBetweenWallAndEnemy > size) {
-                    move(heroRelativeAngle);
+            for (int j = 0; j < 4; ++j) {
+                if (true == twoLinePartsIntersect(gameObjectsInfo.getHero().getCoords(), this.getCoords(), heroRelativeAngle,
+                        gameObjectsInfo.getWallPartStartPoint(i,j), gameObjectsInfo.getWallPartEndPoint(i,j),
+                        gameObjectsInfo.getWallAngle(i))) {
+                    double distBetweenWallAndEnemy = getDistanceBetweenWallAndGameObject(gameObjectsInfo.getWallPart(i,j),
+                            this);
+                    if (distBetweenWallAndEnemy > size) {
+                        move(heroRelativeAngle);
+                        return true;
+                    }
+                    move(getSquaredRelativeDistance(this.getCoords(), gameObjectsInfo.getWallPartEndPoint(i,j)) <
+                            getSquaredRelativeDistance(this.getCoords(), gameObjectsInfo.getWallPartStartPoint(i,j))
+                            ? gameObjectsInfo.getWallAngle(i) : gameObjectsInfo.getWallAngle(i) + Math.PI);
                     return true;
                 }
-                move(getSquaredRelativeDistance(this.getCoords(), gameObjectsInfo.getWallEndPoint(i)) <
-                        getSquaredRelativeDistance(this.getCoords(), gameObjectsInfo.getWallStartPoint(i))
-                        ? gameObjectsInfo.getWallAngle(i) : gameObjectsInfo.getWallAngle(i) + Math.PI);
-                return true;
             }
         }
         return false;

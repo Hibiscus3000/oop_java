@@ -1,22 +1,22 @@
 package ru.nsu.fit.oop.game.model;
 
 import ru.nsu.fit.oop.game.model.entity.game_object.GameObject;
-import ru.nsu.fit.oop.game.model.entity.game_object.wall.Wall;
+import ru.nsu.fit.oop.game.model.entity.game_object.wall.WallPart;
 
 import java.awt.geom.Point2D;
 
 public class Geometry {
 
-    public static double getDistanceBetweenWallAndGameObject(Wall wall, GameObject gameObject) {
-        double xMax = (wall.getEndPoint().getX() > wall.getX())
-                ? wall.getEndPoint().getX() : wall.getStartPoint().getX();
-        double xMin = (wall.getEndPoint().getX() > wall.getX())
-                ? wall.getX() : wall.getEndPoint().getX();
-        double distBetweenWallAndObj = (wall.getAngle() > Math.PI / 2) ?
-                Math.abs((xMax - gameObject.getX()) * Math.sin(wall.getAngle()) -
-                        (-gameObject.getY() + wall.getY()) * Math.cos(wall.getAngle())) :
-                Math.abs((gameObject.getX() - xMin) * Math.sin(wall.getAngle()) -
-                        (gameObject.getY() - wall.getY()) * Math.cos(wall.getAngle()));
+    public static double getDistanceBetweenWallAndGameObject(WallPart wallPart, GameObject gameObject) {
+        double xMax = (wallPart.getEndPoint().getX() > wallPart.getX())
+                ? wallPart.getEndPoint().getX() : wallPart.getStartPoint().getX();
+        double xMin = (wallPart.getEndPoint().getX() > wallPart.getX())
+                ? wallPart.getX() : wallPart.getEndPoint().getX();
+        double distBetweenWallAndObj = (wallPart.getAngle() > Math.PI / 2) ?
+                Math.abs((xMax - gameObject.getX()) * Math.sin(wallPart.getAngle()) -
+                        (-gameObject.getY() + wallPart.getY()) * Math.cos(wallPart.getAngle())) :
+                Math.abs((gameObject.getX() - xMin) * Math.sin(wallPart.getAngle()) -
+                        (gameObject.getY() - wallPart.getY()) * Math.cos(wallPart.getAngle()));
         return distBetweenWallAndObj;
     }
 
@@ -41,6 +41,44 @@ public class Geometry {
             angle = -Math.PI + Math.atan(y / x);
         }
         return angle;
+    }
+
+    public static boolean LinePartAndCircleIntersect(Point2D.Double startPoint, Point2D.Double endPoint, double angle,
+                                                     Point2D.Double circleCenter, double R) {
+
+        if (circleCenter.getX() - R > Math.max(startPoint.getX(), endPoint.getX()) || circleCenter.getX() + R <
+                Math.min(startPoint.getX(), endPoint.getX()) || circleCenter.getY() - R > endPoint.getY() ||
+        circleCenter.getY() + R < startPoint.getY()) {
+            return false;
+        }
+
+        if (startPoint.getX() == endPoint.getX()) {
+            if (circleCenter.getX() - R < startPoint.getX() && circleCenter.getX() + R > startPoint.getX())
+                return true;
+            return false;
+        }
+
+        double A = Math.tan(angle);
+        double B = endPoint.getY() - A * endPoint.getX();
+
+        double a = (A * A + 1);
+        double b = 2 * (A * B - circleCenter.getY() * A - circleCenter.getX());
+        double c = circleCenter.getX() * circleCenter.getX() + B * B + circleCenter.getY() * circleCenter.getY() - 2 * B * circleCenter.getY()
+                - R * R;
+
+        double D = b * b - 4 * a * c;
+        if (D < 0)
+            return false;
+        double x1 = (-b - Math.sqrt(D)) / (2 * a);
+        double x2 = (-b + Math.sqrt(D)) / (2 * a);
+
+        double y1 = A * x1 + B;
+        double y2 = A * x2 + B;
+
+        if (x1 > Math.max(startPoint.getX(), endPoint.getX()) || x2 < Math.min(startPoint.getX(), endPoint.getX()))
+            return false;
+        else
+            return true;
     }
 
     public static boolean twoLinePartsIntersect(Point2D.Double p1s, Point2D.Double p1e, double angle1,
