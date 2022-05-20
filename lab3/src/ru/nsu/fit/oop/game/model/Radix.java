@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Random;
 
 import static ru.nsu.fit.oop.game.model.Geometry.LinePartAndCircleIntersect;
-import static ru.nsu.fit.oop.game.model.Geometry.getDistanceBetweenWallAndGameObject;
 
 public class Radix {
 
@@ -64,9 +63,9 @@ public class Radix {
 
     public void heroUseWeapon(double angle) throws ModelException {
         try {
-            Shell shell = gameObjectsInfo.getHero().useWeapon(angle);
-            if (null != shell)
-                gameObjectsInfo.addShell(shell);
+            List<Shell> shells = gameObjectsInfo.getHero().useWeapon(angle);
+            if (null != shells)
+                gameObjectsInfo.addShells(shells);
         } catch (UnableToUseWeaponException e) {
             throw new ModelException(e);
         }
@@ -115,12 +114,12 @@ public class Radix {
             }
             ++i;
         }
-        /*try {
+        try {
             for (Enemy enemy : gameObjectsInfo.getEnemies()) {
                 EnemyFrameProduction enemyFrameProduction = enemy.enemyFrameTurn(gameObjectsInfo);
                 if (null != enemyFrameProduction) {
-                    if (null != enemyFrameProduction.getShell())
-                        gameObjectsInfo.addShell(enemyFrameProduction.getShell());
+                    if (null != enemyFrameProduction.getShells())
+                        gameObjectsInfo.addShells(enemyFrameProduction.getShells());
                 }
                 if (null != checkCollisions(enemy)) {
                     enemy.move(enemy.getAngle() + Math.PI);
@@ -129,7 +128,7 @@ public class Radix {
         } catch (UnableToUseWeaponException e) {
             e.printStackTrace();
             System.exit(1);
-        }*/
+        }
     }
 
     private void handleShells() {

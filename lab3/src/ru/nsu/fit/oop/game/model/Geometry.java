@@ -7,7 +7,7 @@ import java.awt.geom.Point2D;
 
 public class Geometry {
 
-    public static double getDistanceBetweenWallAndGameObject(WallPart wallPart, GameObject gameObject) {
+    public static double getDistanceBetweenWallAndGameObjectCenter(WallPart wallPart, GameObject gameObject) {
         double xMax = (wallPart.getEndPoint().getX() > wallPart.getX())
                 ? wallPart.getEndPoint().getX() : wallPart.getStartPoint().getX();
         double xMin = (wallPart.getEndPoint().getX() > wallPart.getX())
@@ -22,6 +22,10 @@ public class Geometry {
 
     public static double getSquaredRelativeDistance(Point2D.Double p1, Point2D.Double p2) {
         return (Math.pow(p1.getX() - p2.getX(), 2) + Math.pow(p1.getY() - p2.getY(), 2));
+    }
+
+    public static double getRelativeDistance(Point2D.Double p1, Point2D.Double p2) {
+        return Math.sqrt(getSquaredRelativeDistance(p1,p2));
     }
 
     public static double getRelativeAngle(Point2D.Double p, Point2D.Double pr) {
@@ -53,9 +57,21 @@ public class Geometry {
         }
 
         if (startPoint.getX() == endPoint.getX()) {
-            if (circleCenter.getX() - R < startPoint.getX() && circleCenter.getX() + R > startPoint.getX())
+            double a = 1;
+            double b = -2 * circleCenter.getY();
+            double c = startPoint.getX() * startPoint.getX() - 2 * startPoint.getX() * circleCenter.getX()
+            + circleCenter.getX() * circleCenter.getX() + circleCenter.getY() * circleCenter.getY() - R*R;
+
+            double D = b * b - 4 * a * c;
+            if (D < 0)
+                return false;
+            double y1 = (-b - Math.sqrt(D)) / (2 * a);
+            double y2 = (-b + Math.sqrt(D)) / (2 * a);
+            if (y1 > Math.max(startPoint.getY(), endPoint.getY()) ||
+                    y2 < Math.min(startPoint.getY(), endPoint.getY()))
+                return false;
+            else
                 return true;
-            return false;
         }
 
         double A = Math.tan(angle);
@@ -71,9 +87,6 @@ public class Geometry {
             return false;
         double x1 = (-b - Math.sqrt(D)) / (2 * a);
         double x2 = (-b + Math.sqrt(D)) / (2 * a);
-
-        double y1 = A * x1 + B;
-        double y2 = A * x2 + B;
 
         if (x1 > Math.max(startPoint.getX(), endPoint.getX()) || x2 < Math.min(startPoint.getX(), endPoint.getX()))
             return false;

@@ -7,6 +7,8 @@ import ru.nsu.fit.oop.game.model.entity.game_object.shell.Shell;
 
 import javax.swing.*;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Weapon implements Entity {
 
@@ -35,14 +37,16 @@ public abstract class Weapon implements Entity {
         cooldown.start();
     }
 
-    public Shell use(double angle, double radius, double x, double y) throws ShellInstantiationException {
+    public List<Shell> use(double angle, double radius, double x, double y) throws ShellInstantiationException {
         if (false == isReadyToBeUsed)
             return null;
         isReadyToBeUsed = false;
         cooldown.restart();
+        List<Shell> shells = new ArrayList<>();
         try {
-            return constructor.newInstance(angle, Math.cos(angle) * (radius + shellRadius) + x,
-                    Math.sin(angle) * (radius + shellRadius) + y);
+            shells.add(constructor.newInstance(angle, Math.cos(angle) * (radius + shellRadius) + x,
+                    Math.sin(angle) * (radius + shellRadius) + y));
+            return shells;
         } catch (Exception e) {
             throw new ShellInstantiationException(this.getClass().getName(), shellName, e);
         }

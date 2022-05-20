@@ -117,14 +117,16 @@ public class GameField extends JComponent {
                                 gameObjectsInfo.getHero().getY()));
             }
             /*g2d.setStroke(new BasicStroke((float) gameObjectsInfo.getWallThickness(i)));
-            g2d.draw(new Line2D.Double(gameObjectsInfo.getWallStartPoint(i).getX() +
-                    windowSizeX / 2 - gameObjectsInfo.getHero().getX(),
+            Rectangle2D.Double wallRect = new Rectangle2D.Double(
+                    gameObjectsInfo.getWallStartPoint(i).getX() + windowSizeX / 2 -
+                            gameObjectsInfo.getHero().getX(),
                     gameObjectsInfo.getWallStartPoint(i).getY() + windowSizeY / 2 -
                             gameObjectsInfo.getHero().getY(),
                     gameObjectsInfo.getWallEndPoint(i).getX() + windowSizeX / 2 -
                             gameObjectsInfo.getHero().getX(),
                     gameObjectsInfo.getWallEndPoint(i).getY() + windowSizeY / 2 -
-                            gameObjectsInfo.getHero().getY()));*/
+                            gameObjectsInfo.getHero().getY());
+            g2d.draw(wallRect);*/
         }
     }
 

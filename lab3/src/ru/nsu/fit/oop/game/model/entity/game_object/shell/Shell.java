@@ -1,6 +1,5 @@
 package ru.nsu.fit.oop.game.model.entity.game_object.shell;
 
-import ru.nsu.fit.oop.game.model.entity.weapon.Damage;
 import ru.nsu.fit.oop.game.model.entity.game_object.GameObject;
 
 public class Shell extends GameObject {

@@ -3,7 +3,7 @@ package ru.nsu.fit.oop.game.model.entity.game_object.unit;
 import ru.nsu.fit.oop.game.exception.model.UnableToUseWeaponException;
 import ru.nsu.fit.oop.game.exception.model.shell.ShellInstantiationException;
 import ru.nsu.fit.oop.game.model.ability.Abilitiy;
-import ru.nsu.fit.oop.game.model.entity.weapon.Damage;
+import ru.nsu.fit.oop.game.model.entity.game_object.shell.Damage;
 import ru.nsu.fit.oop.game.model.entity.game_object.GameObject;
 import ru.nsu.fit.oop.game.model.entity.game_object.shell.Shell;
 import ru.nsu.fit.oop.game.model.entity.weapon.Weapon;
@@ -75,7 +75,7 @@ public abstract class Unit extends GameObject {
             shield = 0;
     }
 
-    public Shell useWeapon(double angle) throws UnableToUseWeaponException {
+    public List<Shell> useWeapon(double angle) throws UnableToUseWeaponException {
         try {
             return weapons.get(currentWeaponNumber).use(angle, getRadius(),getX(),getY());
         } catch (ShellInstantiationException e) {
@@ -89,9 +89,15 @@ public abstract class Unit extends GameObject {
     }
 
     public void takeDamage(Damage damage, double angle) {
-        changeHealth(-damage.getHealthDamage());
+        if (0 == armor && 0 == shield)
+            changeHealth(-damage.getHealthDamageWithoutProtection());
+        else
+            changeHealth(-damage.getHealthDamageWithProtection());
+        if (0 == shield)
+            changeArmor(-damage.getArmorDamageWithoutShield());
+        else
+            changeArmor(-damage.getArmorDamageWithShield());
         changeShield(-damage.getShieldDamage());
-        changeArmor(-damage.getArmorDamage());
         move(angle,damage.getImpact());
     }
 

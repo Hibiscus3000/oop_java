@@ -1,7 +1,7 @@
 package ru.nsu.fit.oop.game.model.entity.game_object.wall;
 
 import ru.nsu.fit.oop.game.model.entity.game_object.GameObject;
-import ru.nsu.fit.oop.game.model.entity.weapon.Damage;
+import ru.nsu.fit.oop.game.model.entity.game_object.shell.Damage;
 
 import java.awt.geom.Point2D;
 
@@ -51,7 +51,7 @@ public class WallPart extends GameObject {
 
     @Override
     public void takeDamage(Damage damage,double angle) {
-        absorbedDamage += damage.getArmorDamage();
+        absorbedDamage += damage.getArmorDamageWithoutShield();
     }
 
     public int getAbsorbedDamage() {

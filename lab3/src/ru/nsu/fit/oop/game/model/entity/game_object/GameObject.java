@@ -1,7 +1,7 @@
 package ru.nsu.fit.oop.game.model.entity.game_object;
 
 import ru.nsu.fit.oop.game.model.entity.Entity;
-import ru.nsu.fit.oop.game.model.entity.weapon.Damage;
+import ru.nsu.fit.oop.game.model.entity.game_object.shell.Damage;
 
 import java.awt.geom.Point2D;
 

@@ -26,8 +26,10 @@ public class GameObjectsInfo {
         this.enemies = enemies;
     }
 
-    public void addShell(Shell shell) {
-        shells.add(shell);
+    public void addShells(List<Shell> shells) {
+        for (Shell shell : shells) {
+            this.shells.add(shell);
+        }
     }
 
     public void removeShell(int i) {
