@@ -67,6 +67,9 @@ public class GameWalls {
         return walls.get(index).getAngle();
     }
 
+    public boolean getIsLowerPart(int index, int partIndex) {
+        return walls.get(index).getIsLowerPart(partIndex);
+    }
 
     public double getWallPartAngle(int index, int partIndex) {
         return walls.get(index).getWallPartAngle(partIndex);

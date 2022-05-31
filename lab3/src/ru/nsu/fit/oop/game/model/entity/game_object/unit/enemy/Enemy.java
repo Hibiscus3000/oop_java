@@ -23,9 +23,12 @@ public abstract class Enemy extends Unit {
     protected boolean movedOnFrame;
 
     protected Enemy(String name, int radius, double speed, double preferredDistance, double saveDistance,
-                    double aggressionRange, int lives, int health, int armor, int shield, String weaponName)
+                    double aggressionRange, int lives, int health, int armor, int shield, String weaponName,
+            int healthRegenMillis, int armorRegenMillis,int shieldRegenMillis, int healthRegen,int armorRegen,
+                    int shieldRegen)
             throws FactoryException {
-        super(name, radius, speed, lives, health, armor, shield);
+        super(name, radius, speed, lives, health, armor, shield,healthRegenMillis, armorRegenMillis, shieldRegenMillis,
+                healthRegen, armorRegen, shieldRegen);
         squaredAggressionRange = aggressionRange * aggressionRange;
         this.preferredDistance = preferredDistance;
         defaultPreferredDistance = preferredDistance;
@@ -33,25 +36,18 @@ public abstract class Enemy extends Unit {
         weapons.add((Weapon) WeaponFactory.getInstance().getEntity(weaponName));
     }
 
-    protected Enemy(String name, int radius, double speed, double preferredDistance, double saveDistance,
-                    double aggressionRange, int lives, int health, int armor, int shield) {
-        super(name, radius, speed, lives, health, armor, shield);
-        squaredAggressionRange = aggressionRange * aggressionRange;
-        this.preferredDistance = preferredDistance;
-        defaultPreferredDistance = preferredDistance;
-        this.saveDistance = saveDistance;
-    }
-
     public EnemyFrameProduction enemyFrameTurn(GameObjectsInfo gameObjectsInfo) throws UnableToUseWeaponException {
         if (getSquaredRelativeDistance(this.getCoords(), gameObjectsInfo.getHero().getCoords()) >
                 squaredAggressionRange)
             return null;
+        movedOnFrame = false;
         double heroRelativeAngle = getRelativeAngle(this.getCoords(), gameObjectsInfo.getHero().getCoords());
         dodge(gameObjectsInfo.getShells());
-        if (true != movedOnFrame) {
-            if (true == handleWalls(gameObjectsInfo, heroRelativeAngle))
+        if (!movedOnFrame) {
+            if (handleWalls(gameObjectsInfo, heroRelativeAngle))
                 return null;
-            saveDistance(heroRelativeAngle,gameObjectsInfo.getHero(),gameObjectsInfo.getShells());
+            if (!(movedOnFrame = handleEnemies(gameObjectsInfo)))
+                saveDistance(heroRelativeAngle, gameObjectsInfo.getHero(), gameObjectsInfo.getShells());
         }
         EnemyFrameProduction enemyFrameProduction = new EnemyFrameProduction();
         if (weapons.get(currentWeaponNumber).getIsReadyToUseStatus())
@@ -59,29 +55,50 @@ public abstract class Enemy extends Unit {
         return enemyFrameProduction;
     }
 
+    private boolean handleEnemies(GameObjectsInfo gameObjectsInfo) {
+        for (Enemy enemy : gameObjectsInfo.getEnemies())
+            if ((enemy != this) && (getSquaredRelativeDistance(getCoords(), enemy.getCoords()) < 10000)) {
+                move(getRelativeAngle(getCoords(), enemy.getCoords()) + Math.PI);
+                handleAfterMovementCollisionsWithShells(gameObjectsInfo.getShells(), -1);
+                return true;
+            }
+        return false;
+    }
+
     private boolean handleWalls(GameObjectsInfo gameObjectsInfo, double heroRelativeAngle) {
         for (int i = 0; i < gameObjectsInfo.getWallsNumber(); ++i) {
             for (int j = 0; j < 4; ++j) {
-                if (true == twoLinePartsIntersect(gameObjectsInfo.getHero().getCoords(), this.getCoords(), heroRelativeAngle,
+                /*if ((inWallPartRectangle(gameObjectsInfo.getWallPart(i, j), this)) && (twoLinePartsIntersect(gameObjectsInfo.getHero().getCoords(),
+                        new Point2D.Double(x + radius * Math.cos(heroRelativeAngle), y + radius * Math.sin(heroRelativeAngle)), heroRelativeAngle,
                         gameObjectsInfo.getWallPartStartPoint(i, j), gameObjectsInfo.getWallPartEndPoint(i, j),
-                        gameObjectsInfo.getWallAngle(i))) {
-                    double distBetweenWallAndEnemy = getDistanceBetweenWallAndGameObjectCenter(gameObjectsInfo.getWallPart(i, j),
-                            this);
-                    if (distBetweenWallAndEnemy > size + speed + radius) {
-                        move(heroRelativeAngle);
+                        gameObjectsInfo.getWallPartAngle(i, j)) || twoLinePartsIntersect(gameObjectsInfo.getHero().getCoords(),
+                        new Point2D.Double(x + radius * Math.cos(heroRelativeAngle + Math.PI), y + radius * Math.sin(heroRelativeAngle + Math.PI)),
+                        heroRelativeAngle, gameObjectsInfo.getWallPartStartPoint(i, j), gameObjectsInfo.getWallPartEndPoint(i, j), gameObjectsInfo.getWallPartAngle(i, j))
+                || twoLinePartsIntersect(gameObjectsInfo.getHero().getCoords(), getCoords(), heroRelativeAngle, gameObjectsInfo.getWallPartStartPoint(i, j),
+                        gameObjectsInfo.getWallPartEndPoint(i, j), gameObjectsInfo.getWallPartAngle(i, j)))) {
+                    System.out.println(j);
+                    if (!twoLinePartsIntersect(this.getCoords(), new Point2D.Double(x + Math.cos(gameObjectsInfo.getWallPartNormalAngle(i, j) + Math.PI) * (size + speed + radius),
+                                    y + Math.sin(gameObjectsInfo.getWallPartNormalAngle(i, j) + Math.PI) * (size + speed + radius)), gameObjectsInfo.getWallPartNormalAngle(i, j) + Math.PI,
+                            gameObjectsInfo.getWallPartStartPoint(i, j), gameObjectsInfo.getWallPartEndPoint(i, j), gameObjectsInfo.getWallPartAngle(i, j))) {
+                        move(gameObjectsInfo.getWallPartNormalAngle(i,j) + Math.PI);
                         return true;
-                    } else if (distBetweenWallAndEnemy < size) {
-                        move(heroRelativeAngle + Math.PI);
+                    } else if (twoLinePartsIntersect(this.getCoords(), new Point2D.Double(x + Math.cos(gameObjectsInfo.getWallPartNormalAngle(i, j) + Math.PI) *
+                                    size, y + Math.sin(gameObjectsInfo.getWallPartNormalAngle(i, j) + Math.PI) * size), gameObjectsInfo.getWallPartNormalAngle(i, j) + Math.PI, gameObjectsInfo.getWallPartStartPoint(i, j),
+                            gameObjectsInfo.getWallPartEndPoint(i, j), gameObjectsInfo.getWallPartAngle(i, j))) {
+                        move(gameObjectsInfo.getWallPartNormalAngle(i,j));
                         return true;
                     }
                     move(getRelativeDistance(this.getCoords(), gameObjectsInfo.getWallPartEndPoint(i, j)) +
                             getRelativeDistance(gameObjectsInfo.getWallPartEndPoint(i, j), gameObjectsInfo.getHero().getCoords()) <
                             getRelativeDistance(this.getCoords(), gameObjectsInfo.getWallPartStartPoint(i, j)) +
                                     getRelativeDistance(gameObjectsInfo.getWallPartStartPoint(i, j), gameObjectsInfo.getHero().getCoords())
-                            ? gameObjectsInfo.getWallAngle(i) : gameObjectsInfo.getWallAngle(i) + Math.PI);
-                    handleAfterMovementCollisionsWithShells(gameObjectsInfo.getShells(),-1);
+                            ? gameObjectsInfo.getWallPartAngle(i,j) : gameObjectsInfo.getWallPartAngle(i,j) + Math.PI);
+                    handleAfterMovementCollisionsWithShells(gameObjectsInfo.getShells(), -1);
                     return true;
-                }
+            }*/
+                if (twoLinePartsIntersect(gameObjectsInfo.getHero().getCoords(), getCoords(), heroRelativeAngle, gameObjectsInfo.getWallPartStartPoint(i, j),
+                        gameObjectsInfo.getWallPartEndPoint(i, j), gameObjectsInfo.getWallPartAngle(i, j)))
+                    return true;
             }
         }
         return false;
@@ -97,7 +114,7 @@ public abstract class Enemy extends Unit {
             if (shell.getAngle() * shellRelativeAngle <= 0 && Math.pow(Math.sin(shell.getAngle() - shellRelativeAngle), 2)
                     < Math.pow(getRadius() + shell.getRadius(), 2) / (Math.pow(getX() - shell.getX(), 2) +
                     Math.pow(getY() - shell.getY(), 2))) {
-                squaredRelativeDistance = getSquaredRelativeDistance(shell.getCoords(),this.getCoords());
+                squaredRelativeDistance = getSquaredRelativeDistance(shell.getCoords(), this.getCoords());
                 if (squaredRelativeDistance < min || -1 == min) {
                     shellToDodge = shell;
                     min = squaredRelativeDistance;
@@ -106,14 +123,14 @@ public abstract class Enemy extends Unit {
         }
         if (null != shellToDodge) {
             double shellRelativeAngle = getRelativeAngle(this.getCoords(), shellToDodge.getCoords());
-            if (Math.sin(shellToDodge.getAngle() - shellRelativeAngle) < 0)
-                dodgeAngle = -Math.PI / 2;
-            else
-                dodgeAngle = Math.PI / 2;
+            //if (Math.sin(shellToDodge.getAngle() - shellRelativeAngle) < 0)
+            dodgeAngle = -Math.PI / 2;
+            //else
+            //    dodgeAngle = Math.PI / 2;
             prevAngle = angle;
             move(shellToDodge.getAngle() + dodgeAngle);
             movedOnFrame = true;
-            handleAfterMovementCollisionsWithShells(shells,min);
+            //handleAfterMovementCollisionsWithShells(shells,min);
         }
     }
 
@@ -124,7 +141,7 @@ public abstract class Enemy extends Unit {
             if (shell.getAngle() * shellRelativeAngle <= 0 && Math.pow(Math.sin(shell.getAngle() - shellRelativeAngle), 2)
                     < Math.pow(getRadius() + shell.getRadius(), 2) / (Math.pow(getX() - shell.getX(), 2) +
                     Math.pow(getY() - shell.getY(), 2))) {
-                squaredRelativeDistance = getSquaredRelativeDistance(shell.getCoords(),this.getCoords());
+                squaredRelativeDistance = getSquaredRelativeDistance(shell.getCoords(), this.getCoords());
                 if (squaredRelativeDistance < min || -1 == min) {
                     move(angle + Math.PI);
                     angle = prevAngle;
@@ -146,6 +163,6 @@ public abstract class Enemy extends Unit {
         } else if (Math.pow(hero.getX() - getX(), 2) + Math.pow(hero.getY() - getY(), 2) <
                 Math.pow(preferredDistance + getRadius() + hero.getRadius(), 2))
             move(heroRelativeAngle + Math.PI);
-        handleAfterMovementCollisionsWithShells(shells,-1);
+        handleAfterMovementCollisionsWithShells(shells, -1);
     }
 }

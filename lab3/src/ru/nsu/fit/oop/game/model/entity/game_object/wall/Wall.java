@@ -35,19 +35,19 @@ public class Wall extends GameObject {
         wallParts[0] = new WallPart(number,startX + thickness / 2 * Math.cos(Math.PI / 2 - angle),
                 startY - thickness / 2 * Math.sin(Math.PI / 2 - angle),
                 endX + thickness / 2 * Math.cos(Math.PI / 2 - angle),
-                endY - thickness / 2 * Math.sin(Math.PI / 2 - angle));
+                endY - thickness / 2 * Math.sin(Math.PI / 2 - angle),true);
         wallParts[1] = new WallPart(number,startX - thickness / 2 * Math.cos(Math.PI / 2 - angle),
                 startY + thickness / 2 * Math.sin(Math.PI / 2 - angle),
                 endX - thickness / 2 * Math.cos(Math.PI / 2 - angle),
-                endY + thickness / 2 * Math.sin(Math.PI / 2 - angle));
+                endY + thickness / 2 * Math.sin(Math.PI / 2 - angle), false);
         wallParts[2] = new WallPart(number,startX + thickness / 2 * Math.cos(Math.PI / 2 - angle),
                 startY - thickness / 2 * Math.sin(Math.PI / 2 - angle),
                 startX - thickness / 2 * Math.cos(Math.PI / 2 - angle),
-                startY + thickness / 2 * Math.sin(Math.PI / 2 - angle));
+                startY + thickness / 2 * Math.sin(Math.PI / 2 - angle), true);
         wallParts[3] = new WallPart(number,endX + thickness / 2 * Math.cos(Math.PI / 2 - angle),
                 endY - thickness / 2 * Math.sin(Math.PI / 2 - angle),
                 endX - thickness / 2 * Math.cos(Math.PI / 2 - angle),
-                endY + thickness / 2 * Math.sin(Math.PI / 2 - angle));
+                endY + thickness / 2 * Math.sin(Math.PI / 2 - angle), false);
     }
 
     public void countAbsorbedDamage() {
@@ -85,6 +85,10 @@ public class Wall extends GameObject {
 
     public double getWallPartNormalAngle(int i) {
         return wallParts[i].getNormalAngle();
+    }
+
+    public boolean getIsLowerPart(int i) {
+        return wallParts[i].getIsLowerPart();
     }
 
     public int getWallNumber() {

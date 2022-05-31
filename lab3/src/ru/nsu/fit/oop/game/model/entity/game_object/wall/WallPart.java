@@ -12,9 +12,11 @@ public class WallPart extends GameObject {
     private final double endY;
     private final double normalAngle;
     private int absorbedDamage;
+    private boolean isLowerPart;
 
-    public WallPart(int parentWallNumber,double startX, double startY, double endX, double endY) {
+    public WallPart(int parentWallNumber, double startX, double startY, double endX, double endY, boolean isLowerPart) {
         super("wall", 0, 0);
+        this.isLowerPart = isLowerPart;
         this.parentWallNumber = parentWallNumber;
         this.setCoords((startY > endY) ? endX : startX, (startY > endY) ? endY : startY);
         this.endX = (startY > endY) ? startX : endX;
@@ -23,14 +25,16 @@ public class WallPart extends GameObject {
         double y = this.endY - getY();
         if (0 == x) {
             angle = Math.PI / 2;
-        }
-        else if (x > 0) {
+        } else if (x > 0) {
             angle = Math.atan(y / x);
         } else if (y > 0) {
             angle = Math.PI + Math.atan(y / x);
         } else
             angle = 0;
-        normalAngle = angle - Math.PI / 2;
+        if (true == isLowerPart)
+            normalAngle = angle + Math.PI / 2;
+        else
+            normalAngle = angle - Math.PI / 2;
     }
 
     public Point2D.Double getStartPoint() {
@@ -49,8 +53,12 @@ public class WallPart extends GameObject {
         return parentWallNumber;
     }
 
+    public boolean getIsLowerPart() {
+        return isLowerPart;
+    }
+
     @Override
-    public void takeDamage(Damage damage,double angle) {
+    public void takeDamage(Damage damage, double angle) {
         absorbedDamage += damage.getArmorDamageWithoutShield();
     }
 

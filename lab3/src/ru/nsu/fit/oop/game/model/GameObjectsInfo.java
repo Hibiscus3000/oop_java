@@ -92,6 +92,10 @@ public class GameObjectsInfo {
         return gameWalls.getWallPartEndPoint(index,partIndex);
     }
 
+    public boolean getIsLowerPart(int index, int partIndex) {
+        return gameWalls.getIsLowerPart(index,partIndex);
+    }
+
     public Wall getWall(int index) {
         return gameWalls.getWall(index);
     }

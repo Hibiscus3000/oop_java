@@ -19,6 +19,7 @@ public class View  extends JFrame implements Observer {
     private Model model;
     private StartupMenu startupMenu;
     private GameField gameField;
+    private GameInfo gameInfo;
 
     private class StartupMenu extends JPanel {
 
@@ -29,6 +30,7 @@ public class View  extends JFrame implements Observer {
             addButton("RECORDS", null);
             addButton("CREDITS", null);
             addButton("EXIT", new ExitAction());
+            pack();
         }
 
         private void addButton(String label, ActionListener listener) {
@@ -62,10 +64,10 @@ public class View  extends JFrame implements Observer {
         windowSizeY = (int)(2 * toolkit.getScreenSize().getHeight()) / 3;
         fieldSizeX = 1200;
         fieldSizeY = 800;
-        Dimension size = new Dimension(windowSizeX,windowSizeY );
-        setPreferredSize(size);
         startupMenu = new StartupMenu();
         add(startupMenu);
+        Dimension size = new Dimension(3 * windowSizeX / 4,3 * windowSizeY / 4);
+        setMinimumSize(size);
         setResizable(false);
         setVisible(true);
         getContentPane().setBackground(new Color(30,150,10));
@@ -95,8 +97,13 @@ public class View  extends JFrame implements Observer {
 
     private void initGame(String name) {
         model = new Model(this,fieldSizeX,fieldSizeY);
+        setLayout(new BorderLayout());
         gameField = new GameField(windowSizeX, windowSizeY, model);
-        add(gameField);
+        gameInfo = new GameInfo(windowSizeY);
+        add(gameInfo,BorderLayout.EAST);
+        add(gameField,BorderLayout.WEST);
+        pack();
+        setLocationRelativeTo(null);
         model.initGame(name);
         getContentPane().setBackground(new Color(180,180,180));
         add(new HeroMover(model));
@@ -106,5 +113,6 @@ public class View  extends JFrame implements Observer {
     public void update(Observable o, Object arg) {
         gameField.setGameObjectsInfo(model.getGameObjectsInfo());
         gameField.repaint();
+        gameInfo.repaint();
     }
 }

@@ -7,6 +7,21 @@ import java.awt.geom.Point2D;
 
 public class Geometry {
 
+    public static boolean inWallPartRectangle(WallPart wallPart, GameObject gameObject) {
+        if (gameObject.getY() + gameObject.getRadius() < wallPart.getStartPoint().getY())
+            return false;
+        if (gameObject.getY() - gameObject.getRadius() > wallPart.getEndPoint().getY())
+            return false;
+        if (wallPart.getIsLowerPart() && gameObject.getX() > Math.max(wallPart.getStartPoint().getX(),
+                wallPart.getEndPoint().getX()))
+            return false;
+        if (wallPart.getIsLowerPart() && gameObject.getX() < Math.min(wallPart.getStartPoint().getX(),
+                wallPart.getEndPoint().getX()))
+            return false;
+        System.out.println("true");
+        return true;
+    }
+
     public static double getDistanceBetweenWallAndGameObjectCenter(WallPart wallPart, GameObject gameObject) {
         double xMax = (wallPart.getEndPoint().getX() > wallPart.getX())
                 ? wallPart.getEndPoint().getX() : wallPart.getStartPoint().getX();
@@ -36,7 +51,7 @@ public class Geometry {
             if (y > 0)
                 angle = Math.PI / 2;
             else
-                angle = Math.PI / 2;
+                angle = -Math.PI / 2;
         } else if (x > 0) {
             angle = Math.atan(y / x);
         } else if (y >= 0) {

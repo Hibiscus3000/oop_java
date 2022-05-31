@@ -23,6 +23,7 @@ public class GameField extends JComponent {
     private final int windowSizeX;
     private final int windowSizeY;
     private GameObjectsInfo gameObjectsInfo;
+    private BasicStroke borderStroke = new BasicStroke(10.0f);
     private BasicStroke basicStroke = new BasicStroke(2.0f);
     private Font font = new Font("SansSerif", Font.BOLD, 14);
     private Font statisticsFont = new Font("SansSerif", Font.BOLD,18);
@@ -34,6 +35,7 @@ public class GameField extends JComponent {
         this.windowSizeY = windowSizeY;
         this.model = model;
         addMouseListener(new MouseHandler());
+        setPreferredSize(new Dimension(windowSizeX,windowSizeY));
         addMouseMotionListener(new MouseMotionHandler());
     }
 
@@ -73,6 +75,11 @@ public class GameField extends JComponent {
     public void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         super.paintComponent(g);
+        g2d.setStroke(borderStroke);
+        g2d.drawLine(0,0,windowSizeX,0);
+        g2d.drawLine(windowSizeX,0,windowSizeX,windowSizeY);
+        g2d.drawLine(0,0,0, windowSizeY);
+        g2d.drawLine(0,windowSizeY,windowSizeX,windowSizeY);
         if (null == gameObjectsInfo)
             return;
         g2d.setFont(font);
