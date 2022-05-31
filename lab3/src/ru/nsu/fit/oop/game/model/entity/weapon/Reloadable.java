@@ -12,8 +12,8 @@ public abstract class Reloadable extends Weapon{
     Timer reloadTimer;
 
     protected Reloadable(int cooldownTimeMillis, int reloadTimeMillis, int magazineCapacity,
-                         String shellName) throws ShellNotFoundException {
-        super(cooldownTimeMillis, shellName);
+                         String shellName,String name) throws ShellNotFoundException {
+        super(cooldownTimeMillis, shellName,name);
         this.magazineCapacity = magazineCapacity;
         ammo = magazineCapacity;
         reloadTimer = new Timer(reloadTimeMillis,null);

@@ -148,16 +148,32 @@ public abstract class Unit extends GameObject {
         move(angle,damage.getImpact());
     }
 
-    public String getName() {
-        return name;
-    }
-
     public int getHealth() {
         return health;
     }
 
     public int getMaxHealth() {
         return maxHealth;
+    }
+
+    public int getArmor() {
+        return armor;
+    }
+
+    public int getMaxArmor() {
+        return maxArmor;
+    }
+
+    public int getShield() {
+        return shield;
+    }
+
+    public int getMaxShield() {
+        return maxShield;
+    }
+
+    public int getNumberOfLives() {
+        return lives;
     }
 
     public int getCurrentWeaponNumber() {

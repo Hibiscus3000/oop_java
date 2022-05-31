@@ -18,29 +18,40 @@ public class Model extends Observable {
     private final int fieldSizeX;
     private final int fieldSizeY;
     private Radix radix;
-    private Timer fieldUpdateTimer;
-    private Timer rest;
+    private final Timer fieldUpdateTimer;
+    private final Timer rest;
     private GameObjectsInfo gameObjectsInfo;
+    private boolean victory = false;
 
-    public Model(View view, int fieldSizeX, int fieldSizeY) {
+    public Model(View view, int fieldSizeX, int fieldSizeY,String name) {
         addObserver(view);
         this.fieldSizeX = fieldSizeX;
         this.fieldSizeY = fieldSizeY;
+        try {
+            Hero hero = new Hero(name);
+            GameWalls gameWalls = new GameWalls(fieldSizeX, fieldSizeY);
+            gameObjectsInfo = new GameObjectsInfo(hero,gameWalls);
+            gameObjectsInfo.setWaveNumber(0);
+            radix = new Radix(fieldSizeX, fieldSizeY,gameObjectsInfo);
+        } catch (ModelException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
         rest = new Timer(3500, null);
         fieldUpdateTimer = new Timer(20, null);
         fieldUpdateTimer.addActionListener(e -> {
             radix.updateGameField();
-            if ((false == rest.isRunning()) && (0 == gameObjectsInfo.getNumberOfEnemies()))
+            if ((!rest.isRunning()) && (0 == gameObjectsInfo.getNumberOfEnemies())) {
                 rest.restart();
-            if (false == radix.getHeroInGameStatus())
-                System.exit(1);
+                gameObjectsInfo.setWaveNumber(gameObjectsInfo.getWaveNumber() + 1);
+            }
             setChanged();
             notifyObservers();
             clearChanged();
         });
     }
 
-    public void initGame(String name) {
+    public void initGame() {
         rest.addActionListener(e -> {
             try {
                 rest.stop();
@@ -48,23 +59,14 @@ public class Model extends Observable {
                 if (null != enemies)
                     radix.setEnemies(enemies);
                 else
-                    System.exit(0);
+                    victory = true;
             } catch (FactoryException ex) {
                 ex.printStackTrace();
                 System.exit(1);
             }
         });
-        rest.start();
-        try {
-            Hero hero = new Hero(name);
-            GameWalls gameWalls = new GameWalls(fieldSizeX, fieldSizeY);
-            gameObjectsInfo = new GameObjectsInfo(hero,gameWalls);
-            radix = new Radix(fieldSizeX, fieldSizeY,gameObjectsInfo);
-        } catch (ModelException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
         fieldUpdateTimer.start();
+        rest.start();
     }
 
     public Point2D.Double getHeroCoords() {
@@ -93,5 +95,9 @@ public class Model extends Observable {
 
     public GameObjectsInfo getGameObjectsInfo() {
         return gameObjectsInfo;
+    }
+
+    public boolean getVictory() {
+        return victory;
     }
 }

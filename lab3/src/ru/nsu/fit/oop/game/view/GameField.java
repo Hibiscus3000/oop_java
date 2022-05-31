@@ -2,6 +2,7 @@ package ru.nsu.fit.oop.game.view;
 
 import ru.nsu.fit.oop.game.model.GameObjectsInfo;
 import ru.nsu.fit.oop.game.model.Model;
+import ru.nsu.fit.oop.game.model.entity.game_object.GameObject;
 import ru.nsu.fit.oop.game.model.entity.game_object.shell.Shell;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Unit;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy.Enemy;
@@ -67,10 +68,6 @@ public class GameField extends JComponent {
         }
     }
 
-    public void setGameObjectsInfo(GameObjectsInfo gameObjectsInfo) {
-        this.gameObjectsInfo = gameObjectsInfo;
-    }
-
     @Override
     public void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
@@ -90,11 +87,6 @@ public class GameField extends JComponent {
         drawEnemies(g2d,context);
         drawHero(g2d,context);
         g2d.setColor(Color.RED);
-        g2d.setFont(statisticsFont);
-        String health = new String("Health: " + gameObjectsInfo.getHero().getHealth() + '/' +
-                gameObjectsInfo.getHero().getMaxHealth());
-        g2d.drawString(health,20,20);
-        g2d.setFont(font);
     }
 
     private void drawHero(Graphics2D g2d, FontRenderContext context) {
@@ -202,5 +194,7 @@ public class GameField extends JComponent {
     public Dimension getPreferredSize() {
         return new Dimension(windowSizeX, windowSizeY);
     }
+
+    public void setGameObjectsInfo(GameObjectsInfo gameObjectsInfo) { this.gameObjectsInfo = gameObjectsInfo;}
 
 }

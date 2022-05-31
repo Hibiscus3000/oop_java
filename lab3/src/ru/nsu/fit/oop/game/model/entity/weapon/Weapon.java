@@ -17,9 +17,11 @@ public abstract class Weapon implements Entity {
     protected String shellName;
     protected Constructor<Shell> constructor;
     protected final int shellRadius;
+    protected String name;
 
-    protected Weapon(int cooldownTimeMillis, String shellName) throws ShellNotFoundException {
+    protected Weapon(int cooldownTimeMillis, String shellName, String name) throws ShellNotFoundException {
         try {
+            this.name = name;
             this.shellName = shellName;
             var opClass = Class.forName(shellName);
             constructor = (Constructor<Shell>) opClass.getDeclaredConstructor(Double.class,
@@ -50,6 +52,10 @@ public abstract class Weapon implements Entity {
         } catch (Exception e) {
             throw new ShellInstantiationException(this.getClass().getName(), shellName, e);
         }
+    }
+
+    public String getName() {
+        return name;
     }
 
     public boolean getIsReadyToUseStatus() {

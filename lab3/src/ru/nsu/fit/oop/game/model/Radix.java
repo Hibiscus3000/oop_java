@@ -7,7 +7,6 @@ import ru.nsu.fit.oop.game.model.entity.game_object.shell.Shell;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.Unit;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy.Enemy;
 import ru.nsu.fit.oop.game.model.entity.game_object.unit.enemy.EnemyFrameProduction;
-import ru.nsu.fit.oop.game.model.entity.game_object.wall.Wall;
 import ru.nsu.fit.oop.game.model.entity.game_object.wall.WallPart;
 
 import java.awt.*;

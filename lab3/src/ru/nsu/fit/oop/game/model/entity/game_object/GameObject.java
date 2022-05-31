@@ -62,6 +62,11 @@ public abstract class GameObject implements Entity {
         this.y = y;
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
+
     public void setAngle(double angle) {
         this.angle = angle;
     }

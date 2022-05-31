@@ -5,6 +5,6 @@ import ru.nsu.fit.oop.game.model.entity.weapon.Weapon;
 
 public class Bow extends Weapon {
     protected Bow() throws ShellNotFoundException {
-        super(1300, "ru.nsu.fit.oop.game.model.entity.game_object.shell.Arrow");
+        super(1300, "ru.nsu.fit.oop.game.model.entity.game_object.shell.Arrow","Bow");
     }
 }

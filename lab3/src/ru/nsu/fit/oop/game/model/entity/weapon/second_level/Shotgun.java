@@ -12,7 +12,7 @@ public class Shotgun extends Reloadable {
 
     public Shotgun() throws ShellNotFoundException {
         super(1000,2000,8,
-                "ru.nsu.fit.oop.game.model.entity.game_object.shell.ShotgunBullet");
+                "ru.nsu.fit.oop.game.model.entity.game_object.shell.ShotgunBullet","Bow");
     }
 
     @Override

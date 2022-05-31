@@ -17,6 +17,8 @@ public class GameObjectsInfo {
     private List<Enemy> enemies;
     private volatile Hero hero;
     private GameWalls gameWalls;
+    private int waveNumber;
+    private int numberOfEnemies;
     public GameObjectsInfo(Hero hero, GameWalls gameWalls) {
         this.hero = hero;
         this.gameWalls = gameWalls;
@@ -57,6 +59,8 @@ public class GameObjectsInfo {
     }
 
     public int getNumberOfEnemies() {
+        if (null == enemies)
+            return 0;
         return enemies.size();
     }
 
@@ -110,5 +114,13 @@ public class GameObjectsInfo {
 
     public double getWallPartAngle(int index, int partIndex) {
         return gameWalls.getWallPartAngle(index,partIndex);
+    }
+
+    public int getWaveNumber() {
+        return waveNumber;
+    }
+
+    public void setWaveNumber(int waveNumber) {
+        this.waveNumber = waveNumber;
     }
 }

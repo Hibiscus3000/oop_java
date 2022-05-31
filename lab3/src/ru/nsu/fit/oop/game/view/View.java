@@ -96,7 +96,7 @@ public class View  extends JFrame implements Observer {
     }
 
     private void initGame(String name) {
-        model = new Model(this,fieldSizeX,fieldSizeY);
+        model = new Model(this,fieldSizeX,fieldSizeY,name);
         setLayout(new BorderLayout());
         gameField = new GameField(windowSizeX, windowSizeY, model);
         gameInfo = new GameInfo(windowSizeY);
@@ -104,14 +104,29 @@ public class View  extends JFrame implements Observer {
         add(gameField,BorderLayout.WEST);
         pack();
         setLocationRelativeTo(null);
-        model.initGame(name);
+        model.initGame();
+        gameField.setGameObjectsInfo(model.getGameObjectsInfo());
+        gameInfo.setGameObjectsInfo(model.getGameObjectsInfo());
         getContentPane().setBackground(new Color(180,180,180));
         add(new HeroMover(model));
     }
 
     @Override
     public void update(Observable o, Object arg) {
-        gameField.setGameObjectsInfo(model.getGameObjectsInfo());
+        if (!model.getGameObjectsInfo().getHero().getInGameStatus()) {
+            gameInfo.setVisible(false);
+            gameField.setVisible(false);
+            add(new EndPanel("YOU LOST!"));
+            setLocationRelativeTo(null);
+            pack();
+        }
+        if (model.getVictory()) {
+            gameInfo.setVisible(false);
+            gameField.setVisible(false);
+            add(new EndPanel("YOU WON!"));
+            setLocationRelativeTo(null);
+            pack();
+        }
         gameField.repaint();
         gameInfo.repaint();
     }
