@@ -22,6 +22,14 @@ public class Storages {
         this.capacityAll = capacityAll;
     }
 
+    public String getGoodName() {
+        return goodName;
+    }
+
+    public int getGoodsQuantityAll() {
+        return goodsQuantityAll;
+    }
+
     public boolean isFree() {
         getLock.lock();
         try {

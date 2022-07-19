@@ -1,17 +1,14 @@
 package ru.nsu.fit.oop.lab4.goods;
 
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
-public class Factory {
+public class Factory implements Runnable{
 
     private final String goodName;
     private final int productionTimeSec;
     private final int consumptionTimeSec;
     private final int loadingTimeSec;
     private final int unloadingTimeSec;
-    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private final Storages storages;
 
     public Factory(String goodName, int productionTimeSec, int consumptionTimeSec, int loadingTimeSec,
@@ -24,16 +21,13 @@ public class Factory {
         this.unloadingTimeSec = unloadingTimeSec;
     }
 
-    public void start() {
-        executor.scheduleWithFixedDelay(() -> {
-            if (!Thread.currentThread().isInterrupted())
-                executor.shutdown();
-            try {
+    @Override
+    public void run() {
+        try {
+            while (true) {
+                Thread.sleep(productionTimeSec);
                 storages.addGood(new Good(goodName,consumptionTimeSec,loadingTimeSec,unloadingTimeSec));
-            } catch (InterruptedException e) {
-                executor.shutdown();
             }
-        },productionTimeSec,productionTimeSec, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {}
     }
-
 }
