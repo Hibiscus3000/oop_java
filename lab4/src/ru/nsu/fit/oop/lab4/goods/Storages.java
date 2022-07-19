@@ -13,8 +13,8 @@ public class Storages {
     private int goodsQuantityAll = 0;
     private final Lock addLock = new ReentrantLock();
     private final Condition addCondition = addLock.newCondition();
-    private final Lock loadLock = new ReentrantLock();
-    private final Condition loadCondition = loadLock.newCondition();
+    private final Lock getLock = new ReentrantLock();
+    private final Condition getCondition = getLock.newCondition();
 
     public Storages(String goodName, List<Storage> storages, int capacityAll) {
         this.goodName = goodName;
@@ -23,12 +23,12 @@ public class Storages {
     }
 
     public boolean isFree() {
-        loadLock.lock();
+        getLock.lock();
         try {
             return (capacityAll == goodsQuantityAll);
         }
         finally {
-            loadLock.unlock();
+            getLock.unlock();
         }
     }
 
@@ -51,22 +51,22 @@ public class Storages {
                 if (storage.isFree()) {
                     storage.addGood(good);
                     ++goodsQuantityAll;
-                    loadLock.lock();
-                    loadCondition.signalAll();
+                    getLock.lock();
+                    getCondition.signalAll();
                     break;
                 }
             }
         } finally {
-            loadLock.unlock();
+            getLock.unlock();
             addLock.unlock();
         }
     }
 
     public Good getGood() throws InterruptedException {
-        loadLock.lock();
+        getLock.lock();
         try {
             while (isEmpty())
-                loadCondition.await();
+                getCondition.await();
             for (Storage storage : storages) {
                 if (!storage.isEmpty()) {
                     --goodsQuantityAll;
@@ -78,7 +78,7 @@ public class Storages {
             addLock.lock();
             addCondition.signalAll();
             addLock.unlock();
-            loadLock.unlock();
+            getLock.unlock();
         }
     }
 }

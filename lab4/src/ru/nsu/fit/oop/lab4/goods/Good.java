@@ -7,4 +7,11 @@ public class Good {
     private int loadingTimeSec;
     private int unloadingTimeSec;
 
+    public Good(String name, int consumptionTimeSec, int loadingTimeSec, int unloadingTimeSec) {
+        this.name = name;
+        this.consumptionTimeSec = consumptionTimeSec;
+        this.loadingTimeSec = loadingTimeSec;
+        this.unloadingTimeSec = unloadingTimeSec;
+    }
+
 }
