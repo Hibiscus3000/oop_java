@@ -17,4 +17,8 @@ public class Good {
     public String getName() {
         return name;
     }
+
+    public int getConsumptionTimeSec() {
+        return consumptionTimeSec;
+    }
 }

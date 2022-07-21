@@ -30,6 +30,9 @@ public class Train implements Runnable {
         try {
             while (true) {
                 loadGoods();
+                driveDepartureDestination();
+                unloadGoods();
+                driveDestinationDeparture();
             }
         } catch (InterruptedException e) {
 
