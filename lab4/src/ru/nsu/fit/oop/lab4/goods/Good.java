@@ -3,9 +3,9 @@ package ru.nsu.fit.oop.lab4.goods;
 public class Good {
 
     private String name;
-    private int consumptionTimeSec;
-    private int loadingTimeSec;
-    private int unloadingTimeSec;
+    private final int consumptionTimeSec;
+    private final int loadingTimeSec;
+    private final int unloadingTimeSec;
 
     public Good(String name, int consumptionTimeSec, int loadingTimeSec, int unloadingTimeSec) {
         this.name = name;
@@ -14,4 +14,7 @@ public class Good {
         this.unloadingTimeSec = unloadingTimeSec;
     }
 
+    public String getName() {
+        return name;
+    }
 }

@@ -1,4 +1,4 @@
-package ru.nsu.fit.oop.lab4.station;
+package ru.nsu.fit.oop.lab4.station.tracks;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;

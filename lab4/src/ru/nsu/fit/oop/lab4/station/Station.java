@@ -1,77 +1,85 @@
 package ru.nsu.fit.oop.lab4.station;
 
+import ru.nsu.fit.oop.lab4.goods.Storages;
+import ru.nsu.fit.oop.lab4.station.tracks.LoadingTrack;
+import ru.nsu.fit.oop.lab4.station.tracks.Track;
+import ru.nsu.fit.oop.lab4.station.tracks.TrafficTrack;
+import ru.nsu.fit.oop.lab4.station.tracks.UnloadingTrack;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 public class Station {
 
     private int distance;
-    private int numberOfTracksDeparture;
-    private int numberOfTracksDestination;
+    private int numberOfLoadingTracks;
+    private int numberOfUnloadingTracks;
     private int numberOfTracksDepartureDestination;
     private int numberOfTracksDestinationDeparture;
-    private List<Track> tracksDeparture;
-    private List<Track> tracksDestination;
+    private List<Track> loadingTracks;
+    private List<Track> unloadingTracks;
     private List<Track> tracksDepartureDestination;
     private List<Track> tracksDestinationDeparture;
-    private Semaphore semTracksDeparture;
-    private Semaphore semTracksDestination;
+    private Semaphore semLoadingTracks;
+    private Semaphore semUnloadingTracks;
     private Semaphore semTracksDepartureDestination;
     private Semaphore semTracksDestinationDeparture;
 
-    public Station(int distance, int numberOfTracksDeparture, int numberOfTracksDestination,
-                   int numberOfTracksDepartureDestination, int numberOfTracksDestinationDeparture) {
+    public Station(int distance, int numberOfLoadingTracks, int numberOfUnloadingTracks,
+                   int numberOfTracksDepartureDestination, int numberOfTracksDestinationDeparture,
+                   Map<String, Storages> departureStorages, Map<String, Storages> destinationStorages) {
         this.distance = distance;
-        this.numberOfTracksDeparture = numberOfTracksDeparture;
-        this.numberOfTracksDestination = numberOfTracksDestination;
+        this.numberOfLoadingTracks = numberOfLoadingTracks;
+        this.numberOfUnloadingTracks = numberOfUnloadingTracks;
         this.numberOfTracksDepartureDestination = numberOfTracksDepartureDestination;
         this.numberOfTracksDestinationDeparture = numberOfTracksDestinationDeparture;
 
-        tracksDeparture = new ArrayList<>();
-        tracksDestination = new ArrayList<>();
+        loadingTracks = new ArrayList<>();
+        unloadingTracks = new ArrayList<>();
         tracksDepartureDestination = new ArrayList<>();
         tracksDestinationDeparture = new ArrayList<>();
 
-        for (int i = 0; i < numberOfTracksDeparture; ++i)
-            tracksDeparture.add(new Track());
-        for (int i = 0; i < numberOfTracksDestination; ++i)
-            tracksDestination.add(new Track());
+        for (int i = 0; i < numberOfLoadingTracks; ++i)
+            loadingTracks.add(new LoadingTrack(departureStorages));
+        for (int i = 0; i < numberOfUnloadingTracks; ++i)
+            unloadingTracks.add(new UnloadingTrack(destinationStorages));
         for (int i = 0; i < numberOfTracksDepartureDestination; ++i)
-            tracksDepartureDestination.add(new Track());
+            tracksDepartureDestination.add(new TrafficTrack(distance));
         for (int i = 0; i < numberOfTracksDestinationDeparture; ++i)
-            tracksDestinationDeparture.add(new Track());
+            tracksDestinationDeparture.add(new TrafficTrack(distance));
 
-        semTracksDeparture = new Semaphore(numberOfTracksDeparture);
-        semTracksDestination = new Semaphore(numberOfTracksDestination);
+        semLoadingTracks = new Semaphore(numberOfLoadingTracks);
+        semUnloadingTracks = new Semaphore(numberOfUnloadingTracks);
         semTracksDepartureDestination = new Semaphore(numberOfTracksDepartureDestination);
         semTracksDestinationDeparture = new Semaphore(numberOfTracksDestinationDeparture);
     }
 
-    public Track acquireDepartureTrack() throws InterruptedException {
-        semTracksDeparture.acquire();
-        for (Track track : tracksDeparture)
+    public Track acquireLoadingTrack() throws InterruptedException {
+        semLoadingTracks.acquire();
+        for (Track track : loadingTracks)
             if (track.tryLock())
                 return track;
         return null;
     }
 
-    public void releaseDepartureTrack(Track track) {
+    public void releaseLoadingTrack(Track track) {
         track.releaseLock();
-        semTracksDeparture.release();
+        semLoadingTracks.release();
     }
 
-    public Track acquireDestinationTrack() throws InterruptedException {
-        semTracksDestination.acquire();
-        for (Track track : tracksDestination)
+    public Track acquireUnloadingTrack() throws InterruptedException {
+        semUnloadingTracks.acquire();
+        for (Track track : unloadingTracks)
             if (track.tryLock())
                 return track;
         return null;
     }
 
-    public void releaseDestinationTrack(Track track) {
+    public void releaseUnloadingTrack(Track track) {
         track.releaseLock();
-        semTracksDestination.release();
+        semUnloadingTracks.release();
     }
 
     public Track acquireDepartureDestinationTrack() throws InterruptedException {

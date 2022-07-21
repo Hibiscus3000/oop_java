@@ -25,7 +25,7 @@ public class Factory implements Runnable{
     public void run() {
         try {
             while (true) {
-                Thread.sleep(productionTimeSec);
+                Thread.sleep(1000 * productionTimeSec);
                 storages.addGood(new Good(goodName,consumptionTimeSec,loadingTimeSec,unloadingTimeSec));
             }
         } catch (InterruptedException e) {}
