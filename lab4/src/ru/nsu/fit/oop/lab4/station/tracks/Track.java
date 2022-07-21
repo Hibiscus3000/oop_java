@@ -14,4 +14,5 @@ public class Track {
     public void releaseLock() {
         lock.unlock();
     }
+    // gives more authority to trains then they should have
 }
