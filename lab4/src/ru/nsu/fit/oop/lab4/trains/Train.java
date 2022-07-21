@@ -17,11 +17,16 @@ public class Train implements Runnable {
     private List<Good> goods;
     private final int speed;
     private final Station station;
+    private final int assemblyTime;
+    private final int depreciationTime;
 
-    public Train(Map<String, Integer> capacity, int speed, Station station) {
+    public Train(Map<String, Integer> capacity, int speed, Station station, int assemblyTime,
+                 int depreciationTime) {
         this.capacity = capacity;
         this.speed = speed;
         this.station = station;
+        this.assemblyTime = assemblyTime;
+        this.depreciationTime = depreciationTime;
         goods = new ArrayList<>();
     }
 
