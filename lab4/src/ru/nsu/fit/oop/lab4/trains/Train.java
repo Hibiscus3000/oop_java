@@ -63,7 +63,9 @@ public class Train implements Runnable {
             LoadingTrack track = (LoadingTrack) station.acquireLoadingTrack();
             for (Map.Entry<String, Integer> entry : capacity.entrySet()) {
                 for (int i = 0; i < entry.getValue(); ++i) {
-                    track.getGood(entry.getKey());
+                    Good good = track.getGood(entry.getKey());
+                    good.loadGood();
+                    goods.add(good);
                 }
             }
             station.releaseLoadingTrack(track);
@@ -86,6 +88,7 @@ public class Train implements Runnable {
         try {
             UnloadingTrack track = (UnloadingTrack) station.acquireUnloadingTrack();
             for (Good good : goods) {
+                good.unloadGood();
                 track.unloadGood(good);
             }
         } catch (ClassCastException e) {

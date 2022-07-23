@@ -2,7 +2,7 @@ package ru.nsu.fit.oop.lab4.goods;
 
 public class Good {
 
-    private String name;
+    private final String name;
     private final int consumptionTimeSec;
     private final int loadingTimeSec;
     private final int unloadingTimeSec;
@@ -20,7 +20,16 @@ public class Good {
         return name;
     }
 
-    public int getConsumptionTimeSec() {
-        return consumptionTimeSec;
+    public void consumeGood() throws InterruptedException {
+        Thread.sleep(1000 * consumptionTimeSec);
     }
+
+    public void loadGood() throws InterruptedException {
+        Thread.sleep(1000 * loadingTimeSec);
+    }
+
+    public void unloadGood() throws InterruptedException {
+        Thread.sleep(1000 * unloadingTimeSec);
+    }
+
 }

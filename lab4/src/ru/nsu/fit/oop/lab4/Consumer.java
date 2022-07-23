@@ -4,7 +4,7 @@ import ru.nsu.fit.oop.lab4.goods.Storages;
 
 public class Consumer implements Runnable{
 
-    private Storages storages;
+    private final Storages storages;
 
     public Consumer(Storages storages) {
         this.storages = storages;
@@ -14,7 +14,7 @@ public class Consumer implements Runnable{
     public void run() {
         try {
             while (true) {
-                Thread.sleep(1000 * storages.getGood().getConsumptionTimeSec());
+                storages.getGood().consumeGood();
             }
         } catch (InterruptedException e) {
             // DO SMT!!!
