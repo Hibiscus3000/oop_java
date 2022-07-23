@@ -16,10 +16,14 @@ public class Storages {
     private final Lock getLock = new ReentrantLock();
     private final Condition getCondition = getLock.newCondition();
 
-    public Storages(String goodName, List<Storage> storages, int capacityAll) {
+    public Storages(String goodName, List<Storage> storages) {
         this.goodName = goodName;
         this.storages = storages;
-        this.capacityAll = capacityAll;
+        int totalCapacity = 0;
+        for (Storage storage : storages) {
+            totalCapacity += storage.getCapacity();
+        }
+        capacityAll = totalCapacity;
     }
 
     public String getGoodName() {

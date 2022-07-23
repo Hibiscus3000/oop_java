@@ -23,7 +23,7 @@ public class Depot {
         trainsConfig = new Properties();
         var stream = this.getClass().getResourceAsStream("trains.properties");
         if (null == stream)
-            throw new InvalidConfigException("Bad trains config.");
+            throw new InvalidConfigException("Wasn't able to open trains config.");
         trainsConfig.load(stream);
         numberOfTrains = trainsConfig.size() / 4;
         trains = new ArrayList<>(numberOfTrains);
