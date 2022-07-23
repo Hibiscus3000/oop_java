@@ -3,6 +3,7 @@ package ru.nsu.fit.oop.lab4.trains;
 import ru.nsu.fit.oop.lab4.exception.InvalidConfigException;
 import ru.nsu.fit.oop.lab4.station.Station;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -18,11 +19,12 @@ public class Depot {
     private final Station station;
     private final Properties goodsConfig;
 
-    public Depot(int numberOfGoodTypes, Station station, Properties goodsConfig) throws InvalidConfigException {
+    public Depot(int numberOfGoodTypes, Station station, Properties goodsConfig) throws InvalidConfigException, IOException {
         trainsConfig = new Properties();
         var stream = this.getClass().getResourceAsStream("trains.properties");
         if (null == stream)
             throw new InvalidConfigException("Bad trains config.");
+        trainsConfig.load(stream);
         numberOfTrains = trainsConfig.size() / 4;
         trains = new ArrayList<>(numberOfTrains);
         this.station = station;

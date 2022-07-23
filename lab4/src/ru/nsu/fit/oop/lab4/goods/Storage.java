@@ -32,4 +32,8 @@ public class Storage {
     public Good getGood() {
         return goods.remove(goods.size());
     }
+
+    public int getCapacity() {
+        return capacity;
+    }
 }
