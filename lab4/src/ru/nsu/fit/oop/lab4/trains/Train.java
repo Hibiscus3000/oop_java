@@ -17,17 +17,26 @@ public class Train implements Runnable {
     private List<Good> goods;
     private final int speed;
     private final Station station;
-    private final int assemblyTime;
-    private final int depreciationTime;
+    private final int assemblyTimeSec;
+    private final int depreciationTimeSec;
 
-    public Train(Map<String, Integer> capacity, int speed, Station station, int assemblyTime,
-                 int depreciationTime) {
+    public Train(Map<String, Integer> capacity, int speed, Station station, int assemblyTimeSec,
+                 int depreciationTimeSec) {
         this.capacity = capacity;
         this.speed = speed;
         this.station = station;
-        this.assemblyTime = assemblyTime;
-        this.depreciationTime = depreciationTime;
+        this.assemblyTimeSec = assemblyTimeSec;
+        this.depreciationTimeSec = depreciationTimeSec;
         goods = new ArrayList<>();
+    }
+
+    public Train(Train train) throws InterruptedException {
+        capacity = train.capacity;
+        speed = train.speed;
+        station = train.station;
+        assemblyTimeSec = train.assemblyTimeSec;
+        depreciationTimeSec = train.depreciationTimeSec;
+        Thread.sleep(assemblyTimeSec);
     }
 
     @Override
@@ -40,9 +49,8 @@ public class Train implements Runnable {
                 driveDestinationDeparture();
             }
         } catch (InterruptedException e) {
-
+            notifyAll();
         } catch (BadTrackException e) {
-
         }
         // DO SMT!!!
     }
@@ -90,5 +98,9 @@ public class Train implements Runnable {
         } catch (ClassCastException e) {
             throw new BadTrackException(e);
         }
+    }
+
+    public int getDepreciationTimeSec() {
+        return depreciationTimeSec;
     }
 }

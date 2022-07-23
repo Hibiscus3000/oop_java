@@ -6,23 +6,24 @@ import ru.nsu.fit.oop.lab4.station.Station;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Depot {
 
     private final int numberOfWorkers = 4;
     private final ScheduledExecutorService workers = Executors.newScheduledThreadPool(numberOfWorkers);
-    private final Properties trainConfig;
+    private final Properties trainsConfig;
     private final int numberOfTrains;
     private final List<Train> trains;
     private final Station station;
     private final Properties goodsConfig;
 
     public Depot(int numberOfGoodTypes, Station station, Properties goodsConfig) throws InvalidConfigException {
-        trainConfig = new Properties();
+        trainsConfig = new Properties();
         var stream = this.getClass().getResourceAsStream("trains.properties");
         if (null == stream)
-            throw new InvalidConfigException("Bad trains Config.");
-        numberOfTrains = trainConfig.size() / 4;
+            throw new InvalidConfigException("Bad trains config.");
+        numberOfTrains = trainsConfig.size() / 4;
         trains = new ArrayList<>(numberOfTrains);
         this.station = station;
         this.goodsConfig = goodsConfig;
@@ -31,7 +32,7 @@ public class Depot {
     private Map<String,Integer> parseCapacities(int trainNumber, int numberOfGoodTypes,
                                                 Properties goodsConfig) {
         Map<String, Integer> capacity = new HashMap<>();
-        String capacities = trainConfig.getProperty(Integer.valueOf(10 * trainNumber).toString());
+        String capacities = trainsConfig.getProperty(Integer.valueOf(10 * trainNumber).toString());
         int beginIndex = 0;
         int endIndex;
         for (int i = 0; i < numberOfGoodTypes; ++i) {
@@ -43,13 +44,34 @@ public class Depot {
         return capacity;
     }
 
-    public void start() {
+    public void start() throws InterruptedException {
         int numberOfGoodTypes = goodsConfig.size() / 4;
         for (int i = 0; i < numberOfTrains; ++i) {
-            trains.add(new Train(parseCapacities(i,numberOfGoodTypes, goodsConfig),
-                    Integer.parseInt(trainConfig.getProperty(Integer.valueOf(10 * i + 1).toString())),
-                    station,Integer.parseInt(trainConfig.getProperty(Integer.valueOf(10 * i + 2).toString())),
-                    Integer.parseInt(trainConfig.getProperty(Integer.valueOf(10 * i + 3).toString()))));
+            Train sample = new Train(parseCapacities(i, numberOfGoodTypes, goodsConfig),
+                    Integer.parseInt(trainsConfig.getProperty(Integer.valueOf(10 * i + 1).toString())),
+                    station, Integer.parseInt(trainsConfig.getProperty(Integer.valueOf(10 * i + 2).toString())),
+                    Integer.parseInt(trainsConfig.getProperty(Integer.valueOf(10 * i + 3).toString())));
+            trains.add(sample);
+            createTrain(sample);
         }
+    }
+
+    private void createTrain(Train sample) throws InterruptedException {
+        Train train = new Train(sample);
+        Thread t = new Thread(train);
+        t.start();
+        workers.schedule(() -> {
+            try {
+                disposeTrain(train,t);
+            } catch (InterruptedException e) {
+                //DO SMT!!!!
+            }
+        },sample.getDepreciationTimeSec(),TimeUnit.SECONDS);
+    }
+
+    private void disposeTrain(Train train, Thread t) throws InterruptedException {
+        t.interrupt();
+        t.wait();
+        createTrain(train);
     }
 }
