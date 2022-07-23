@@ -42,13 +42,15 @@ public class Station {
         tracksDestinationDeparture = new ArrayList<>();
 
         for (int i = 0; i < numberOfLoadingTracks; ++i)
-            loadingTracks.add(new LoadingTrack(departureStorages));
+            loadingTracks.add(new LoadingTrack(departureStorages,i + 1));
         for (int i = 0; i < numberOfUnloadingTracks; ++i)
-            unloadingTracks.add(new UnloadingTrack(destinationStorages));
+            unloadingTracks.add(new UnloadingTrack(destinationStorages,numberOfLoadingTracks + i + 1));
         for (int i = 0; i < numberOfTracksDepartureDestination; ++i)
-            tracksDepartureDestination.add(new TrafficTrack(distance));
+            tracksDepartureDestination.add(new TrafficTrack(distance, numberOfLoadingTracks + numberOfUnloadingTracks
+            + i + 1));
         for (int i = 0; i < numberOfTracksDestinationDeparture; ++i)
-            tracksDestinationDeparture.add(new TrafficTrack(distance));
+            tracksDestinationDeparture.add(new TrafficTrack(distance, numberOfLoadingTracks + numberOfUnloadingTracks
+            + numberOfTracksDepartureDestination + i + 1));
 
         semLoadingTracks = new Semaphore(numberOfLoadingTracks);
         semUnloadingTracks = new Semaphore(numberOfUnloadingTracks);

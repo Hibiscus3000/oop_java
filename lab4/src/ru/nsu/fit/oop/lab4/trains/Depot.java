@@ -52,7 +52,7 @@ public class Depot {
             Train sample = new Train(parseCapacities(i, numberOfGoodTypes, goodsConfig),
                     Integer.parseInt(trainsConfig.getProperty(Integer.valueOf(10 * i + 1).toString())),
                     station, Integer.parseInt(trainsConfig.getProperty(Integer.valueOf(10 * i + 2).toString())),
-                    Integer.parseInt(trainsConfig.getProperty(Integer.valueOf(10 * i + 3).toString())));
+                    Integer.parseInt(trainsConfig.getProperty(Integer.valueOf(10 * i + 3).toString())),i);
             trains.add(sample);
             createTrain(sample);
         }

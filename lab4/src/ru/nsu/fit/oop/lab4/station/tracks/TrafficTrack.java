@@ -4,7 +4,8 @@ public class TrafficTrack extends Track{
 
     private int distance;
 
-    public TrafficTrack(int distance) {
+    public TrafficTrack(int distance, int id) {
+        super(id);
         this.distance = distance;
     }
 

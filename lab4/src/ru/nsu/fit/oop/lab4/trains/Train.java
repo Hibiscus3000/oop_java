@@ -19,15 +19,17 @@ public class Train implements Runnable {
     private final Station station;
     private final int assemblyTimeSec;
     private final int depreciationTimeSec;
+    private final int id;
 
     public Train(Map<String, Integer> capacity, int speed, Station station, int assemblyTimeSec,
-                 int depreciationTimeSec) {
+                 int depreciationTimeSec, int id) {
         this.capacity = capacity;
         this.speed = speed;
         this.station = station;
         this.assemblyTimeSec = assemblyTimeSec;
         this.depreciationTimeSec = depreciationTimeSec;
         goods = new ArrayList<>();
+        this.id = id;
     }
 
     public Train(Train train) throws InterruptedException {
@@ -37,6 +39,7 @@ public class Train implements Runnable {
         assemblyTimeSec = train.assemblyTimeSec;
         depreciationTimeSec = train.depreciationTimeSec;
         Thread.sleep(assemblyTimeSec);
+        id = train.id;
     }
 
     @Override

@@ -13,9 +13,12 @@ import java.util.*;
 
 public class Complex {
 
-    private final List<Factory> factories;
+    private final List<Factory> factories = new ArrayList<>();
+    private final Map<String,Storages> departureStorages = new HashMap<>();
+    private final Map<String,Storages> destinationStorages = new HashMap<>();
+    private Station station;
     private final Depot depot;
-    private final List<Consumer> consumers;
+    private final List<Consumer> consumers = new ArrayList<>();
 
     public Complex() throws IOException, InvalidConfigException {
         Properties goodsConfig = new Properties();
@@ -24,26 +27,11 @@ public class Complex {
             throw new InvalidConfigException("Wasn't able to open goods config.");
         }
         goodsConfig.load(goodsStream);
-        int numberOfGoods = goodsConfig.size() / 9;
-        Map<String, Storages> departureStorages = new HashMap<>(numberOfGoods);
-        Map<String, Storages> destinationStorages = new HashMap<>(numberOfGoods);
-        for (int i = 0; i < numberOfGoods; ++i) {
-            String goodName = goodsConfig.getProperty(Integer.valueOf(10 * i).toString());
-            departureStorages.put(goodName, new Storages(goodName,
-                    createStoragesList(i, 1, goodsConfig)));
-            departureStorages.put(goodName, new Storages(goodName,
-                    createStoragesList(i, 3, goodsConfig)));
-        }
-        InputStream stationStream = this.getClass().getResourceAsStream("station/station.properties");
-        if (null == stationStream) {
-            throw new InvalidConfigException("Wasn't able to open station config");
-        }
-        Properties stationConfig = new Properties();
-        stationConfig.load(stationStream);
-        Station station = new Station(Integer.parseInt(stationConfig.getProperty("distance")),
-                stationConfig.getProperty("numberOfLoadingTracks"),
-                stationConfig.getProperty("numberOfUnloadingTrack"),stationConfig.getProperty("numberOfDepartureDestinationTracks"),
-                stationConfig.getProperty("numberOfDestinationDepartureTracks"),departureStorages,destinationStorages);
+        int numberOfGoodTypes = goodsConfig.size() / 9;
+        createStoragesAndConsumers(numberOfGoodTypes,goodsConfig);
+        createStation();
+        createFactories(numberOfGoodTypes,goodsConfig);
+        depot = new Depot(numberOfGoodTypes,station,goodsConfig);
     }
 
     //arg number refers to either departure storages or destination storages
@@ -55,13 +43,62 @@ public class Complex {
         for (int i = 0; i < numberOfStorages; ++i) {
             endIndex = capacities.indexOf(" ", beginIndex);
             storageList.add(new Storage(Integer.parseInt(capacities.substring(beginIndex,
-                    endIndex == -1 ? capacities.length() : endIndex))));
+                    endIndex == -1 ? capacities.length() : endIndex)),i));
             beginIndex = endIndex + 1;
         }
         return storageList;
     }
 
-    public void start() {
+    private void createStoragesAndConsumers(int numberOfGoodTypes, Properties goodsConfig) {
+        for (int i = 0; i < numberOfGoodTypes; ++i) {
+            String goodName = goodsConfig.getProperty(Integer.valueOf(10 * i).toString());
+            departureStorages.put(goodName, new Storages(goodName,
+                    createStoragesList(i, 1, goodsConfig)));
+            Storages storages;
+            destinationStorages.put(goodName, storages = new Storages(goodName,
+                    createStoragesList(i, 3, goodsConfig)));
+            for (int j = 0; j < Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 9))); ++j) {
+                consumers.add(new Consumer(storages));
+            }
+        }
+    }
 
+    private void createStation() throws InvalidConfigException, IOException {
+        InputStream stationStream = this.getClass().getResourceAsStream("station/station.properties");
+        if (null == stationStream) {
+            throw new InvalidConfigException("Wasn't able to open station config");
+        }
+        Properties stationConfig = new Properties();
+        stationConfig.load(stationStream);
+        station = new Station(Integer.parseInt(stationConfig.getProperty("distance")),
+                Integer.parseInt(stationConfig.getProperty("numberOfLoadingTracks")),
+                Integer.parseInt(stationConfig.getProperty("numberOfUnloadingTrack")),
+                Integer.parseInt(stationConfig.getProperty("numberOfDepartureDestinationTracks")),
+                Integer.parseInt(stationConfig.getProperty("numberOfDestinationDepartureTracks")),
+                departureStorages,destinationStorages);
+    }
+
+    private void createFactories(int numberOfGoodTypes, Properties goodsConfig) {
+        for (int i = 0; i < numberOfGoodTypes; ++i) {
+            factories.add(new Factory(goodsConfig.getProperty(String.valueOf(10 * i)),
+                    Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 5))),
+                    Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 6))),
+                    Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 7))),
+                    Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 8))),
+                    departureStorages.get(goodsConfig.getProperty(String.valueOf(10 * i))),
+                    i));
+        }
+    }
+
+    public void start() throws InterruptedException {
+        for (Factory factory : factories) {
+            Thread t = new Thread(factory);
+            t.start();
+        }
+        depot.start();
+        for (Consumer consumer : consumers) {
+            Thread t = new Thread(consumer);
+            t.start();
+        }
     }
 }

@@ -9,7 +9,8 @@ public class LoadingTrack extends Track {
 
     private final Map<String,Storages> storages;
 
-    public LoadingTrack(Map<String,Storages> departureStorages) {
+    public LoadingTrack(Map<String,Storages> departureStorages, int id) {
+        super(id);
         storages = departureStorages;
     }
 

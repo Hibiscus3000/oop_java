@@ -9,7 +9,8 @@ public class UnloadingTrack extends Track {
 
     private final Map<String, Storages> storages;
 
-    public UnloadingTrack(Map<String, Storages> destinationStorages) {
+    public UnloadingTrack(Map<String, Storages> destinationStorages, int id) {
+        super(id);
         storages = destinationStorages;
     }
 

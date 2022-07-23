@@ -11,10 +11,12 @@ public class Storage {
     private final int capacity;
     private boolean isFree = true;
     private final Lock loadLock = new ReentrantLock();
+    private final int id;
 
-    public Storage(int capacity) {
+    public Storage(int capacity, int id) {
         this.capacity = capacity;
         goods = new ArrayList<>();
+        this.id = id;
     }
 
     public boolean isFree() {
