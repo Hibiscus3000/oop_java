@@ -9,22 +9,28 @@ import java.util.stream.IntStream;
 public class Factory implements Runnable{
 
     private final String goodName;
+    private final int goodNumber;
     private final int productionTimeSec;
     private final int consumptionTimeSec;
     private final int loadingTimeSec;
     private final int unloadingTimeSec;
-    private final Storages storages;
+    private final Storage storage;
     private final int numberOfIds = 10000;
-    private final List<Integer> ids;
+    private List<Integer> ids;
 
     public Factory(String goodName, int productionTimeSec, int consumptionTimeSec, int loadingTimeSec,
-                   int unloadingTimeSec, Storages storages, int goodNumber) {
-        this.storages = storages;
+                   int unloadingTimeSec, Storage storage, int goodNumber) {
+        this.goodNumber = goodNumber;
         this.goodName = goodName;
         this.productionTimeSec = productionTimeSec;
         this.consumptionTimeSec = consumptionTimeSec;
         this.loadingTimeSec = loadingTimeSec;
         this.unloadingTimeSec = unloadingTimeSec;
+        this.storage = storage;
+        makeIDs();
+    }
+
+    private void makeIDs() {
         ids = IntStream.range(numberOfIds * goodNumber + 1, numberOfIds * (goodNumber + 1) + 1).boxed()
                 .collect(Collectors.toCollection(ArrayList::new));
         Collections.shuffle(ids);
@@ -35,7 +41,10 @@ public class Factory implements Runnable{
         try {
             while (true) {
                 Thread.sleep(1000 * productionTimeSec);
-                storages.addGood(new Good(goodName,consumptionTimeSec,loadingTimeSec,unloadingTimeSec,ids.remove(0)));
+                storage.addGood(new Good(goodName,consumptionTimeSec,loadingTimeSec,unloadingTimeSec,ids.remove(0)));
+                if (ids.isEmpty()) {
+                    makeIDs();
+                }
             }
         } catch (InterruptedException e) {}
     }

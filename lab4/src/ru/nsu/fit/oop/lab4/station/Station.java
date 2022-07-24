@@ -1,6 +1,6 @@
 package ru.nsu.fit.oop.lab4.station;
 
-import ru.nsu.fit.oop.lab4.goods.Storages;
+import ru.nsu.fit.oop.lab4.goods.Storage;
 import ru.nsu.fit.oop.lab4.station.tracks.LoadingTrack;
 import ru.nsu.fit.oop.lab4.station.tracks.Track;
 import ru.nsu.fit.oop.lab4.station.tracks.TrafficTrack;
@@ -29,7 +29,7 @@ public class Station {
 
     public Station(int distance, int numberOfLoadingTracks, int numberOfUnloadingTracks,
                    int numberOfTracksDepartureDestination, int numberOfTracksDestinationDeparture,
-                   Map<String, Storages> departureStorages, Map<String, Storages> destinationStorages) {
+                   Map<String, Storage> departureStorages, Map<String, Storage> destinationStorages) {
         this.distance = distance;
         this.numberOfLoadingTracks = numberOfLoadingTracks;
         this.numberOfUnloadingTracks = numberOfUnloadingTracks;

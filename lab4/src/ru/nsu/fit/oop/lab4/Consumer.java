@@ -1,20 +1,20 @@
 package ru.nsu.fit.oop.lab4;
 
-import ru.nsu.fit.oop.lab4.goods.Storages;
+import ru.nsu.fit.oop.lab4.goods.Storage;
 
 public class Consumer implements Runnable{
 
-    private final Storages storages;
+    private final Storage storage;
 
-    public Consumer(Storages storages) {
-        this.storages = storages;
+    public Consumer(Storage storage) {
+        this.storage = storage;
     }
 
     @Override
     public void run() {
         try {
             while (true) {
-                storages.getGood().consumeGood();
+                storage.getGood().consumeGood();
             }
         } catch (InterruptedException e) {
             // DO SMT!!!

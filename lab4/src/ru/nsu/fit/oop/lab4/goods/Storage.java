@@ -2,40 +2,31 @@ package ru.nsu.fit.oop.lab4.goods;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class Storage {
 
-    List<Good> goods;
+    private final String goodName;
+    private List<Good> goods;
     private final int capacity;
-    private boolean isFree = true;
-    private final Lock loadLock = new ReentrantLock();
-    private final int id;
 
-    public Storage(int capacity, int id) {
+    public Storage(String goodName, int capacity) {
+        this.goodName = goodName;
         this.capacity = capacity;
         goods = new ArrayList<>();
-        this.id = id;
     }
 
-    public boolean isFree() {
-        return isFree;
-    }
-
-    public boolean isEmpty() {
-        return goods.isEmpty();
-    }
-
-    public void addGood(Good good) {
+    public synchronized void addGood(Good good) throws InterruptedException {
+        while (goods.size() == capacity)
+            wait();
         goods.add(good);
+        notifyAll();
     }
 
-    public Good getGood() {
-        return goods.remove(goods.size());
-    }
-
-    public int getCapacity() {
-        return capacity;
+    public synchronized Good getGood() throws InterruptedException {
+        while (goods.isEmpty())
+            wait();
+        Good good = goods.remove(goods.size());
+        notifyAll();
+        return good;
     }
 }
