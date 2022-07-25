@@ -30,6 +30,10 @@ public class Factory implements Runnable{
         makeIDs();
     }
 
+    public String getGoodName() {
+        return goodName;
+    }
+
     private void makeIDs() {
         ids = IntStream.range(numberOfIds * goodNumber + 1, numberOfIds * (goodNumber + 1) + 1).boxed()
                 .collect(Collectors.toCollection(ArrayList::new));

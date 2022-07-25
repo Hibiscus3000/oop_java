@@ -15,6 +15,10 @@ public class Storage {
         goods = new ArrayList<>();
     }
 
+    public String getGoodName() {
+        return goodName;
+    }
+
     public synchronized void addGood(Good good) throws InterruptedException {
         while (goods.size() == capacity)
             wait();

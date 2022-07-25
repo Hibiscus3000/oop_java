@@ -23,14 +23,25 @@ public class Complex {
         Properties goodsConfig = new Properties();
         InputStream goodsStream = this.getClass().getResourceAsStream("goods/goods.properties");
         if (null == goodsStream) {
-            throw new InvalidConfigException("Wasn't able to open goods config.");
+            InvalidConfigException e = new InvalidConfigException("Wasn't able to open goods config.");
+            Main.logger.throwing(this.getClass().getSimpleName(),"Complex",e);
+            throw e;
         }
         goodsConfig.load(goodsStream);
-        int numberOfGoodTypes = goodsConfig.size() / 9;
+        Main.logger.config("Loaded goods config.");
+        int numberOfGoodTypes = goodsConfig.size() / 7;
+        Main.logger.info("Creating storages and consumers...");
         createStoragesAndConsumers(numberOfGoodTypes, goodsConfig);
+        Main.logger.info("Storages and consumers created.");
+        Main.logger.info("Creating station...");
         createStation();
+        Main.logger.info("Station created.");
+        Main.logger.info("Creating factories...");
         createFactories(numberOfGoodTypes, goodsConfig);
+        Main.logger.info("Factories created.");
+        Main.logger.info("Creating depot...");
         depot = new Depot(numberOfGoodTypes, station, goodsConfig);
+        Main.logger.info("Depot created.");
     }
 
     private void createStoragesAndConsumers(int numberOfGoodTypes, Properties goodsConfig) {
@@ -39,10 +50,13 @@ public class Complex {
             departureStorages.put(goodName, new Storage(goodName,
                     Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 1)))));
             Storage storage;
+            Main.logger.config("created departure storage for " + goodName);
             destinationStorages.put(goodName, storage = new Storage(goodName,
                     Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 2)))));
-            for (int j = 0; j < Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 9))); ++j) {
-                consumers.add(new Consumer(storage));
+            Main.logger.config("created destination storage for " + goodName);
+            for (int j = 0; j < Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 7))); ++j) {
+                Main.logger.config("created Consumer #" + j + " for " + goodName);
+                consumers.add(new Consumer(storage,j));
             }
         }
     }
@@ -50,13 +64,16 @@ public class Complex {
     private void createStation() throws InvalidConfigException, IOException {
         InputStream stationStream = this.getClass().getResourceAsStream("station/station.properties");
         if (null == stationStream) {
-            throw new InvalidConfigException("Wasn't able to open station config");
+            InvalidConfigException e = new InvalidConfigException("Wasn't able to open station config");
+            Main.logger.throwing(this.getClass().getSimpleName(),"createStation",e);
+            throw e;
         }
         Properties stationConfig = new Properties();
         stationConfig.load(stationStream);
+        Main.logger.config("Loaded station config.");
         station = new Station(Integer.parseInt(stationConfig.getProperty("distance")),
                 Integer.parseInt(stationConfig.getProperty("numberOfLoadingTracks")),
-                Integer.parseInt(stationConfig.getProperty("numberOfUnloadingTrack")),
+                Integer.parseInt(stationConfig.getProperty("numberOfUnloadingTracks")),
                 Integer.parseInt(stationConfig.getProperty("numberOfDepartureDestinationTracks")),
                 Integer.parseInt(stationConfig.getProperty("numberOfDestinationDepartureTracks")),
                 departureStorages, destinationStorages);
@@ -64,24 +81,29 @@ public class Complex {
 
     private void createFactories(int numberOfGoodTypes, Properties goodsConfig) {
         for (int i = 0; i < numberOfGoodTypes; ++i) {
-            factories.add(new Factory(goodsConfig.getProperty(String.valueOf(10 * i)),
+            String goodName = goodsConfig.getProperty(String.valueOf(10 * i));
+            Main.logger.config("Created factory for " + goodName);
+            factories.add(new Factory(goodName,
+                    Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 3))),
+                    Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 4))),
                     Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 5))),
                     Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 6))),
-                    Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 7))),
-                    Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 8))),
-                    departureStorages.get(goodsConfig.getProperty(String.valueOf(10 * i))),
+                    departureStorages.get(goodName),
                     i));
         }
     }
 
     public void start() throws InterruptedException {
         for (Factory factory : factories) {
+            Main.logger.config("Starting factory producing " + factory.getGoodName() + "...");
             Thread t = new Thread(factory);
             t.start();
         }
+        Main.logger.config("Starting depot... ");
         depot.start();
         for (Consumer consumer : consumers) {
             Thread t = new Thread(consumer);
+            Main.logger.config("Starting consumer interested in " + consumer.getGoodName() + "...");
             t.start();
         }
     }
