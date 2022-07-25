@@ -1,5 +1,6 @@
 package ru.nsu.fit.oop.lab4.station;
 
+import ru.nsu.fit.oop.lab4.Main;
 import ru.nsu.fit.oop.lab4.goods.Storage;
 import ru.nsu.fit.oop.lab4.station.tracks.LoadingTrack;
 import ru.nsu.fit.oop.lab4.station.tracks.Track;
@@ -43,26 +44,35 @@ public class Station {
 
         for (int i = 0; i < numberOfLoadingTracks; ++i)
             loadingTracks.add(new LoadingTrack(departureStorages,i + 1));
+        Main.logger.config("Created " + numberOfLoadingTracks + " loading tracks.");
         for (int i = 0; i < numberOfUnloadingTracks; ++i)
             unloadingTracks.add(new UnloadingTrack(destinationStorages,numberOfLoadingTracks + i + 1));
+        Main.logger.config("Created " + numberOfUnloadingTracks + " unloading tracks.");
         for (int i = 0; i < numberOfTracksDepartureDestination; ++i)
             tracksDepartureDestination.add(new TrafficTrack(distance, numberOfLoadingTracks + numberOfUnloadingTracks
             + i + 1));
+        Main.logger.config("Created " + numberOfTracksDepartureDestination +
+                " departure destination tracks.");
         for (int i = 0; i < numberOfTracksDestinationDeparture; ++i)
             tracksDestinationDeparture.add(new TrafficTrack(distance, numberOfLoadingTracks + numberOfUnloadingTracks
             + numberOfTracksDepartureDestination + i + 1));
+        Main.logger.config("Created " + numberOfTracksDestinationDeparture +
+                " destination departure tracks.");
 
         semLoadingTracks = new Semaphore(numberOfLoadingTracks);
         semUnloadingTracks = new Semaphore(numberOfUnloadingTracks);
         semTracksDepartureDestination = new Semaphore(numberOfTracksDepartureDestination);
         semTracksDestinationDeparture = new Semaphore(numberOfTracksDestinationDeparture);
+        Main.logger.config("Created semaphores.");
     }
 
     public Track acquireLoadingTrack() throws InterruptedException {
         semLoadingTracks.acquire();
         for (Track track : loadingTracks)
-            if (track.tryLock())
+            if (track.tryLock()) {
                 return track;
+            }
+        Main.logger.severe("Wasn't able to acquire loading track.");
         return null;
     }
 
@@ -76,6 +86,7 @@ public class Station {
         for (Track track : unloadingTracks)
             if (track.tryLock())
                 return track;
+        Main.logger.severe("Wasn't able to acquire unloading track.");
         return null;
     }
 
@@ -89,6 +100,7 @@ public class Station {
         for (Track track : tracksDepartureDestination)
             if (track.tryLock())
                 return track;
+        Main.logger.severe("Wasn't able to acquire departure destination track.");
         return null;
     }
 
@@ -102,6 +114,7 @@ public class Station {
         for (Track track : tracksDestinationDeparture)
             if (track.tryLock())
                 return track;
+        Main.logger.severe("Wasn't able to acquire destination departure track.");
         return null;
     }
 

@@ -1,5 +1,7 @@
 package ru.nsu.fit.oop.lab4.goods;
 
+import ru.nsu.fit.oop.lab4.Main;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -44,12 +46,17 @@ public class Factory implements Runnable{
     public void run() {
         try {
             while (true) {
+                Main.logger.config("Producing " + goodName + "...");
                 Thread.sleep(1000 * productionTimeSec);
+                Main.logger.info("Produced " + goodName + ".");
                 storage.addGood(new Good(goodName,consumptionTimeSec,loadingTimeSec,unloadingTimeSec,ids.remove(0)));
+                Main.logger.config("Factory added " + goodName + " to storage.");
                 if (ids.isEmpty()) {
                     makeIDs();
                 }
             }
-        } catch (InterruptedException e) {}
+        } catch (InterruptedException e) {
+            Main.logger.info("Factory interrupted");
+        }
     }
 }

@@ -1,5 +1,6 @@
 package ru.nsu.fit.oop.lab4.trains;
 
+import ru.nsu.fit.oop.lab4.Main;
 import ru.nsu.fit.oop.lab4.exception.InvalidConfigException;
 import ru.nsu.fit.oop.lab4.station.Station;
 
@@ -25,6 +26,7 @@ public class Depot {
         if (null == stream)
             throw new InvalidConfigException("Wasn't able to open trains config.");
         trainsConfig.load(stream);
+        Main.logger.config("Loaded trains config.");
         numberOfTrains = trainsConfig.size() / 4;
         trains = new ArrayList<>(numberOfTrains);
         this.station = station;
@@ -60,8 +62,10 @@ public class Depot {
 
     private void createTrain(Train sample) throws InterruptedException {
         Train train = new Train(sample);
+        Main.logger.info("Created train #" + train.getId() + ".");
         Thread t = new Thread(train);
         t.start();
+        Main.logger.info("Started train #" + train.getId() + ".");
         workers.schedule(() -> {
             try {
                 disposeTrain(train,t);
@@ -73,7 +77,10 @@ public class Depot {
 
     private void disposeTrain(Train train, Thread t) throws InterruptedException {
         t.interrupt();
-        t.wait();
+        while (!train.isDisposed()) {
+            train.wait();
+        }
+        Main.logger.info("Train #" + train.getId() + " was scrapped.");
         createTrain(train);
     }
 }
