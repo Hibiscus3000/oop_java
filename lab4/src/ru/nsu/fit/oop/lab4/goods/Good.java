@@ -20,15 +20,15 @@ public class Good {
         return name;
     }
 
-    public void consumeGood() throws InterruptedException {
+    public void consume() throws InterruptedException {
         Thread.sleep(1000 * consumptionTimeSec);
     }
 
-    public void loadGood() throws InterruptedException {
+    public void load() throws InterruptedException {
         Thread.sleep(1000 * loadingTimeSec);
     }
 
-    public void unloadGood() throws InterruptedException {
+    public void unload() throws InterruptedException {
         Thread.sleep(1000 * unloadingTimeSec);
     }
 

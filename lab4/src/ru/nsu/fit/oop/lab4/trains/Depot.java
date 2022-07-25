@@ -2,6 +2,7 @@ package ru.nsu.fit.oop.lab4.trains;
 
 import ru.nsu.fit.oop.lab4.Main;
 import ru.nsu.fit.oop.lab4.exception.InvalidConfigException;
+import ru.nsu.fit.oop.lab4.exception.UnsuccessfulLoggerCreation;
 import ru.nsu.fit.oop.lab4.station.Station;
 
 import java.io.IOException;
@@ -9,6 +10,9 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 public class Depot {
 
@@ -19,8 +23,19 @@ public class Depot {
     private final List<Train> trains;
     private final Station station;
     private final Properties goodsConfig;
+    private final Logger logger;
 
-    public Depot(int numberOfGoodTypes, Station station, Properties goodsConfig) throws InvalidConfigException, IOException {
+    public Depot(Station station, Properties goodsConfig) throws InvalidConfigException,
+            IOException, UnsuccessfulLoggerCreation {
+        try {
+            LogManager.getLogManager().readConfiguration(this.getClass().getResourceAsStream
+                    ("depot_log.properties"));
+        } catch (IOException e) {
+            Main.logger.severe("Wasn't able to create logger for depot.");
+            throw new UnsuccessfulLoggerCreation("depot",e);
+        }
+        logger = Logger.getLogger(this.getClass().getSimpleName());
+        logger.setLevel(Level.ALL);
         trainsConfig = new Properties();
         var stream = this.getClass().getResourceAsStream("trains.properties");
         if (null == stream)
@@ -48,7 +63,7 @@ public class Depot {
         return capacity;
     }
 
-    public void start() throws InterruptedException {
+    public void start() throws InterruptedException, UnsuccessfulLoggerCreation {
         int numberOfGoodTypes = goodsConfig.size() / 4;
         for (int i = 0; i < numberOfTrains; ++i) {
             Train sample = new Train(parseCapacities(i, numberOfGoodTypes, goodsConfig),
@@ -62,10 +77,10 @@ public class Depot {
 
     private void createTrain(Train sample) throws InterruptedException {
         Train train = new Train(sample);
-        Main.logger.info("Created train #" + train.getId() + ".");
+        logger.info("Created train #" + train.getId() + ".");
         Thread t = new Thread(train);
         t.start();
-        Main.logger.info("Started train #" + train.getId() + ".");
+        logger.info("Started train #" + train.getId() + ".");
         workers.schedule(() -> {
             try {
                 disposeTrain(train,t);
@@ -80,7 +95,7 @@ public class Depot {
         while (!train.isDisposed()) {
             train.wait();
         }
-        Main.logger.info("Train #" + train.getId() + " was scrapped.");
+        logger.info("Train #" + train.getId() + " was scrapped.");
         createTrain(train);
     }
 }

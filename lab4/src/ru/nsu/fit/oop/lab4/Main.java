@@ -9,7 +9,7 @@ public class Main {
     static {
         try {
             LogManager.getLogManager().readConfiguration(
-                    Main.class.getResourceAsStream("log.properties"));
+                    Main.class.getResourceAsStream("main_log.properties"));
             logger = Logger.getLogger(Main.class.getName());
             logger.setLevel(Level.ALL);
         } catch (Exception e) {

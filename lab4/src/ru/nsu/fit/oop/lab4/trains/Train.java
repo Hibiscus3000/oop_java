@@ -2,15 +2,20 @@ package ru.nsu.fit.oop.lab4.trains;
 
 import ru.nsu.fit.oop.lab4.Main;
 import ru.nsu.fit.oop.lab4.exception.BadTrackException;
+import ru.nsu.fit.oop.lab4.exception.UnsuccessfulLoggerCreation;
 import ru.nsu.fit.oop.lab4.goods.Good;
 import ru.nsu.fit.oop.lab4.station.Station;
 import ru.nsu.fit.oop.lab4.station.tracks.LoadingTrack;
 import ru.nsu.fit.oop.lab4.station.tracks.TrafficTrack;
 import ru.nsu.fit.oop.lab4.station.tracks.UnloadingTrack;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 public class Train implements Runnable {
 
@@ -22,9 +27,19 @@ public class Train implements Runnable {
     private final int depreciationTimeSec;
     private final int id;
     private boolean isDisposed = false;
+    private final Logger logger;
 
     public Train(Map<String, Integer> capacity, int speed, Station station, int assemblyTimeSec,
-                 int depreciationTimeSec, int id) {
+                 int depreciationTimeSec, int id) throws UnsuccessfulLoggerCreation {
+        try {
+            LogManager.getLogManager().readConfiguration(this.getClass().getResourceAsStream
+                    ("train_log.properties"));
+        } catch (IOException e) {
+            Main.logger.severe("Wasn't able to create logger for train");
+            throw new UnsuccessfulLoggerCreation("train",e);
+        }
+        logger = Logger.getLogger(this.getClass().getSimpleName());
+        logger.setLevel(Level.ALL);
         this.capacity = capacity;
         this.speed = speed;
         this.station = station;
@@ -40,6 +55,7 @@ public class Train implements Runnable {
         station = train.station;
         assemblyTimeSec = train.assemblyTimeSec;
         depreciationTimeSec = train.depreciationTimeSec;
+        logger = train.logger;
         Thread.sleep(assemblyTimeSec);
         id = train.id;
     }
@@ -68,6 +84,7 @@ public class Train implements Runnable {
                 driveDestinationDeparture();
             }
         } catch (InterruptedException e) {
+            logger.info("Train #" + id + " was interrupted.");
             isDisposed = true;
             notifyAll();
         } catch (BadTrackException e) {
@@ -82,7 +99,7 @@ public class Train implements Runnable {
                 Main.logger.config("");
                 for (int i = 0; i < entry.getValue(); ++i) {
                     Good good = track.getGood(entry.getKey());
-                    good.loadGood();
+                    good.load();
                     goods.add(good);
                 }
             }
@@ -106,7 +123,7 @@ public class Train implements Runnable {
         try {
             UnloadingTrack track = (UnloadingTrack) station.acquireUnloadingTrack();
             for (Good good : goods) {
-                good.unloadGood();
+                good.unload();
                 track.unloadGood(good);
                 station.releaseUnloadingTrack(track);
             }

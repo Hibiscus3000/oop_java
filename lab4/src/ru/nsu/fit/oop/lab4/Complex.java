@@ -1,6 +1,7 @@
 package ru.nsu.fit.oop.lab4;
 
 import ru.nsu.fit.oop.lab4.exception.InvalidConfigException;
+import ru.nsu.fit.oop.lab4.exception.UnsuccessfulLoggerCreation;
 import ru.nsu.fit.oop.lab4.goods.Factory;
 import ru.nsu.fit.oop.lab4.goods.Storage;
 import ru.nsu.fit.oop.lab4.station.Station;
@@ -19,12 +20,12 @@ public class Complex {
     private final Depot depot;
     private final List<Consumer> consumers = new ArrayList<>();
 
-    public Complex() throws IOException, InvalidConfigException {
+    public Complex() throws IOException, InvalidConfigException, UnsuccessfulLoggerCreation {
         Properties goodsConfig = new Properties();
         InputStream goodsStream = this.getClass().getResourceAsStream("goods/goods.properties");
         if (null == goodsStream) {
             InvalidConfigException e = new InvalidConfigException("Wasn't able to open goods config.");
-            Main.logger.throwing(this.getClass().getSimpleName(),"Complex",e);
+            Main.logger.throwing(this.getClass().getSimpleName(), "Complex", e);
             throw e;
         }
         goodsConfig.load(goodsStream);
@@ -40,11 +41,11 @@ public class Complex {
         createFactories(numberOfGoodTypes, goodsConfig);
         Main.logger.info("Factories created.");
         Main.logger.info("Creating depot...");
-        depot = new Depot(numberOfGoodTypes, station, goodsConfig);
+        depot = new Depot(station, goodsConfig);
         Main.logger.info("Depot created.");
     }
 
-    private void createStoragesAndConsumers(int numberOfGoodTypes, Properties goodsConfig) {
+    private void createStoragesAndConsumers(int numberOfGoodTypes, Properties goodsConfig) throws UnsuccessfulLoggerCreation {
         for (int i = 0; i < numberOfGoodTypes; ++i) {
             String goodName = goodsConfig.getProperty(Integer.valueOf(10 * i).toString());
             departureStorages.put(goodName, new Storage(goodName,
@@ -56,7 +57,7 @@ public class Complex {
             Main.logger.config("created destination storage for " + goodName);
             for (int j = 0; j < Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 7))); ++j) {
                 Main.logger.config("created Consumer #" + j + " for " + goodName);
-                consumers.add(new Consumer(storage,j));
+                consumers.add(new Consumer(storage, j));
             }
         }
     }
@@ -65,7 +66,7 @@ public class Complex {
         InputStream stationStream = this.getClass().getResourceAsStream("station/station.properties");
         if (null == stationStream) {
             InvalidConfigException e = new InvalidConfigException("Wasn't able to open station config");
-            Main.logger.throwing(this.getClass().getSimpleName(),"createStation",e);
+            Main.logger.throwing(this.getClass().getSimpleName(), "createStation", e);
             throw e;
         }
         Properties stationConfig = new Properties();
@@ -79,10 +80,10 @@ public class Complex {
                 departureStorages, destinationStorages);
     }
 
-    private void createFactories(int numberOfGoodTypes, Properties goodsConfig) {
+    private void createFactories(int numberOfGoodTypes, Properties goodsConfig) throws UnsuccessfulLoggerCreation {
         for (int i = 0; i < numberOfGoodTypes; ++i) {
             String goodName = goodsConfig.getProperty(String.valueOf(10 * i));
-            Main.logger.config("Created factory for " + goodName);
+            Main.logger.config("Creating factory for " + goodName + "...");
             factories.add(new Factory(goodName,
                     Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 3))),
                     Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 4))),
@@ -93,7 +94,7 @@ public class Complex {
         }
     }
 
-    public void start() throws InterruptedException {
+    public void start() throws InterruptedException, UnsuccessfulLoggerCreation {
         for (Factory factory : factories) {
             Main.logger.config("Starting factory producing " + factory.getGoodName() + "...");
             Thread t = new Thread(factory);
