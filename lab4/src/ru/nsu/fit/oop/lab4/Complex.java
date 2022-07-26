@@ -1,7 +1,7 @@
 package ru.nsu.fit.oop.lab4;
 
+import ru.nsu.fit.oop.lab4.exception.BadNumberOfTracks;
 import ru.nsu.fit.oop.lab4.exception.InvalidConfigException;
-import ru.nsu.fit.oop.lab4.exception.UnsuccessfulLoggerCreation;
 import ru.nsu.fit.oop.lab4.goods.Factory;
 import ru.nsu.fit.oop.lab4.goods.Storage;
 import ru.nsu.fit.oop.lab4.station.Station;
@@ -20,7 +20,7 @@ public class Complex {
     private final Depot depot;
     private final List<Consumer> consumers = new ArrayList<>();
 
-    public Complex() throws IOException, InvalidConfigException, UnsuccessfulLoggerCreation {
+    public Complex() throws IOException, InvalidConfigException, BadNumberOfTracks {
         Properties goodsConfig = new Properties();
         InputStream goodsStream = this.getClass().getResourceAsStream("goods/goods.properties");
         if (null == goodsStream) {
@@ -45,7 +45,7 @@ public class Complex {
         Main.logger.info("Depot created.");
     }
 
-    private void createStoragesAndConsumers(int numberOfGoodTypes, Properties goodsConfig) throws UnsuccessfulLoggerCreation {
+    private void createStoragesAndConsumers(int numberOfGoodTypes, Properties goodsConfig) {
         for (int i = 0; i < numberOfGoodTypes; ++i) {
             String goodName = goodsConfig.getProperty(Integer.valueOf(10 * i).toString());
             departureStorages.put(goodName, new Storage(goodName,
@@ -62,7 +62,7 @@ public class Complex {
         }
     }
 
-    private void createStation() throws InvalidConfigException, IOException {
+    private void createStation() throws InvalidConfigException, IOException, BadNumberOfTracks {
         InputStream stationStream = this.getClass().getResourceAsStream("station/station.properties");
         if (null == stationStream) {
             InvalidConfigException e = new InvalidConfigException("Wasn't able to open station config");
@@ -80,7 +80,7 @@ public class Complex {
                 departureStorages, destinationStorages);
     }
 
-    private void createFactories(int numberOfGoodTypes, Properties goodsConfig) throws UnsuccessfulLoggerCreation {
+    private void createFactories(int numberOfGoodTypes, Properties goodsConfig) {
         for (int i = 0; i < numberOfGoodTypes; ++i) {
             String goodName = goodsConfig.getProperty(String.valueOf(10 * i));
             Main.logger.config("Creating factory for " + goodName + "...");
@@ -94,14 +94,14 @@ public class Complex {
         }
     }
 
-    public void start() throws InterruptedException, UnsuccessfulLoggerCreation {
+    public void start() throws InterruptedException {
+        depot.start();
         for (Factory factory : factories) {
             Main.logger.config("Starting factory producing " + factory.getGoodName() + "...");
             Thread t = new Thread(factory);
             t.start();
         }
         Main.logger.config("Starting depot... ");
-        depot.start();
         for (Consumer consumer : consumers) {
             Thread t = new Thread(consumer);
             Main.logger.config("Starting consumer interested in " + consumer.getGoodName() + "...");

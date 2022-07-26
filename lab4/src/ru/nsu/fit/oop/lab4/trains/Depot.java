@@ -2,7 +2,6 @@ package ru.nsu.fit.oop.lab4.trains;
 
 import ru.nsu.fit.oop.lab4.Main;
 import ru.nsu.fit.oop.lab4.exception.InvalidConfigException;
-import ru.nsu.fit.oop.lab4.exception.UnsuccessfulLoggerCreation;
 import ru.nsu.fit.oop.lab4.station.Station;
 
 import java.io.IOException;
@@ -11,7 +10,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class Depot {
@@ -26,14 +24,7 @@ public class Depot {
     private final Logger logger;
 
     public Depot(Station station, Properties goodsConfig) throws InvalidConfigException,
-            IOException, UnsuccessfulLoggerCreation {
-        try {
-            LogManager.getLogManager().readConfiguration(this.getClass().getResourceAsStream
-                    ("depot_log.properties"));
-        } catch (IOException e) {
-            Main.logger.severe("Wasn't able to create logger for depot.");
-            throw new UnsuccessfulLoggerCreation("depot",e);
-        }
+            IOException {
         logger = Logger.getLogger(this.getClass().getSimpleName());
         logger.setLevel(Level.ALL);
         trainsConfig = new Properties();
@@ -48,28 +39,28 @@ public class Depot {
         this.goodsConfig = goodsConfig;
     }
 
-    private Map<String,Integer> parseCapacities(int trainNumber, int numberOfGoodTypes,
-                                                Properties goodsConfig) {
+    private Map<String, Integer> parseCapacities(int trainNumber, int numberOfGoodTypes,
+                                                 Properties goodsConfig) {
         Map<String, Integer> capacity = new HashMap<>();
         String capacities = trainsConfig.getProperty(Integer.valueOf(10 * trainNumber).toString());
         int beginIndex = 0;
         int endIndex;
         for (int i = 0; i < numberOfGoodTypes; ++i) {
             Integer goodCapacity = Integer.parseInt(capacities.substring(beginIndex, (endIndex =
-                    capacities.indexOf(" ",beginIndex)) != -1 ? endIndex : capacities.length()));
+                    capacities.indexOf(" ", beginIndex)) != -1 ? endIndex : capacities.length()));
             beginIndex = endIndex + 1;
-            capacity.put(goodsConfig.getProperty(Integer.valueOf(10 * i).toString()),goodCapacity);
+            capacity.put(goodsConfig.getProperty(Integer.valueOf(10 * i).toString()), goodCapacity);
         }
         return capacity;
     }
 
-    public void start() throws InterruptedException, UnsuccessfulLoggerCreation {
-        int numberOfGoodTypes = goodsConfig.size() / 4;
+    public void start() throws InterruptedException {
+        int numberOfGoodTypes = goodsConfig.size() / 7;
         for (int i = 0; i < numberOfTrains; ++i) {
             Train sample = new Train(parseCapacities(i, numberOfGoodTypes, goodsConfig),
                     Integer.parseInt(trainsConfig.getProperty(Integer.valueOf(10 * i + 1).toString())),
                     station, Integer.parseInt(trainsConfig.getProperty(Integer.valueOf(10 * i + 2).toString())),
-                    Integer.parseInt(trainsConfig.getProperty(Integer.valueOf(10 * i + 3).toString())),i);
+                    Integer.parseInt(trainsConfig.getProperty(Integer.valueOf(10 * i + 3).toString())), i);
             trains.add(sample);
             createTrain(sample);
         }
@@ -83,15 +74,15 @@ public class Depot {
         logger.info("Started train #" + train.getId() + ".");
         workers.schedule(() -> {
             try {
-                disposeTrain(train,t);
+                disposeTrain(train, t);
             } catch (InterruptedException e) {
                 //DO SMT!!!!
             }
-        },sample.getDepreciationTimeSec(),TimeUnit.SECONDS);
+        }, sample.getDepreciationTimeMillis(), TimeUnit.MILLISECONDS);
     }
 
     private void disposeTrain(Train train, Thread t) throws InterruptedException {
-        t.interrupt();
+        train.mark();
         while (!train.isDisposed()) {
             train.wait();
         }

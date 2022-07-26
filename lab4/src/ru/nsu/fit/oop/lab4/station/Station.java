@@ -1,6 +1,7 @@
 package ru.nsu.fit.oop.lab4.station;
 
 import ru.nsu.fit.oop.lab4.Main;
+import ru.nsu.fit.oop.lab4.exception.BadNumberOfTracks;
 import ru.nsu.fit.oop.lab4.goods.Storage;
 import ru.nsu.fit.oop.lab4.station.tracks.LoadingTrack;
 import ru.nsu.fit.oop.lab4.station.tracks.Track;
@@ -30,12 +31,20 @@ public class Station {
 
     public Station(int distance, int numberOfLoadingTracks, int numberOfUnloadingTracks,
                    int numberOfTracksDepartureDestination, int numberOfTracksDestinationDeparture,
-                   Map<String, Storage> departureStorages, Map<String, Storage> destinationStorages) {
+                   Map<String, Storage> departureStorages, Map<String, Storage> destinationStorages) throws BadNumberOfTracks {
         this.distance = distance;
         this.numberOfLoadingTracks = numberOfLoadingTracks;
+        if (numberOfLoadingTracks < 1)
+            throw new BadNumberOfTracks("loading",numberOfLoadingTracks);
         this.numberOfUnloadingTracks = numberOfUnloadingTracks;
+        if (numberOfUnloadingTracks < 1)
+            throw new BadNumberOfTracks("unloading",numberOfUnloadingTracks);
         this.numberOfTracksDepartureDestination = numberOfTracksDepartureDestination;
+        if (numberOfTracksDepartureDestination < 1)
+            throw new BadNumberOfTracks("departure destination",numberOfTracksDepartureDestination);
         this.numberOfTracksDestinationDeparture = numberOfTracksDestinationDeparture;
+        if (numberOfTracksDestinationDeparture < 1)
+            throw new BadNumberOfTracks("destination departure",numberOfTracksDestinationDeparture);
 
         loadingTracks = new ArrayList<>();
         unloadingTracks = new ArrayList<>();

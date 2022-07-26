@@ -3,16 +3,16 @@ package ru.nsu.fit.oop.lab4.goods;
 public class Good {
 
     private final String name;
-    private final int consumptionTimeSec;
-    private final int loadingTimeSec;
-    private final int unloadingTimeSec;
+    private final int consumptionTimeMillis;
+    private final int loadingTimeMillis;
+    private final int unloadingTimeMillis;
     private final int id;
 
-    public Good(String name, int consumptionTimeSec, int loadingTimeSec, int unloadingTimeSec, int id) {
+    public Good(String name, int consumptionTimeMillis, int loadingTimeMillis, int unloadingTimeMillis, int id) {
         this.name = name;
-        this.consumptionTimeSec = consumptionTimeSec;
-        this.loadingTimeSec = loadingTimeSec;
-        this.unloadingTimeSec = unloadingTimeSec;
+        this.consumptionTimeMillis = consumptionTimeMillis;
+        this.loadingTimeMillis = loadingTimeMillis;
+        this.unloadingTimeMillis = unloadingTimeMillis;
         this.id = id;
     }
 
@@ -21,15 +21,15 @@ public class Good {
     }
 
     public void consume() throws InterruptedException {
-        Thread.sleep(1000 * consumptionTimeSec);
+        Thread.sleep(consumptionTimeMillis);
     }
 
     public void load() throws InterruptedException {
-        Thread.sleep(1000 * loadingTimeSec);
+        Thread.sleep(loadingTimeMillis);
     }
 
     public void unload() throws InterruptedException {
-        Thread.sleep(1000 * unloadingTimeSec);
+        Thread.sleep(unloadingTimeMillis);
     }
 
 }

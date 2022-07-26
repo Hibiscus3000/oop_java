@@ -1,20 +1,16 @@
 package ru.nsu.fit.oop.lab4.trains;
 
-import ru.nsu.fit.oop.lab4.Main;
 import ru.nsu.fit.oop.lab4.exception.BadTrackException;
-import ru.nsu.fit.oop.lab4.exception.UnsuccessfulLoggerCreation;
 import ru.nsu.fit.oop.lab4.goods.Good;
 import ru.nsu.fit.oop.lab4.station.Station;
 import ru.nsu.fit.oop.lab4.station.tracks.LoadingTrack;
 import ru.nsu.fit.oop.lab4.station.tracks.TrafficTrack;
 import ru.nsu.fit.oop.lab4.station.tracks.UnloadingTrack;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class Train implements Runnable {
@@ -23,28 +19,28 @@ public class Train implements Runnable {
     private List<Good> goods;
     private final int speed;
     private final Station station;
-    private final int assemblyTimeSec;
-    private final int depreciationTimeSec;
+    private final int assemblyTimeMillis;
+    private final int depreciationTimeMillis;
     private final int id;
-    private boolean isDisposed = false;
+    private final int capacityAll;
+    private volatile boolean isMarked = false;
+    private volatile boolean isDisposed = false;
     private final Logger logger;
 
-    public Train(Map<String, Integer> capacity, int speed, Station station, int assemblyTimeSec,
-                 int depreciationTimeSec, int id) throws UnsuccessfulLoggerCreation {
-        try {
-            LogManager.getLogManager().readConfiguration(this.getClass().getResourceAsStream
-                    ("train_log.properties"));
-        } catch (IOException e) {
-            Main.logger.severe("Wasn't able to create logger for train");
-            throw new UnsuccessfulLoggerCreation("train",e);
-        }
+    public Train(Map<String, Integer> capacity, int speed, Station station, int assemblyTimeMillis,
+                 int depreciationTimeMillis, int id) {
         logger = Logger.getLogger(this.getClass().getSimpleName());
         logger.setLevel(Level.ALL);
         this.capacity = capacity;
+        int totalCapacity = 0;
+        for (Map.Entry<String, Integer> goodCapacity : capacity.entrySet()) {
+            totalCapacity += goodCapacity.getValue();
+        }
+        capacityAll = totalCapacity;
         this.speed = speed;
         this.station = station;
-        this.assemblyTimeSec = assemblyTimeSec;
-        this.depreciationTimeSec = depreciationTimeSec;
+        this.assemblyTimeMillis = assemblyTimeMillis;
+        this.depreciationTimeMillis = depreciationTimeMillis;
         goods = new ArrayList<>();
         this.id = id;
     }
@@ -53,11 +49,13 @@ public class Train implements Runnable {
         capacity = train.capacity;
         speed = train.speed;
         station = train.station;
-        assemblyTimeSec = train.assemblyTimeSec;
-        depreciationTimeSec = train.depreciationTimeSec;
-        logger = train.logger;
-        Thread.sleep(assemblyTimeSec);
+        assemblyTimeMillis = train.assemblyTimeMillis;
+        depreciationTimeMillis = train.depreciationTimeMillis;
+        goods = new ArrayList<>();
         id = train.id;
+        capacityAll = train.capacityAll;
+        logger = train.logger;
+        Thread.sleep(assemblyTimeMillis);
     }
 
     public int getId() {
@@ -68,25 +66,33 @@ public class Train implements Runnable {
         return isDisposed;
     }
 
+    public void mark() {
+        isMarked = true;
+        logger.info("Train #" + id + " marked for recycling.");
+    }
+
     @Override
     public void run() {
         try {
             while (true) {
-                Main.logger.info("Train #" + id + " starting to load goods...");
+                logger.info("Train #" + id + " loading goods...");
                 loadGoods();
-                Main.logger.info("Train #" + id + " starting to drive from departure" +
+                logger.info("Train #" + id + " finished loading goods, driving from departure " +
                         "station to destination station...");
                 driveDepartureDestination();
-                Main.logger.info("Train #" + id + " starting to unload goods...");
+                logger.info("Train #" + id + " unloading goods...");
                 unloadGoods();
-                Main.logger.info("Train #" + id + " starting to drive from destination" +
+                logger.info("Train #" + id + " finished unloading goods, driving from destination " +
                         "station to departure station...");
                 driveDestinationDeparture();
+                if (isMarked) {
+                    dispose();
+                    break;
+                }
             }
         } catch (InterruptedException e) {
             logger.info("Train #" + id + " was interrupted.");
-            isDisposed = true;
-            notifyAll();
+            dispose();
         } catch (BadTrackException e) {
         }
         // DO SMT!!!
@@ -96,12 +102,14 @@ public class Train implements Runnable {
         try {
             LoadingTrack track = (LoadingTrack) station.acquireLoadingTrack();
             for (Map.Entry<String, Integer> entry : capacity.entrySet()) {
-                Main.logger.config("");
                 for (int i = 0; i < entry.getValue(); ++i) {
                     Good good = track.getGood(entry.getKey());
                     good.load();
                     goods.add(good);
+                    logger.info("Train #" + id + " loaded " + entry.getKey() + "." +
+                            " Train occupancy: " + goods.size() + "/" + capacityAll + ".");
                 }
+                logger.info("Train #" + id + " finished loading " + entry.getKey() + ".");
             }
             station.releaseLoadingTrack(track);
         } catch (ClassCastException e) {
@@ -125,8 +133,8 @@ public class Train implements Runnable {
             for (Good good : goods) {
                 good.unload();
                 track.unloadGood(good);
-                station.releaseUnloadingTrack(track);
             }
+            station.releaseUnloadingTrack(track);
         } catch (ClassCastException e) {
             throw new BadTrackException(e);
         }
@@ -142,7 +150,15 @@ public class Train implements Runnable {
         }
     }
 
-    public int getDepreciationTimeSec() {
-        return depreciationTimeSec;
+    private void dispose() {
+        isDisposed = true;
+        synchronized (this) {
+            notifyAll();
+        }
+        logger.info("Train #" + id + " was scrapped.");
+    }
+
+    public int getDepreciationTimeMillis() {
+        return depreciationTimeMillis;
     }
 }
