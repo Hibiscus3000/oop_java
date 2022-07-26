@@ -1,5 +1,6 @@
 package ru.nsu.fit.oop.lab4.trains;
 
+import ru.nsu.fit.oop.lab4.Logging;
 import ru.nsu.fit.oop.lab4.exception.BadTrackException;
 import ru.nsu.fit.oop.lab4.goods.Good;
 import ru.nsu.fit.oop.lab4.station.Station;
@@ -7,13 +8,15 @@ import ru.nsu.fit.oop.lab4.station.tracks.LoadingTrack;
 import ru.nsu.fit.oop.lab4.station.tracks.TrafficTrack;
 import ru.nsu.fit.oop.lab4.station.tracks.UnloadingTrack;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Train implements Runnable {
+public class Train implements Runnable, Logging {
 
     private final Map<String, Integer> capacity;
     private List<Good> goods;
@@ -23,14 +26,19 @@ public class Train implements Runnable {
     private final int depreciationTimeMillis;
     private final int id;
     private final int capacityAll;
+    private int goodsTransported = 0;
     private volatile boolean isMarked = false;
     private volatile boolean isDisposed = false;
     private final Logger logger;
 
     public Train(Map<String, Integer> capacity, int speed, Station station, int assemblyTimeMillis,
-                 int depreciationTimeMillis, int id) {
-        logger = Logger.getLogger(this.getClass().getSimpleName());
+                 int depreciationTimeMillis, int id) throws IOException {
+        logger = Logger.getLogger(this.getClass().getSimpleName() + id);
         logger.setLevel(Level.ALL);
+        FileHandler fileHandler = new FileHandler("train" + id + "_log%g.txt",
+                1000000,1,false);
+        fileHandler.setLevel(Level.ALL);
+        logger.addHandler(fileHandler);
         this.capacity = capacity;
         int totalCapacity = 0;
         for (Map.Entry<String, Integer> goodCapacity : capacity.entrySet()) {
@@ -43,6 +51,7 @@ public class Train implements Runnable {
         this.depreciationTimeMillis = depreciationTimeMillis;
         goods = new ArrayList<>();
         this.id = id;
+        logger.config("Sample #" + id + " created.");
     }
 
     public Train(Train train) throws InterruptedException {
@@ -56,6 +65,7 @@ public class Train implements Runnable {
         capacityAll = train.capacityAll;
         logger = train.logger;
         Thread.sleep(assemblyTimeMillis);
+        logger.config("Train #" + id + " created.");
     }
 
     public int getId() {
@@ -91,7 +101,8 @@ public class Train implements Runnable {
                 }
             }
         } catch (InterruptedException e) {
-            logger.info("Train #" + id + " was interrupted.");
+            logger.warning("Train #" + id + " was interrupted.");
+            logFinalInfo();
             dispose();
         } catch (BadTrackException e) {
         }
@@ -102,11 +113,12 @@ public class Train implements Runnable {
         try {
             LoadingTrack track = (LoadingTrack) station.acquireLoadingTrack();
             for (Map.Entry<String, Integer> entry : capacity.entrySet()) {
+                logger.info("Train #" + id + " loading " + entry.getKey() + ".");
                 for (int i = 0; i < entry.getValue(); ++i) {
                     Good good = track.getGood(entry.getKey());
                     good.load();
                     goods.add(good);
-                    logger.info("Train #" + id + " loaded " + entry.getKey() + "." +
+                    logger.config("Train #" + id + " loaded " + entry.getKey() + "." +
                             " Train occupancy: " + goods.size() + "/" + capacityAll + ".");
                 }
                 logger.info("Train #" + id + " finished loading " + entry.getKey() + ".");
@@ -133,6 +145,9 @@ public class Train implements Runnable {
             for (Good good : goods) {
                 good.unload();
                 track.unloadGood(good);
+                ++goodsTransported;
+                logger.config("Train #" + id + " unloaded " + good.getName() + "." +
+                        " Train occupancy: " + goods.size() + "/" + capacityAll + ".");
             }
             station.releaseUnloadingTrack(track);
         } catch (ClassCastException e) {
@@ -160,5 +175,11 @@ public class Train implements Runnable {
 
     public int getDepreciationTimeMillis() {
         return depreciationTimeMillis;
+    }
+
+    @Override
+    public void logFinalInfo() {
+        logger.info("Train #" + id + " transported " + goodsTransported + " goods.\n" +
+                "Then it was interrupted it had " + goods.size() + " in it.");
     }
 }

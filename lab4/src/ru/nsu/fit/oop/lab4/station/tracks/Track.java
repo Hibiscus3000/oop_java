@@ -11,6 +11,10 @@ public class Track {
         this.id = id;
     }
 
+    public int getId() {
+        return id;
+    }
+
     private Lock lock = new ReentrantLock();
 
     public boolean tryLock() {

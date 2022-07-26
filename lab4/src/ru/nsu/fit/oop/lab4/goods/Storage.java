@@ -1,7 +1,10 @@
 package ru.nsu.fit.oop.lab4.goods;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Storage {
@@ -11,11 +14,17 @@ public class Storage {
     private final int capacity;
     private final Logger logger;
 
-    public Storage(String goodName, int capacity) {
-        logger = Logger.getLogger(this.getClass().getSimpleName());
+    public Storage(String goodName, int capacity) throws IOException {
+        logger = Logger.getLogger(goodName + this.getClass().getSimpleName());
         this.goodName = goodName;
         this.capacity = capacity;
         goods = new ArrayList<>();
+        FileHandler fileHandler = new FileHandler(getGoodName() + "Factory_log%g.txt",
+                1000000,1,false);
+        fileHandler.setLevel(Level.ALL);
+        logger.addHandler(fileHandler);
+        logger.setLevel(Level.ALL);
+        logger.config(goodName + " storage created.");
     }
 
     public String getGoodName() {
@@ -28,7 +37,7 @@ public class Storage {
             wait();
         }
         goods.add(good);
-        logger.info(goodName + " added to storage. Storage occupancy: " + goods.size() + "/" +
+        logger.config(goodName + " added to storage. Storage occupancy: " + goods.size() + "/" +
                 capacity);
         notifyAll();
     }
@@ -40,7 +49,7 @@ public class Storage {
         }
         Good good = goods.remove(0);
         notifyAll();
-        logger.info(goodName + " removed from storage. Storage occupancy: " + goods.size() + "/" +
+        logger.config(goodName + " removed from storage. Storage occupancy: " + goods.size() + "/" +
                 capacity);
         return good;
     }

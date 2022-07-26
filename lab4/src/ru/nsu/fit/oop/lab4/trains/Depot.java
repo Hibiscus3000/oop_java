@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,6 +28,10 @@ public class Depot {
             IOException {
         logger = Logger.getLogger(this.getClass().getSimpleName());
         logger.setLevel(Level.ALL);
+        FileHandler fileHandler = new FileHandler("depot_log%g.txt",
+                1000000,1,false);
+        fileHandler.setLevel(Level.ALL);
+        logger.addHandler(fileHandler);
         trainsConfig = new Properties();
         var stream = this.getClass().getResourceAsStream("trains.properties");
         if (null == stream)
@@ -54,7 +59,7 @@ public class Depot {
         return capacity;
     }
 
-    public void start() throws InterruptedException {
+    public void start() throws InterruptedException, IOException {
         int numberOfGoodTypes = goodsConfig.size() / 7;
         for (int i = 0; i < numberOfTrains; ++i) {
             Train sample = new Train(parseCapacities(i, numberOfGoodTypes, goodsConfig),

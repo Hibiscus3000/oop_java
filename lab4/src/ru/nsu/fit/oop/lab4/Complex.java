@@ -10,6 +10,7 @@ import ru.nsu.fit.oop.lab4.trains.Depot;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.logging.Logger;
 
 public class Complex {
 
@@ -45,7 +46,8 @@ public class Complex {
         Main.logger.info("Depot created.");
     }
 
-    private void createStoragesAndConsumers(int numberOfGoodTypes, Properties goodsConfig) {
+    private void createStoragesAndConsumers(int numberOfGoodTypes, Properties goodsConfig) throws IOException {
+        int numberOfConsumersTotal = 0;
         for (int i = 0; i < numberOfGoodTypes; ++i) {
             String goodName = goodsConfig.getProperty(Integer.valueOf(10 * i).toString());
             departureStorages.put(goodName, new Storage(goodName,
@@ -55,10 +57,12 @@ public class Complex {
             destinationStorages.put(goodName, storage = new Storage(goodName,
                     Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 2)))));
             Main.logger.config("created destination storage for " + goodName);
-            for (int j = 0; j < Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 7))); ++j) {
+            int j;
+            for (j = 0; j < Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 7))); ++j) {
                 Main.logger.config("created Consumer #" + j + " for " + goodName);
-                consumers.add(new Consumer(storage, j));
+                consumers.add(new Consumer(storage, numberOfConsumersTotal + j));
             }
+            numberOfConsumersTotal += j;
         }
     }
 
@@ -80,7 +84,7 @@ public class Complex {
                 departureStorages, destinationStorages);
     }
 
-    private void createFactories(int numberOfGoodTypes, Properties goodsConfig) {
+    private void createFactories(int numberOfGoodTypes, Properties goodsConfig) throws IOException {
         for (int i = 0; i < numberOfGoodTypes; ++i) {
             String goodName = goodsConfig.getProperty(String.valueOf(10 * i));
             Main.logger.config("Creating factory for " + goodName + "...");
@@ -94,14 +98,14 @@ public class Complex {
         }
     }
 
-    public void start() throws InterruptedException {
+    public void start() throws InterruptedException, IOException {
         depot.start();
+        Main.logger.config("Starting depot... ");
         for (Factory factory : factories) {
             Main.logger.config("Starting factory producing " + factory.getGoodName() + "...");
             Thread t = new Thread(factory);
             t.start();
         }
-        Main.logger.config("Starting depot... ");
         for (Consumer consumer : consumers) {
             Thread t = new Thread(consumer);
             Main.logger.config("Starting consumer interested in " + consumer.getGoodName() + "...");
