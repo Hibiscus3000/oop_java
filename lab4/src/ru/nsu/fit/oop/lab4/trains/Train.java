@@ -105,8 +105,8 @@ public class Train implements Runnable, Logging {
             logFinalInfo();
             dispose();
         } catch (BadTrackException e) {
+            logger.log(Level.SEVERE,"Train #" + id + " threw a bad track exception.",e);
         }
-        // DO SMT!!!
     }
 
     private void loadGoods() throws InterruptedException, BadTrackException {
@@ -119,7 +119,7 @@ public class Train implements Runnable, Logging {
                     good.load();
                     goods.add(good);
                     logger.config("Train #" + id + " loaded " + entry.getKey() + "." +
-                            " Train occupancy: " + goods.size() + "/" + capacityAll + ".");
+                            " Train " + entry.getKey() +  " occupancy: " + i + "/" + entry.getValue() + ".");
                 }
                 logger.info("Train #" + id + " finished loading " + entry.getKey() + ".");
             }

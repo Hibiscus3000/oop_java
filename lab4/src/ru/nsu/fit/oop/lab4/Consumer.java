@@ -15,6 +15,7 @@ public class Consumer implements Runnable, Logging {
     private final int id;
     private final Logger logger;
     private int numberOfGoodsConsumed = 0;
+    private final int logUpdationFreq = 20;
 
     public Consumer(Storage storage, int id) throws IOException {
         this.storage = storage;
@@ -25,7 +26,7 @@ public class Consumer implements Runnable, Logging {
         fileHandler.setLevel(Level.ALL);
         logger.addHandler(fileHandler);
         logger.setLevel(Level.ALL);
-        logger.config("Consumer #" + id + ", interested in " + getGoodName() + " created.");
+        logger.config("Consumer #" + id + ", interested in " + getGoodName() + ", created.");
     }
 
     public String getGoodName() {
@@ -41,13 +42,16 @@ public class Consumer implements Runnable, Logging {
                         good.getId() + ", going to consume it...");
                 good.consume();
                 ++numberOfGoodsConsumed;
-                logger.info("Consumer consumed " + getGoodName() + " #" + good.getId() + ".");
+                logger.config("Consumer #" + id + " consumed " + getGoodName() + " #" + good.getId() + ".");
+                if (0 == (numberOfGoodsConsumed % logUpdationFreq)) {
+                    logger.info("Consumer #" + id + " consumed " + numberOfGoodsConsumed + " " + getGoodName() + ".");
+                }
             }
         } catch (InterruptedException e) {
             logger.warning("Consumer interested in " + getGoodName() + " was interrupted.");
             logFinalInfo();
         } catch (ReusedGoodException e) {
-            logger.log(Level.SEVERE,"Trying to reuse good",e);
+            logger.log(Level.SEVERE,"Trying to reuse " + getGoodName(),e);
         }
     }
 

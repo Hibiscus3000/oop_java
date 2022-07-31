@@ -1,5 +1,6 @@
 package ru.nsu.fit.oop.lab4.trains;
 
+import ru.nsu.fit.oop.lab4.Logging;
 import ru.nsu.fit.oop.lab4.Main;
 import ru.nsu.fit.oop.lab4.exception.InvalidConfigException;
 import ru.nsu.fit.oop.lab4.station.Station;
@@ -13,7 +14,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Depot {
+public class Depot implements Logging {
 
     private final int numberOfWorkers = 4;
     private final ScheduledExecutorService workers = Executors.newScheduledThreadPool(numberOfWorkers);
@@ -29,7 +30,7 @@ public class Depot {
         logger = Logger.getLogger(this.getClass().getSimpleName());
         logger.setLevel(Level.ALL);
         FileHandler fileHandler = new FileHandler("depot_log%g.txt",
-                1000000,1,false);
+                1000000, 1, false);
         fileHandler.setLevel(Level.ALL);
         logger.addHandler(fileHandler);
         trainsConfig = new Properties();
@@ -81,17 +82,24 @@ public class Depot {
             try {
                 disposeTrain(train, t);
             } catch (InterruptedException e) {
-                //DO SMT!!!!
+                workers.shutdownNow();
+                logFinalInfo();
             }
         }, sample.getDepreciationTimeMillis(), TimeUnit.MILLISECONDS);
     }
 
     private void disposeTrain(Train train, Thread t) throws InterruptedException {
         train.mark();
-        while (!train.isDisposed()) {
-            train.wait();
+        synchronized (train) {
+            while (!train.isDisposed()) {
+                train.wait();
+            }
         }
-        logger.info("Train #" + train.getId() + " was scrapped.");
         createTrain(train);
+    }
+
+    @Override
+    public void logFinalInfo() {
+        logger.info("Depot workers were interrupted and shutdown.");
     }
 }

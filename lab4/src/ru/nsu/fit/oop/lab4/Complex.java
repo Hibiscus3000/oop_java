@@ -51,11 +51,11 @@ public class Complex {
         for (int i = 0; i < numberOfGoodTypes; ++i) {
             String goodName = goodsConfig.getProperty(Integer.valueOf(10 * i).toString());
             departureStorages.put(goodName, new Storage(goodName,
-                    Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 1)))));
+                    Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 1))),"Departure"));
             Storage storage;
             Main.logger.config("created departure storage for " + goodName);
             destinationStorages.put(goodName, storage = new Storage(goodName,
-                    Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 2)))));
+                    Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 2))),"Destination"));
             Main.logger.config("created destination storage for " + goodName);
             int j;
             for (j = 0; j < Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 7))); ++j) {
