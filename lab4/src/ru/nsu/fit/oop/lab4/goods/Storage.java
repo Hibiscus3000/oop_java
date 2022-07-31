@@ -12,15 +12,26 @@ public class Storage {
     private final String goodName;
     private List<Good> goods;
     private final int capacity;
+    private final String place;
+    private final String takerName;
+    private final String placerName;
     private final Logger logger;
 
-    public Storage(String goodName, int capacity) throws IOException {
-        logger = Logger.getLogger(goodName + this.getClass().getSimpleName());
+    public Storage(String goodName, int capacity, String place) throws IOException {
+        if (place == "Departure") {
+            takerName = "Train";
+            placerName = "Factory";
+        } else {
+            takerName = "Consumer";
+            placerName = "Train";
+        }
         this.goodName = goodName;
         this.capacity = capacity;
+        this.place = place;
         goods = new ArrayList<>();
-        FileHandler fileHandler = new FileHandler(getGoodName() + "Factory_log%g.txt",
-                1000000,1,false);
+        logger = Logger.getLogger(goodName + place + this.getClass().getSimpleName());
+        FileHandler fileHandler = new FileHandler(getGoodName() + place + "Storage_log%g.txt",
+                1000000, 1, false);
         fileHandler.setLevel(Level.ALL);
         logger.addHandler(fileHandler);
         logger.setLevel(Level.ALL);
@@ -33,7 +44,7 @@ public class Storage {
 
     public synchronized void addGood(Good good) throws InterruptedException {
         while (goods.size() == capacity) {
-            logger.config("Train or factory is standing idle, because storage is full");
+            logger.config(placerName + " is standing idle, because storage is full");
             wait();
         }
         goods.add(good);
@@ -44,7 +55,7 @@ public class Storage {
 
     public synchronized Good getGood() throws InterruptedException {
         while (goods.isEmpty()) {
-            logger.config("Train or consumer is standing idle, because storage is empty");
+            logger.config(takerName + " is standing idle, because storage is empty");
             wait();
         }
         Good good = goods.remove(0);

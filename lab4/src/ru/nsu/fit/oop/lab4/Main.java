@@ -13,7 +13,7 @@ public class Main {
         try {
             LogManager.getLogManager().readConfiguration(
                     Main.class.getResourceAsStream("log.properties"));
-            logger = Logger.getLogger(Main.class.getSimpleName());
+            logger = Logger.getLogger("");
             logger.setLevel(Level.ALL);
             FileHandler fileHandler = new FileHandler("log_all%g.txt", 1000000, 1, false);
             fileHandler.setLevel(Level.ALL);
