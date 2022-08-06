@@ -10,16 +10,17 @@ import ru.nsu.fit.oop.lab4.trains.Depot;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.logging.Logger;
 
 public class Complex {
 
     private final List<Factory> factories = new ArrayList<>();
+    private final List<Thread> factoryThreads = new ArrayList<>();
     private final Map<String, Storage> departureStorages = new HashMap<>();
     private final Map<String, Storage> destinationStorages = new HashMap<>();
     private Station station;
     private final Depot depot;
     private final List<Consumer> consumers = new ArrayList<>();
+    private final List<Thread> consumerThreads = new ArrayList<>();
 
     public Complex() throws IOException, InvalidConfigException, BadNumberOfTracks {
         Properties goodsConfig = new Properties();
@@ -102,14 +103,35 @@ public class Complex {
         depot.start();
         Main.logger.config("Starting depot... ");
         for (Factory factory : factories) {
-            Main.logger.config("Starting factory producing " + factory.getGoodName() + "...");
             Thread t = new Thread(factory);
+            Main.logger.config("Starting factory producing " + factory.getGoodName() + "...");
+            factoryThreads.add(t);
             t.start();
         }
         for (Consumer consumer : consumers) {
             Thread t = new Thread(consumer);
             Main.logger.config("Starting consumer interested in " + consumer.getGoodName() + "...");
+            consumerThreads.add(t);
             t.start();
+        }
+    }
+
+    public void stop() {
+        depot.stop();
+        stopFactoriesAndConsumers();
+    }
+
+    public void stopUrgently() {
+        depot.stopUrgently();
+        stopFactoriesAndConsumers();
+    }
+
+    private void stopFactoriesAndConsumers() {
+        for (Thread factoryThread : factoryThreads) {
+            factoryThread.interrupt();
+        }
+        for (Thread consumerThread : consumerThreads) {
+            consumerThread.interrupt();
         }
     }
 }

@@ -21,8 +21,8 @@ public class Consumer implements Runnable, Logging {
         this.storage = storage;
         this.id = id;
         logger = Logger.getLogger(this.getClass().getSimpleName() + id);
-        FileHandler fileHandler = new FileHandler(getGoodName() + "Consumer" + id + "_log%g.txt",
-                1000000,1,false);
+        FileHandler fileHandler = new FileHandler("logs/" + getGoodName() + "Consumer" +
+                id + "_log%g.txt", 1000000,1,false);
         fileHandler.setLevel(Level.ALL);
         logger.addHandler(fileHandler);
         logger.setLevel(Level.ALL);

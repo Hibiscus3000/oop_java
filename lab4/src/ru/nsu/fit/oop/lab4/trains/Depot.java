@@ -20,16 +20,18 @@ public class Depot implements Logging {
     private final ScheduledExecutorService workers = Executors.newScheduledThreadPool(numberOfWorkers);
     private final Properties trainsConfig;
     private final int numberOfTrains;
-    private final List<Train> trains;
+    private volatile List<Train> trains;
+    private volatile List<Thread> threads;
     private final Station station;
     private final Properties goodsConfig;
     private final Logger logger;
+    private volatile boolean stop = false;
 
     public Depot(Station station, Properties goodsConfig) throws InvalidConfigException,
             IOException {
         logger = Logger.getLogger(this.getClass().getSimpleName());
         logger.setLevel(Level.ALL);
-        FileHandler fileHandler = new FileHandler("depot_log%g.txt",
+        FileHandler fileHandler = new FileHandler("logs/depot_log%g.txt",
                 1000000, 1, false);
         fileHandler.setLevel(Level.ALL);
         logger.addHandler(fileHandler);
@@ -41,6 +43,7 @@ public class Depot implements Logging {
         Main.logger.config("Loaded trains config.");
         numberOfTrains = trainsConfig.size() / 4;
         trains = new ArrayList<>(numberOfTrains);
+        threads = new ArrayList<>(numberOfTrains);
         this.station = station;
         this.goodsConfig = goodsConfig;
     }
@@ -67,20 +70,21 @@ public class Depot implements Logging {
                     Integer.parseInt(trainsConfig.getProperty(Integer.valueOf(10 * i + 1).toString())),
                     station, Integer.parseInt(trainsConfig.getProperty(Integer.valueOf(10 * i + 2).toString())),
                     Integer.parseInt(trainsConfig.getProperty(Integer.valueOf(10 * i + 3).toString())), i);
-            trains.add(sample);
             createTrain(sample);
         }
     }
 
     private void createTrain(Train sample) throws InterruptedException {
         Train train = new Train(sample);
+        trains.add(train);
         logger.info("Created train #" + train.getId() + ".");
-        Thread t = new Thread(train);
-        t.start();
+        Thread thread = new Thread(train);
+        threads.add(thread);
+        thread.start();
         logger.info("Started train #" + train.getId() + ".");
         workers.schedule(() -> {
             try {
-                disposeTrain(train, t);
+                disposeTrain(train, thread);
             } catch (InterruptedException e) {
                 workers.shutdownNow();
                 logFinalInfo();
@@ -88,7 +92,7 @@ public class Depot implements Logging {
         }, sample.getDepreciationTimeMillis(), TimeUnit.MILLISECONDS);
     }
 
-    private void disposeTrain(Train train, Thread t) throws InterruptedException {
+    private void disposeTrain(Train train, Thread thread) throws InterruptedException {
         train.mark();
         synchronized (train) {
             while (!train.isDisposed()) {
@@ -96,11 +100,24 @@ public class Depot implements Logging {
             }
         }
         logger.info("Depot disposed of the train #" + train.getId() + ".");
+        threads.remove(thread);
+        trains.remove(train);
         createTrain(train);
     }
 
     @Override
     public void logFinalInfo() {
         logger.info("Depot workers were interrupted and shutdown.");
+    }
+
+    public void stop() {
+        stop = true;
+    }
+
+    public void stopUrgently() {
+        workers.shutdownNow();
+        for (Thread thread : threads) {
+            thread.interrupt();
+        }
     }
 }
