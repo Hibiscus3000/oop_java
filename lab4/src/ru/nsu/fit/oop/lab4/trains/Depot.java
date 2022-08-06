@@ -31,7 +31,7 @@ public class Depot implements Logging {
             IOException {
         logger = Logger.getLogger(this.getClass().getSimpleName());
         logger.setLevel(Level.ALL);
-        FileHandler fileHandler = new FileHandler("logs/depot_log%g.txt",
+        FileHandler fileHandler = new FileHandler("../logs/depot_log%g.txt",
                 1000000, 1, false);
         fileHandler.setLevel(Level.ALL);
         logger.addHandler(fileHandler);

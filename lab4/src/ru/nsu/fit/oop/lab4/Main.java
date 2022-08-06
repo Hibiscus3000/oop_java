@@ -26,7 +26,7 @@ public class Main {
                 complexFrame.setVisible(true);
             });
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Wasn't able to create or start complex!", e);
+            logger.log(Level.SEVERE, "Wasn't able to create main logger!", e);
         }
     }
 

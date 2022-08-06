@@ -37,7 +37,7 @@ public class Train implements Runnable, Logging {
                  int depreciationTimeMillis, int id) throws IOException {
         logger = Logger.getLogger(this.getClass().getSimpleName() + id);
         logger.setLevel(Level.ALL);
-        FileHandler fileHandler = new FileHandler("logs/train" + id + "_log%g.txt",
+        FileHandler fileHandler = new FileHandler("../logs/train" + id + "_log%g.txt",
                 1000000,1,false);
         fileHandler.setLevel(Level.ALL);
         logger.addHandler(fileHandler);

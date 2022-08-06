@@ -39,7 +39,7 @@ public class Factory implements Runnable, Logging {
         makeIDs();
         logger = Logger.getLogger(goodName + this.getClass().getSimpleName());
         logger.setLevel(Level.ALL);
-        FileHandler fileHandler = new FileHandler("logs/" + getGoodName() + "Factory_log%g.txt",
+        FileHandler fileHandler = new FileHandler("../logs/" + getGoodName() + "Factory_log%g.txt",
                 1000000,1,false);
         fileHandler.setLevel(Level.ALL);
         logger.addHandler(fileHandler);
