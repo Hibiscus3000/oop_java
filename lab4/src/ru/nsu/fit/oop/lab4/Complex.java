@@ -2,10 +2,11 @@ package ru.nsu.fit.oop.lab4;
 
 import ru.nsu.fit.oop.lab4.exception.BadNumberOfTracks;
 import ru.nsu.fit.oop.lab4.exception.InvalidConfigException;
-import ru.nsu.fit.oop.lab4.goods.Factory;
-import ru.nsu.fit.oop.lab4.goods.Storage;
+import ru.nsu.fit.oop.lab4.good.Factory;
+import ru.nsu.fit.oop.lab4.good.Storage;
 import ru.nsu.fit.oop.lab4.station.Station;
-import ru.nsu.fit.oop.lab4.trains.Depot;
+import ru.nsu.fit.oop.lab4.train.Depot;
+import ru.nsu.fit.oop.lab4.train.Train;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +25,7 @@ public class Complex {
 
     public Complex() throws IOException, InvalidConfigException, BadNumberOfTracks {
         Properties goodsConfig = new Properties();
-        InputStream goodsStream = this.getClass().getResourceAsStream("goods/goods.properties");
+        InputStream goodsStream = this.getClass().getResourceAsStream("good/goods.properties");
         if (null == goodsStream) {
             InvalidConfigException e = new InvalidConfigException("Wasn't able to open goods config.");
             Main.logger.throwing(this.getClass().getSimpleName(), "Complex", e);
@@ -133,5 +134,29 @@ public class Complex {
         for (Thread consumerThread : consumerThreads) {
             consumerThread.interrupt();
         }
+    }
+
+    public List<Factory> getFactories() {
+        return factories;
+    }
+
+    public Map<String, Storage> getDepartureStorages() {
+        return departureStorages;
+    }
+
+    public Map<String, Storage> getDestinationStorages() {
+        return destinationStorages;
+    }
+
+    public Station getStation() {
+        return station;
+    }
+
+    public List<Consumer> getConsumers() {
+        return consumers;
+    }
+
+    public List<Train> getTrains() {
+        return depot.getTrains();
     }
 }

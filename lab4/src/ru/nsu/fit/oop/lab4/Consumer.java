@@ -1,8 +1,8 @@
 package ru.nsu.fit.oop.lab4;
 
 import ru.nsu.fit.oop.lab4.exception.ReusedGoodException;
-import ru.nsu.fit.oop.lab4.goods.Good;
-import ru.nsu.fit.oop.lab4.goods.Storage;
+import ru.nsu.fit.oop.lab4.good.Good;
+import ru.nsu.fit.oop.lab4.good.Storage;
 
 import java.io.IOException;
 import java.util.logging.FileHandler;

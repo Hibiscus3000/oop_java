@@ -1,9 +1,9 @@
-package ru.nsu.fit.oop.lab4.trains;
+package ru.nsu.fit.oop.lab4.train;
 
 import ru.nsu.fit.oop.lab4.Logging;
 import ru.nsu.fit.oop.lab4.exception.BadTrackException;
 import ru.nsu.fit.oop.lab4.exception.UnknownGoodName;
-import ru.nsu.fit.oop.lab4.goods.Good;
+import ru.nsu.fit.oop.lab4.good.Good;
 import ru.nsu.fit.oop.lab4.station.Station;
 import ru.nsu.fit.oop.lab4.station.tracks.LoadingTrack;
 import ru.nsu.fit.oop.lab4.station.tracks.TrafficTrack;
@@ -37,7 +37,7 @@ public class Train implements Runnable, Logging {
                  int depreciationTimeMillis, int id) throws IOException {
         logger = Logger.getLogger(this.getClass().getSimpleName() + id);
         logger.setLevel(Level.ALL);
-        FileHandler fileHandler = new FileHandler("../logs/train" + id + "_log%g.txt",
+        FileHandler fileHandler = new FileHandler("logs/train" + id + "_log%g.txt",
                 1000000,1,false);
         fileHandler.setLevel(Level.ALL);
         logger.addHandler(fileHandler);

@@ -1,4 +1,4 @@
-package ru.nsu.fit.oop.lab4.trains;
+package ru.nsu.fit.oop.lab4.train;
 
 import ru.nsu.fit.oop.lab4.Logging;
 import ru.nsu.fit.oop.lab4.Main;
@@ -31,7 +31,7 @@ public class Depot implements Logging {
             IOException {
         logger = Logger.getLogger(this.getClass().getSimpleName());
         logger.setLevel(Level.ALL);
-        FileHandler fileHandler = new FileHandler("../logs/depot_log%g.txt",
+        FileHandler fileHandler = new FileHandler("logs/depot_log%g.txt",
                 1000000, 1, false);
         fileHandler.setLevel(Level.ALL);
         logger.addHandler(fileHandler);
@@ -119,5 +119,9 @@ public class Depot implements Logging {
         for (Thread thread : threads) {
             thread.interrupt();
         }
+    }
+
+    public List<Train> getTrains() {
+        return trains;
     }
 }

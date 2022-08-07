@@ -1,6 +1,6 @@
 package ru.nsu.fit.oop.lab4.exception;
 
-import ru.nsu.fit.oop.lab4.goods.Good;
+import ru.nsu.fit.oop.lab4.good.Good;
 
 public class ReusedGoodException extends Exception{
 

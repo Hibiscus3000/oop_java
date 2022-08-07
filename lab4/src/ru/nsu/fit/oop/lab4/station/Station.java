@@ -2,7 +2,7 @@ package ru.nsu.fit.oop.lab4.station;
 
 import ru.nsu.fit.oop.lab4.Main;
 import ru.nsu.fit.oop.lab4.exception.BadNumberOfTracks;
-import ru.nsu.fit.oop.lab4.goods.Storage;
+import ru.nsu.fit.oop.lab4.good.Storage;
 import ru.nsu.fit.oop.lab4.station.tracks.LoadingTrack;
 import ru.nsu.fit.oop.lab4.station.tracks.Track;
 import ru.nsu.fit.oop.lab4.station.tracks.TrafficTrack;

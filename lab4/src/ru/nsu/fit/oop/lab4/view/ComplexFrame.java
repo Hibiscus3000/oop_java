@@ -1,6 +1,7 @@
 package ru.nsu.fit.oop.lab4.view;
 
 import ru.nsu.fit.oop.lab4.Complex;
+import ru.nsu.fit.oop.lab4.view.panel.BorderPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,6 +12,7 @@ import static ru.nsu.fit.oop.lab4.Main.logger;
 public class ComplexFrame extends JFrame {
 
     private Complex complex;
+    private boolean restart = false;
 
     public ComplexFrame() {
         Toolkit kit = Toolkit.getDefaultToolkit();
@@ -20,7 +22,14 @@ public class ComplexFrame extends JFrame {
         setResizable(true);
         setTitle("Transport company");
         setIconImage(new ImageIcon("images/train.png").getImage());
+        addButtonPanel();
+        try {
+            complex = new Complex();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
+        add(new BorderPanel(complex), BorderLayout.CENTER);
     }
 
     private void addButtonPanel() {
@@ -43,16 +52,11 @@ public class ComplexFrame extends JFrame {
         inputMap.put(KeyStroke.getKeyStroke("ctrl C"),
                 "buttonPanel.urgent_stop");
         ActionMap actionMap = buttonPanel.getActionMap();
-        actionMap.put("buttonPanel.start",startAction);
-        actionMap.put("buttonPanel.stop",stopAction);
-        actionMap.put("buttonPanel.urgent_stop",urgentStopAction);
-        add(buttonPanel,BorderLayout.SOUTH);
-    }
-
-    private void addGridBagPanel() {
-        JPanel gridBagPanel = new JPanel();
-        gridBagPanel.setLayout(new GridBagLayout());
-        add(gridBagPanel,BorderLayout.CENTER);
+        actionMap.put("buttonPanel.start", startAction);
+        actionMap.put("buttonPanel.stop", stopAction);
+        actionMap.put("buttonPanel.urgent_stop", urgentStopAction);
+        buttonPanel.setBorder(BorderFactory.createMatteBorder(3, 3, 3, 3, Color.ORANGE));
+        add(buttonPanel, BorderLayout.SOUTH);
     }
 
     private class StartAction extends AbstractAction {
@@ -63,7 +67,7 @@ public class ComplexFrame extends JFrame {
         public StartAction() {
             putValue(Action.NAME, "start");
             putValue(Action.SMALL_ICON, new ImageIcon(new ImageIcon("images/start.png").getImage().
-                    getScaledInstance(20,20,Image.SCALE_DEFAULT)));
+                    getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
             putValue(Action.SHORT_DESCRIPTION, "start the complex");
         }
 
@@ -71,7 +75,10 @@ public class ComplexFrame extends JFrame {
         public void actionPerformed(ActionEvent e) {
             try {
                 logger.info("Constructing complex...");
-                complex = new Complex();
+                if (restart) {
+                    complex = new Complex();
+                }
+                restart = true;
                 logger.info("Complex constructed, complex starts working...");
                 complex.start();
                 logger.info("Complex started working.");
@@ -123,7 +130,7 @@ public class ComplexFrame extends JFrame {
             super(startAction);
             putValue(Action.NAME, "stop");
             putValue(Action.SMALL_ICON, new ImageIcon(new ImageIcon("images/stop.png").getImage().
-                    getScaledInstance(20,20,Image.SCALE_DEFAULT)));
+                    getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
             putValue(Action.SHORT_DESCRIPTION, "stop the complex");
         }
 
@@ -145,7 +152,7 @@ public class ComplexFrame extends JFrame {
             super(startAction);
             putValue(Action.NAME, "urgent stop");
             putValue(Action.SMALL_ICON, new ImageIcon(new ImageIcon("images/urgent_stop.png").getImage().
-                    getScaledInstance(20,20,Image.SCALE_DEFAULT)));
+                    getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
             putValue(Action.SHORT_DESCRIPTION, "stop the complex immediately!");
         }
 

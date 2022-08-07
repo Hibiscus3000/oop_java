@@ -1,4 +1,4 @@
-package ru.nsu.fit.oop.lab4.goods;
+package ru.nsu.fit.oop.lab4.good;
 
 import ru.nsu.fit.oop.lab4.exception.ReusedGoodException;
 

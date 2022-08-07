@@ -1,4 +1,4 @@
-package ru.nsu.fit.oop.lab4.goods;
+package ru.nsu.fit.oop.lab4.good;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class Storage {
         this.place = place;
         goods = new ArrayList<>();
         logger = Logger.getLogger(goodName + place + this.getClass().getSimpleName());
-        FileHandler fileHandler = new FileHandler("../logs/" + getGoodName() + place + "Storage_log%g.txt",
+        FileHandler fileHandler = new FileHandler("logs/" + getGoodName() + place + "Storage_log%g.txt",
                 1000000, 1, false);
         fileHandler.setLevel(Level.ALL);
         logger.addHandler(fileHandler);
@@ -63,5 +63,9 @@ public class Storage {
         logger.config(goodName + " removed from storage. Storage occupancy: " + goods.size() + "/" +
                 capacity);
         return good;
+    }
+
+    public String getPlace() {
+        return place;
     }
 }
