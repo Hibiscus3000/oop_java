@@ -2,13 +2,13 @@ package ru.nsu.fit.oop.lab4.view.panel;
 
 import ru.nsu.fit.oop.lab4.train.Train;
 
-import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 
-public class TrainsPanel extends JPanel {
+public class TrainsPanel extends ComplexPanel {
 
     public TrainsPanel(List<Train> trains) {
-        setBorder(BorderFactory.createEtchedBorder());
+        super(Color.white,"trains");
     }
 
 }

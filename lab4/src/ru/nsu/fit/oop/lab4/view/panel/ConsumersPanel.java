@@ -2,13 +2,13 @@ package ru.nsu.fit.oop.lab4.view.panel;
 
 import ru.nsu.fit.oop.lab4.Consumer;
 
-import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 
-public class ConsumersPanel extends JPanel {
+public class ConsumersPanel extends ComplexPanel {
 
     public ConsumersPanel(List<Consumer> consumers) {
-        setBorder(BorderFactory.createEtchedBorder());
+        super(Color.PINK,"consumers");
     }
 
 }

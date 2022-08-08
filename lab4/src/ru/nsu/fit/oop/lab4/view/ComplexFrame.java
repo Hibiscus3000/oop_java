@@ -17,7 +17,7 @@ public class ComplexFrame extends JFrame {
     public ComplexFrame() {
         Toolkit kit = Toolkit.getDefaultToolkit();
         Dimension screenSize = kit.getScreenSize();
-        setSize(3 * screenSize.width / 4, 3 * screenSize.height / 4);
+        setSize(screenSize.width, screenSize.height);
         setLocationRelativeTo(null);
         setResizable(true);
         setTitle("Transport company");
@@ -41,20 +41,9 @@ public class ComplexFrame extends JFrame {
         urgentStopAction.addAnotherStopAction(stopAction);
         stopAction.disableStopActions();
         startAction.addStopAction(stopAction).addUrgentStopAction(urgentStopAction);
-        buttonPanel.add(new JButton(startAction));
-        buttonPanel.add(new JButton(stopAction));
-        buttonPanel.add(new JButton(urgentStopAction));
-        InputMap inputMap = buttonPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        inputMap.put(KeyStroke.getKeyStroke("ctrl Z"),
-                "buttonPanel.start");
-        inputMap.put(KeyStroke.getKeyStroke("ctrl X"),
-                "buttonPanel.stop");
-        inputMap.put(KeyStroke.getKeyStroke("ctrl C"),
-                "buttonPanel.urgent_stop");
-        ActionMap actionMap = buttonPanel.getActionMap();
-        actionMap.put("buttonPanel.start", startAction);
-        actionMap.put("buttonPanel.stop", stopAction);
-        actionMap.put("buttonPanel.urgent_stop", urgentStopAction);
+        addNewAction(buttonPanel,startAction,"ctrl Z","buttonPanel.start");
+        addNewAction(buttonPanel,stopAction,"ctrl X","buttonPanel.stop");
+        addNewAction(buttonPanel,urgentStopAction,"ctrl C","buttonPanel.urgent_stop");
         buttonPanel.setBorder(BorderFactory.createMatteBorder(3, 3, 3, 3, Color.ORANGE));
         add(buttonPanel, BorderLayout.SOUTH);
     }
@@ -164,4 +153,12 @@ public class ComplexFrame extends JFrame {
             disableStopActions();
         }
     }
+
+    private void addNewAction(JPanel buttonPanel, Action action, String key, String keyObject) {
+        buttonPanel.add(new JButton(action));
+        InputMap inputMap = buttonPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        inputMap.put(KeyStroke.getKeyStroke(key),keyObject);
+        buttonPanel.getActionMap().put(keyObject,action);
+    }
+
 }
