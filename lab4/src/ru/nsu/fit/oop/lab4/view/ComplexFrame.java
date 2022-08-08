@@ -17,7 +17,7 @@ public class ComplexFrame extends JFrame {
     public ComplexFrame() {
         Toolkit kit = Toolkit.getDefaultToolkit();
         Dimension screenSize = kit.getScreenSize();
-        setSize(screenSize.width, screenSize.height);
+        setSize(screenSize.width, screenSize.height - 50);
         setLocationRelativeTo(null);
         setResizable(true);
         setTitle("Transport company");

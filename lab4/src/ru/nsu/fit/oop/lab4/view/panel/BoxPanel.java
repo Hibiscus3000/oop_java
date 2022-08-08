@@ -1,6 +1,7 @@
 package ru.nsu.fit.oop.lab4.view.panel;
 
 import ru.nsu.fit.oop.lab4.Complex;
+import ru.nsu.fit.oop.lab4.view.table_model.TrainsTableModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,14 +20,13 @@ public class BoxPanel extends JPanel {
 
     public BoxPanel(Complex complex) {
         setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
-        addPanel("station", new StationPanel(complex.getStation()));
-        addPanel("trains", new TrainsPanel(complex.getTrains()));
-        addPanel("consumers", new ConsumersPanel(complex.getConsumers()));
-        addPanel("factories", new FactoriesPanel(complex.getFactories()));
-        addPanel("departure storages", new StoragesPanel(complex.getDepartureStorages(),
-                "departure"));
-        addPanel("destination storages", new StoragesPanel(complex.getDestinationStorages(),
-                "destination"));
+        addPanel("station", new JPanel());
+        addPanel("trains", new ComplexPanel(Color.white,"trains",new TrainsTableModel(
+                complex.getTrains(),complex.getGoodNames())));
+        addPanel("consumers", new JPanel());
+        addPanel("factories", new JPanel());
+        addPanel("departure storages", new JPanel());
+        addPanel("destination storages", new JPanel());
     }
 
     private void addPanel(String name, JPanel panel) {

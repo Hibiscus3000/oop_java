@@ -22,6 +22,7 @@ public class Complex {
     private final Depot depot;
     private final List<Consumer> consumers = new ArrayList<>();
     private final List<Thread> consumerThreads = new ArrayList<>();
+    private final List<String> goodNames = new ArrayList<>();
 
     public Complex() throws IOException, InvalidConfigException, BadNumberOfTracks {
         Properties goodsConfig = new Properties();
@@ -89,6 +90,7 @@ public class Complex {
     private void createFactories(int numberOfGoodTypes, Properties goodsConfig) throws IOException {
         for (int i = 0; i < numberOfGoodTypes; ++i) {
             String goodName = goodsConfig.getProperty(String.valueOf(10 * i));
+            goodNames.add(goodName);
             Main.logger.config("Creating factory for " + goodName + "...");
             factories.add(new Factory(goodName,
                     Integer.parseInt(goodsConfig.getProperty(String.valueOf(10 * i + 3))),
@@ -158,5 +160,9 @@ public class Complex {
 
     public List<Train> getTrains() {
         return depot.getTrains();
+    }
+
+    public String[] getGoodNames() {
+        return goodNames.toArray(new String[goodNames.size()]);
     }
 }

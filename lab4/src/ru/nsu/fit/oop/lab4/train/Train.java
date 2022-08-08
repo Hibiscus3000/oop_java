@@ -195,4 +195,26 @@ public class Train implements Runnable, Logging {
         logger.info("Train #" + id + " transported " + goodsTransported + " goods.\n" +
                 "Then it was interrupted it had " + goods.size() + " in it.");
     }
+
+    public int getGoodCapacity(String goodName) throws UnknownGoodName {
+        Integer goodCapacity = capacity.get(goodName);
+        if (null == goodCapacity) {
+            UnknownGoodName unknownGoodName = new UnknownGoodName(goodName);
+            logger.throwing(this.getClass().getSimpleName(), "getGoodCapacity", unknownGoodName);
+            throw unknownGoodName;
+        } else {
+            return goodCapacity;
+        }
+    }
+
+    public int getGoodQuantity(String goodName) throws UnknownGoodName {
+        List<Good> goodList = goods.get(goodName);
+        if (null == goodList) {
+            UnknownGoodName unknownGoodName = new UnknownGoodName(goodName);
+            logger.throwing(this.getClass().getSimpleName(), "getGoodCapacity", unknownGoodName);
+            throw unknownGoodName;
+        } else {
+            return goodList.size();
+        }
+    }
 }
