@@ -21,7 +21,7 @@ public class BoxPanel extends JPanel {
     public BoxPanel(Complex complex) {
         setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
         addPanel("station", new JPanel());
-        addPanel("trains", new ComplexPanel(Color.white,"trains",new TrainsTableModel(
+        addPanel("trains", new ComplexPanel(complex, Color.white,"trains",new TrainsTableModel(
                 complex.getTrains(),complex.getGoodNames())));
         addPanel("consumers", new JPanel());
         addPanel("factories", new JPanel());

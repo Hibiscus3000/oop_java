@@ -165,4 +165,9 @@ public class Complex {
     public String[] getGoodNames() {
         return goodNames.toArray(new String[goodNames.size()]);
     }
+
+    public Observer setDepotObserver(Observer observer) {
+        depot.setObserver(observer);
+        return observer;
+    }
 }

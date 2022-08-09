@@ -1,6 +1,7 @@
 package ru.nsu.fit.oop.lab4.good;
 
 import ru.nsu.fit.oop.lab4.Logging;
+import ru.nsu.fit.oop.lab4.ObservableLogging;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class Factory implements Runnable, Logging {
+public class Factory extends ObservableLogging implements Runnable{
 
     private final String goodName;
     private final int goodNumber;
@@ -25,10 +26,10 @@ public class Factory implements Runnable, Logging {
     private final int logUpdationFreq = 20;
     private int numberOfGoodsProduced = 0;
     private List<Integer> ids;
-    private final Logger logger;
 
     public Factory(String goodName, int productionTimeMillis, int consumptionTimeMillis, int loadingTimeMillis,
                    int unloadingTimeMillis, Storage storage, int goodNumber) throws IOException {
+        super(goodName + Factory.class.getSimpleName());
         this.goodNumber = goodNumber;
         this.goodName = goodName;
         this.productionTimeMillis = productionTimeMillis;
@@ -37,12 +38,6 @@ public class Factory implements Runnable, Logging {
         this.unloadingTimeMillis = unloadingTimeMillis;
         this.storage = storage;
         makeIDs();
-        logger = Logger.getLogger(goodName + this.getClass().getSimpleName());
-        logger.setLevel(Level.ALL);
-        FileHandler fileHandler = new FileHandler("logs/" + getGoodName() + "Factory_log%g.txt",
-                1000000,1,false);
-        fileHandler.setLevel(Level.ALL);
-        logger.addHandler(fileHandler);
         logger.config(goodName + " factory created.");
     }
 

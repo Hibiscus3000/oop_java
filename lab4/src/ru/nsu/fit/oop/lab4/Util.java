@@ -1,4 +1,4 @@
-package ru.nsu.fit.oop.lab4.view;
+package ru.nsu.fit.oop.lab4;
 
 import java.util.Arrays;
 

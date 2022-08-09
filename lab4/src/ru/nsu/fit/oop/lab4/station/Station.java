@@ -1,6 +1,6 @@
 package ru.nsu.fit.oop.lab4.station;
 
-import ru.nsu.fit.oop.lab4.Main;
+import ru.nsu.fit.oop.lab4.ObservableLogging;
 import ru.nsu.fit.oop.lab4.exception.BadNumberOfTracks;
 import ru.nsu.fit.oop.lab4.good.Storage;
 import ru.nsu.fit.oop.lab4.station.tracks.LoadingTrack;
@@ -8,12 +8,13 @@ import ru.nsu.fit.oop.lab4.station.tracks.Track;
 import ru.nsu.fit.oop.lab4.station.tracks.TrafficTrack;
 import ru.nsu.fit.oop.lab4.station.tracks.UnloadingTrack;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
 
-public class Station {
+public class Station extends ObservableLogging {
 
     private int distance;
     private int numberOfLoadingTracks;
@@ -31,7 +32,8 @@ public class Station {
 
     public Station(int distance, int numberOfLoadingTracks, int numberOfUnloadingTracks,
                    int numberOfTracksDepartureDestination, int numberOfTracksDestinationDeparture,
-                   Map<String, Storage> departureStorages, Map<String, Storage> destinationStorages) throws BadNumberOfTracks {
+                   Map<String, Storage> departureStorages, Map<String, Storage> destinationStorages) throws BadNumberOfTracks, IOException {
+        super(Station.class.getSimpleName());
         this.distance = distance;
         this.numberOfLoadingTracks = numberOfLoadingTracks;
         if (numberOfLoadingTracks < 1)
@@ -53,84 +55,84 @@ public class Station {
 
         for (int i = 0; i < numberOfLoadingTracks; ++i)
             loadingTracks.add(new LoadingTrack(departureStorages,i + 1));
-        Main.logger.config("Created " + numberOfLoadingTracks + " loading tracks.");
+        logger.config("Created " + numberOfLoadingTracks + " loading tracks.");
         for (int i = 0; i < numberOfUnloadingTracks; ++i)
             unloadingTracks.add(new UnloadingTrack(destinationStorages,numberOfLoadingTracks + i + 1));
-        Main.logger.config("Created " + numberOfUnloadingTracks + " unloading tracks.");
+        logger.config("Created " + numberOfUnloadingTracks + " unloading tracks.");
         for (int i = 0; i < numberOfTracksDepartureDestination; ++i)
             tracksDepartureDestination.add(new TrafficTrack(distance, numberOfLoadingTracks + numberOfUnloadingTracks
             + i + 1));
-        Main.logger.config("Created " + numberOfTracksDepartureDestination +
+        logger.config("Created " + numberOfTracksDepartureDestination +
                 " departure destination tracks.");
         for (int i = 0; i < numberOfTracksDestinationDeparture; ++i)
             tracksDestinationDeparture.add(new TrafficTrack(distance, numberOfLoadingTracks + numberOfUnloadingTracks
             + numberOfTracksDepartureDestination + i + 1));
-        Main.logger.config("Created " + numberOfTracksDestinationDeparture +
+        logger.config("Created " + numberOfTracksDestinationDeparture +
                 " destination departure tracks.");
 
         semLoadingTracks = new Semaphore(numberOfLoadingTracks);
         semUnloadingTracks = new Semaphore(numberOfUnloadingTracks);
         semTracksDepartureDestination = new Semaphore(numberOfTracksDepartureDestination);
         semTracksDestinationDeparture = new Semaphore(numberOfTracksDestinationDeparture);
-        Main.logger.config("Created semaphores.");
+        logger.config("Created semaphores.");
     }
 
     public Track acquireLoadingTrack() throws InterruptedException {
         semLoadingTracks.acquire();
         for (Track track : loadingTracks)
             if (track.tryLock()) {
-                Main.logger.config("Loading track #" + track.getId() + " acquired.");
+                logger.config("Loading track #" + track.getId() + " acquired.");
                 return track;
             }
-        Main.logger.severe("Wasn't able to acquire loading track.");
+        logger.severe("Wasn't able to acquire loading track.");
         return null;
     }
 
     public void releaseLoadingTrack(Track track) {
         track.releaseLock();
         semLoadingTracks.release();
-        Main.logger.config("Loading track #" + track.getId() + " released.");
+        logger.config("Loading track #" + track.getId() + " released.");
     }
 
     public Track acquireUnloadingTrack() throws InterruptedException {
         semUnloadingTracks.acquire();
         for (Track track : unloadingTracks)
             if (track.tryLock()) {
-                Main.logger.config("Unloading track #" + track.getId() + " acquired.");
+                logger.config("Unloading track #" + track.getId() + " acquired.");
                 return track;
             }
-        Main.logger.severe("Wasn't able to acquire unloading track.");
+        logger.severe("Wasn't able to acquire unloading track.");
         return null;
     }
 
     public void releaseUnloadingTrack(Track track) {
         track.releaseLock();
         semUnloadingTracks.release();
-        Main.logger.config("Unloading track #" + track.getId() + " released.");
+        logger.config("Unloading track #" + track.getId() + " released.");
     }
 
     public Track acquireDepartureDestinationTrack() throws InterruptedException {
         semTracksDepartureDestination.acquire();
         for (Track track : tracksDepartureDestination)
             if (track.tryLock()) {
-                Main.logger.config("Departure destination track #" + track.getId() + " acquired");
+                logger.config("Departure destination track #" + track.getId() + " acquired");
                 return track;
             }
-        Main.logger.severe("Wasn't able to acquire departure destination track.");
+        logger.severe("Wasn't able to acquire departure destination track.");
         return null;
     }
 
     public void releaseDepartureDestinationTrack(Track track) {
         track.releaseLock();
         semTracksDepartureDestination.release();
-        Main.logger.config("Departure destination track #" + track.getId() + " released");
+        logger.config("Departure destination track #" + track.getId() + " released");
     }
 
     public Track acquireDestinationDepartureTrack() throws InterruptedException {
         semTracksDestinationDeparture.acquire();
         for (Track track : tracksDestinationDeparture)
             if (track.tryLock()) {
-                Main.logger.config("Destination departure track #" + track.getId() + " acquired");
+                logger.config("Destination departure track #" + track.getId() + " acquired");
                 return track;
             }
         return null;
@@ -139,7 +141,11 @@ public class Station {
     public void releaseDestinationDepartureTrack(Track track) {
         track.releaseLock();
         semTracksDestinationDeparture.release();
-        Main.logger.config("Destination departure track #" + track.getId() + " released");
+        logger.config("Destination departure track #" + track.getId() + " released");
     }
 
+    @Override
+    public void logFinalInfo() {
+
+    }
 }

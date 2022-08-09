@@ -1,6 +1,6 @@
 package ru.nsu.fit.oop.lab4.train;
 
-import ru.nsu.fit.oop.lab4.Logging;
+import ru.nsu.fit.oop.lab4.ObservableLogging;
 import ru.nsu.fit.oop.lab4.exception.BadTrackException;
 import ru.nsu.fit.oop.lab4.exception.UnknownGoodName;
 import ru.nsu.fit.oop.lab4.good.Good;
@@ -10,18 +10,13 @@ import ru.nsu.fit.oop.lab4.station.tracks.TrafficTrack;
 import ru.nsu.fit.oop.lab4.station.tracks.UnloadingTrack;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.FileHandler;
+import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public class Train implements Runnable, Logging {
+public class Train extends ObservableLogging implements Runnable {
 
     private final Map<String, Integer> capacity;
-    private final Map<String, List<Good>> goods = new HashMap<>();
+    private final Map<String, List<Good>> goods;
     private final int speed;
     private final Station station;
     private final int assemblyTimeMillis;
@@ -29,19 +24,15 @@ public class Train implements Runnable, Logging {
     private final int id;
     private final int capacityAll;
     private int goodsTransported = 0;
-    private volatile boolean isMarked = false;
+    private volatile boolean mark = false;
     private volatile boolean isDisposed = false;
-    private final Logger logger;
+    private TrainState state;
 
     public Train(Map<String, Integer> capacity, int speed, Station station, int assemblyTimeMillis,
                  int depreciationTimeMillis, int id) throws IOException {
-        logger = Logger.getLogger(this.getClass().getSimpleName() + id);
-        logger.setLevel(Level.ALL);
-        FileHandler fileHandler = new FileHandler("logs/train" + id + "_log%g.txt",
-                1000000,1,false);
-        fileHandler.setLevel(Level.ALL);
-        logger.addHandler(fileHandler);
+        super(Train.class.getSimpleName() + id);
         this.capacity = capacity;
+        goods = new HashMap<>();
         for (Map.Entry<String, Integer> entry : capacity.entrySet()) {
              goods.put(entry.getKey(),new ArrayList<>(entry.getValue()));
         }
@@ -58,7 +49,7 @@ public class Train implements Runnable, Logging {
         logger.config("Sample #" + id + " created.");
     }
 
-    public Train(Train train) throws InterruptedException {
+    public Train(Train train, Observer observer) throws InterruptedException {
         capacity = train.capacity;
         speed = train.speed;
         station = train.station;
@@ -67,8 +58,10 @@ public class Train implements Runnable, Logging {
         id = train.id;
         capacityAll = train.capacityAll;
         logger = train.logger;
-        Thread.sleep(assemblyTimeMillis);
+        goods = train.goods;
         logger.config("Train #" + id + " created.");
+        state = TrainState.ASSEMBLING;
+        addObserver(observer);
     }
 
     public int getId() {
@@ -80,25 +73,40 @@ public class Train implements Runnable, Logging {
     }
 
     public void mark() {
-        isMarked = true;
-        logger.info("Train #" + id + " marked for recycling.");
+        mark = true;
+        logger.info("Train #" + id + " mark for recycling.");
     }
 
     @Override
     public void run() {
         try {
             while (true) {
+                setChanged();
+                notifyObservers();
+                Thread.sleep(assemblyTimeMillis);
                 logger.info("Train #" + id + " loading goods...");
+                state = TrainState.LOADING;
+                setChanged();
+                notifyObservers();
                 loadGoods();
                 logger.info("Train #" + id + " finished loading goods, driving from departure " +
                         "station to destination station...");
+                state = TrainState.DRIVING_DEPARTURE_DESTINATION;
+                setChanged();
+                notifyObservers();
                 driveDepartureDestination();
                 logger.info("Train #" + id + " unloading goods...");
+                state = TrainState.UNLOADING;
+                setChanged();
+                notifyObservers();
                 unloadGoods();
                 logger.info("Train #" + id + " finished unloading goods, driving from destination " +
                         "station to departure station...");
+                state = TrainState.DRIVING_DESTINATION_DEPARTURE;
+                setChanged();
+                notifyObservers();
                 driveDestinationDeparture();
-                if (isMarked) {
+                if (mark) {
                     dispose();
                     break;
                 }
@@ -128,6 +136,8 @@ public class Train implements Runnable, Logging {
                         throw new UnknownGoodName(goodName);
                     }
                     currentGoods.add(good);
+                    setChanged();
+                    notifyObservers();
                     logger.config("Train #" + id + " loaded " + goodName + "# " + good.getId() + "." +
                             " Train " + goodName +  " occupancy: " + (i + 1) + "/" + entry.getValue() + ".");
                 }
@@ -155,6 +165,8 @@ public class Train implements Runnable, Logging {
             for (Map.Entry<String,List<Good>> entry : goods.entrySet()) {
                 for (Good good : entry.getValue()) {
                     goods.remove(good);
+                    setChanged();
+                    notifyObservers();
                     good.unload();
                     track.unloadGood(good);
                     ++goodsTransported;
@@ -211,10 +223,18 @@ public class Train implements Runnable, Logging {
         List<Good> goodList = goods.get(goodName);
         if (null == goodList) {
             UnknownGoodName unknownGoodName = new UnknownGoodName(goodName);
-            logger.throwing(this.getClass().getSimpleName(), "getGoodCapacity", unknownGoodName);
+            logger.throwing(this.getClass().getSimpleName(), "getGoodQuantity", unknownGoodName);
             throw unknownGoodName;
         } else {
             return goodList.size();
         }
+    }
+
+    public String getState() {
+        return state.getStringState();
+    }
+
+    public boolean isMarked() {
+        return mark;
     }
 }

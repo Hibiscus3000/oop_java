@@ -26,15 +26,11 @@ public class Depot implements Logging {
     private final Properties goodsConfig;
     private final Logger logger;
     private volatile boolean stop = false;
+    private Observer observer;
 
     public Depot(Station station, Properties goodsConfig) throws InvalidConfigException,
             IOException {
-        logger = Logger.getLogger(this.getClass().getSimpleName());
-        logger.setLevel(Level.ALL);
-        FileHandler fileHandler = new FileHandler("logs/depot_log%g.txt",
-                1000000, 1, false);
-        fileHandler.setLevel(Level.ALL);
-        logger.addHandler(fileHandler);
+        logger = getLogger(this.getClass().getSimpleName());
         trainsConfig = new Properties();
         var stream = this.getClass().getResourceAsStream("trains.properties");
         if (null == stream)
@@ -75,13 +71,14 @@ public class Depot implements Logging {
     }
 
     private void createTrain(Train sample) throws InterruptedException {
-        Train train = new Train(sample);
+        Train train = new Train(sample,observer);
         trains.add(train);
         logger.info("Created train #" + train.getId() + ".");
         Thread thread = new Thread(train);
         threads.add(thread);
         thread.start();
         logger.info("Started train #" + train.getId() + ".");
+        sample = train;
         workers.schedule(() -> {
             try {
                 disposeTrain(train, thread);
@@ -101,7 +98,6 @@ public class Depot implements Logging {
         }
         logger.info("Depot disposed of the train #" + train.getId() + ".");
         threads.remove(thread);
-        trains.remove(train);
         createTrain(train);
     }
 
@@ -123,5 +119,9 @@ public class Depot implements Logging {
 
     public List<Train> getTrains() {
         return trains;
+    }
+
+    public void setObserver(Observer observer) {
+        this.observer = observer;
     }
 }

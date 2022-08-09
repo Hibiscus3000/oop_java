@@ -9,23 +9,17 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Consumer implements Runnable, Logging {
+public class Consumer extends ObservableLogging implements Runnable {
 
     private final Storage storage;
     private final int id;
-    private final Logger logger;
     private int numberOfGoodsConsumed = 0;
     private final int logUpdationFreq = 20;
 
     public Consumer(Storage storage, int id) throws IOException {
+        super(Consumer.class.getSimpleName() + storage.getGoodName() + id);
         this.storage = storage;
         this.id = id;
-        logger = Logger.getLogger(this.getClass().getSimpleName() + id);
-        FileHandler fileHandler = new FileHandler("logs/" + getGoodName() + "Consumer" +
-                id + "_log%g.txt", 1000000,1,false);
-        fileHandler.setLevel(Level.ALL);
-        logger.addHandler(fileHandler);
-        logger.setLevel(Level.ALL);
         logger.config("Consumer #" + id + ", interested in " + getGoodName() + ", created.");
     }
 

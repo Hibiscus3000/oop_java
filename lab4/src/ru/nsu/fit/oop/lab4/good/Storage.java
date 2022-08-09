@@ -1,5 +1,7 @@
 package ru.nsu.fit.oop.lab4.good;
 
+import ru.nsu.fit.oop.lab4.ObservableLogging;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +9,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Storage {
+public class Storage extends ObservableLogging {
 
     private final String goodName;
     private List<Good> goods;
@@ -15,9 +17,9 @@ public class Storage {
     private final String place;
     private final String takerName;
     private final String placerName;
-    private final Logger logger;
 
     public Storage(String goodName, int capacity, String place) throws IOException {
+        super(goodName + place + Storage.class.getSimpleName());
         if (place == "Departure") {
             takerName = "Train";
             placerName = "Factory";
@@ -29,12 +31,6 @@ public class Storage {
         this.capacity = capacity;
         this.place = place;
         goods = new ArrayList<>();
-        logger = Logger.getLogger(goodName + place + this.getClass().getSimpleName());
-        FileHandler fileHandler = new FileHandler("logs/" + getGoodName() + place + "Storage_log%g.txt",
-                1000000, 1, false);
-        fileHandler.setLevel(Level.ALL);
-        logger.addHandler(fileHandler);
-        logger.setLevel(Level.ALL);
         logger.config(goodName + " storage created.");
     }
 
@@ -67,5 +63,10 @@ public class Storage {
 
     public String getPlace() {
         return place;
+    }
+
+    @Override
+    public void logFinalInfo() {
+
     }
 }
