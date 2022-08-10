@@ -2,7 +2,7 @@ package ru.nsu.fit.oop.lab4.view.table_model;
 
 import ru.nsu.fit.oop.lab4.station.Station;
 
-public class StationTableModel extends ObservableLoggingTableModel {
+public class StationTableModel extends ObservableLoggingTableModel<Station> {
 
     private final Station station;
 
@@ -45,5 +45,9 @@ public class StationTableModel extends ObservableLoggingTableModel {
         if (2 == rowIndex)
             return station.getNumberOfAvailableDepartureDestinationTracks();
         return station.getNumberOfAvailableDestinationDepartureTracks();
+    }
+
+    public void showLogs() {
+        station.setWindowHandlerVisible(true);
     }
 }

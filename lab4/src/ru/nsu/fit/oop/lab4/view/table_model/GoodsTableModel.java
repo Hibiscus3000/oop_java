@@ -17,8 +17,10 @@ public class GoodsTableModel extends ComplexTableModel<Good>{
             return null;
         Good good = list.get(rowIndex);
         if (0 == columnIndex)
-            return (double) good.getLoadingTimeMillis() / 1000;
+            return good.getName();
         if (1 == columnIndex)
+            return (double) good.getLoadingTimeMillis() / 1000;
+        if (2 == columnIndex)
             return (double) good.getUnloadingTimeMillis() / 1000;
         return (double) good.getConsumptionTimeMillis() / 1000;
     }

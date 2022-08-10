@@ -6,8 +6,10 @@ import ru.nsu.fit.oop.lab4.ObservableLogging;
 import ru.nsu.fit.oop.lab4.good.Factory;
 import ru.nsu.fit.oop.lab4.good.Good;
 import ru.nsu.fit.oop.lab4.good.Storage;
+import ru.nsu.fit.oop.lab4.station.Station;
 import ru.nsu.fit.oop.lab4.view.table.ComplexTable;
 import ru.nsu.fit.oop.lab4.view.table.ObservableLoggingTable;
+import ru.nsu.fit.oop.lab4.view.table.StationTable;
 import ru.nsu.fit.oop.lab4.view.table_model.*;
 
 import javax.swing.*;
@@ -28,28 +30,32 @@ public class BoxPanel extends JPanel {
         }
         addPanel("goods", new ComplexPanel(Color.GREEN, "goods",
                 new ComplexTable(new GoodsTableModel(samples))));
-        addPanel("station", new StationPanel(complex.getStation()));
-        addPanel("trains", new ObservableLoggingPanel(Color.WHITE, "trains",
+        Station station = complex.getStation();
+        StationTable stationTable;
+        addPanel("station", new StationPanel(station,
+                stationTable = new StationTable(new StationTableModel(station))));
+        setStationObserver(station,stationTable);
+        addPanel("trains", new RowLoggingPanel(Color.WHITE, "trains",
                 (ObservableLoggingTable) complex.setDepotObserver(new ObservableLoggingTable(
                         new TrainsTableModel(complex.getTrains(), complex.getGoodNames())))));
         ObservableLoggingTable factoriesTable = new ObservableLoggingTable(new FactoryTableModel(factories));
         setObserver(factories, factoriesTable);
-        addPanel("factories", new ObservableLoggingPanel(Color.ORANGE, "factories", factoriesTable
+        addPanel("factories", new RowLoggingPanel(Color.ORANGE, "factories", factoriesTable
         ));
         List<Storage> departureStorages = new ArrayList<Storage>(complex.getDepartureStorages().values());
         ObservableLoggingTable departureStoragesTable = new ObservableLoggingTable(new StorageTableModel(departureStorages));
         setObserver(departureStorages, departureStoragesTable);
-        addPanel("departure storages", new ObservableLoggingPanel(Color.LIGHT_GRAY, "departure storages",
+        addPanel("departure storages", new RowLoggingPanel(Color.LIGHT_GRAY, "departure storages",
                 departureStoragesTable));
         List<Storage> destinationStorages = new ArrayList<Storage>(complex.getDestinationStorages().values());
         ObservableLoggingTable destinationStoragesTable = new ObservableLoggingTable(new StorageTableModel(destinationStorages));
         setObserver(destinationStorages, destinationStoragesTable);
-        addPanel("destination storages", new ObservableLoggingPanel(Color.LIGHT_GRAY, "destination storages",
+        addPanel("destination storages", new RowLoggingPanel(Color.LIGHT_GRAY, "destination storages",
                 destinationStoragesTable));
         List<Consumer> consumers = complex.getConsumers();
         ObservableLoggingTable consumersTable = new ObservableLoggingTable(new ConsumersTableModel(consumers));
         setObserver(consumers, consumersTable);
-        addPanel("consumers", new ObservableLoggingPanel(Color.PINK, "consumers",
+        addPanel("consumers", new RowLoggingPanel(Color.PINK, "consumers",
                 consumersTable));
     }
 
@@ -62,6 +68,10 @@ public class BoxPanel extends JPanel {
         for (ObservableLogging observableLogging : observableLoggingList) {
             observableLogging.addObserver(observer);
         }
+    }
+
+    private void setStationObserver(Station station, StationTable stationTable) {
+        station.addObserver(stationTable);
     }
 
     public void setPanelVisible(String name, boolean b) {

@@ -184,18 +184,18 @@ public class Station extends ObservableLogging {
     }
 
     public int getNumberOfAvailableLoadingTracks() {
-        return numberOfLoadingTracks - semLoadingTracks.availablePermits();
+        return semLoadingTracks.availablePermits();
     }
 
     public int getNumberOfAvailableUnloadingTracks() {
-        return numberOfUnloadingTracks - semUnloadingTracks.availablePermits();
+        return semUnloadingTracks.availablePermits();
     }
 
     public int getNumberOfAvailableDepartureDestinationTracks() {
-        return numberOfTracksDepartureDestination - semTracksDepartureDestination.availablePermits();
+        return semTracksDepartureDestination.availablePermits();
     }
 
     public int getNumberOfAvailableDestinationDepartureTracks() {
-        return numberOfTracksDestinationDeparture - semTracksDestinationDeparture.availablePermits();
+        return semTracksDestinationDeparture.availablePermits();
     }
 }

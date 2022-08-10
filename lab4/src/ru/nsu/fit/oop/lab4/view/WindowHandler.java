@@ -21,6 +21,7 @@ public class WindowHandler extends StreamHandler {
         output.setLineWrap(true);
         DefaultCaret caret = (DefaultCaret)output.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        output.setEditable(false);
         frame.add(new JScrollPane(output));
         frame.setLocationRelativeTo(null);
         setOutputStream(new OutputStream() {
