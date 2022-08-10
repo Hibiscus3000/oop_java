@@ -5,9 +5,6 @@ import ru.nsu.fit.oop.lab4.ObservableLogging;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Storage extends ObservableLogging {
 
@@ -44,6 +41,8 @@ public class Storage extends ObservableLogging {
             wait();
         }
         goods.add(good);
+        setChanged();
+        notifyObservers();
         logger.config(goodName + " added to storage. Storage occupancy: " + goods.size() + "/" +
                 capacity);
         notifyAll();
@@ -55,6 +54,8 @@ public class Storage extends ObservableLogging {
             wait();
         }
         Good good = goods.remove(0);
+        setChanged();
+        notifyObservers();
         notifyAll();
         logger.config(goodName + " removed from storage. Storage occupancy: " + goods.size() + "/" +
                 capacity);
@@ -63,6 +64,14 @@ public class Storage extends ObservableLogging {
 
     public String getPlace() {
         return place;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public int getGoodsQuantity() {
+        return goods.size();
     }
 
     @Override

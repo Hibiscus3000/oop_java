@@ -1,16 +1,21 @@
 package ru.nsu.fit.oop.lab4.view.table_model;
 
-import ru.nsu.fit.oop.lab4.ObservableLogging;
-
 import javax.swing.table.AbstractTableModel;
+import java.util.List;
 
-public abstract class ComplexTableModel extends AbstractTableModel {
+public abstract class ComplexTableModel<T> extends AbstractTableModel {
 
+    protected final List<T> list;
     private final String[] columNames;
-    protected final String format = "%d/%d";
 
-    public ComplexTableModel(String... columNames) {
+    public ComplexTableModel(List<T> list, String... columNames) {
+        this.list = list;
         this.columNames = columNames;
+    }
+
+    @Override
+    public int getRowCount() {
+        return list.size();
     }
 
     @Override
@@ -26,5 +31,4 @@ public abstract class ComplexTableModel extends AbstractTableModel {
     protected int getNumberOfColumns() {
         return columNames.length;
     }
-
 }

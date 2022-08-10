@@ -11,6 +11,7 @@ public abstract class ObservableLogging extends Observable implements Logging {
 
     protected Logger logger;
     private WindowHandler windowHandler;
+
     public ObservableLogging(String loggerName) throws IOException {
         logger = getLogger(loggerName);
         windowHandler = new WindowHandler(loggerName + " log");
@@ -18,8 +19,8 @@ public abstract class ObservableLogging extends Observable implements Logging {
         logger.addHandler(windowHandler);
     }
 
-    public ObservableLogging() {
-
+    public ObservableLogging(ObservableLogging observableLogging) {
+        windowHandler = observableLogging.windowHandler;
     }
 
     public void setWindowHandlerVisible(boolean b) {

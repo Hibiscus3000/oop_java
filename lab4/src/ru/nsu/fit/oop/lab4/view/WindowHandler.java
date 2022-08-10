@@ -1,6 +1,7 @@
 package ru.nsu.fit.oop.lab4.view;
 
 import javax.swing.*;
+import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.io.OutputStream;
 import java.util.logging.LogRecord;
@@ -17,6 +18,11 @@ public class WindowHandler extends StreamHandler {
         frame.setTitle(title);
         frame.setSize(2 * screenSize.width / 5, 2 * screenSize.height / 5);
         final JTextArea output = new JTextArea();
+        output.setLineWrap(true);
+        DefaultCaret caret = (DefaultCaret)output.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        frame.add(new JScrollPane(output));
+        frame.setLocationRelativeTo(null);
         setOutputStream(new OutputStream() {
             @Override
             public void write(int b) {}
@@ -30,8 +36,6 @@ public class WindowHandler extends StreamHandler {
 
     @Override
     public void publish(LogRecord record) {
-        if (!frame.isVisible())
-            return;
         super.publish(record);
         flush();
     }

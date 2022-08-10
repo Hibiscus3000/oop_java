@@ -1,15 +1,11 @@
 package ru.nsu.fit.oop.lab4.good;
 
-import ru.nsu.fit.oop.lab4.Logging;
 import ru.nsu.fit.oop.lab4.ObservableLogging;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -45,6 +41,10 @@ public class Factory extends ObservableLogging implements Runnable{
         return goodName;
     }
 
+    public int getNumberOfGoodsProduced() {
+        return numberOfGoodsProduced;
+    }
+
     private void makeIDs() {
         ids = IntStream.range(numberOfIds * goodNumber + 1, numberOfIds * (goodNumber + 1) + 1).boxed()
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -59,6 +59,8 @@ public class Factory extends ObservableLogging implements Runnable{
                 Thread.sleep(productionTimeMillis);
                 Good good = new Good(goodName, consumptionTimeMillis, loadingTimeMillis, unloadingTimeMillis, ids.remove(0));
                 ++numberOfGoodsProduced;
+                setChanged();
+                notifyObservers();
                 if (0 == (numberOfGoodsProduced % logUpdationFreq)) {
                     logger.info("Factory produced " + numberOfGoodsProduced + " " + goodName + " units.");
                 } else {
@@ -73,6 +75,10 @@ public class Factory extends ObservableLogging implements Runnable{
             logger.info(goodName + " factory interrupted.");
             logFinalInfo();
         }
+    }
+
+    public Good getSample() {
+        return new Good(goodName, consumptionTimeMillis, loadingTimeMillis, unloadingTimeMillis,-1);
     }
 
     @Override

@@ -81,6 +81,8 @@ public class Station extends ObservableLogging {
         semLoadingTracks.acquire();
         for (Track track : loadingTracks)
             if (track.tryLock()) {
+                setChanged();
+                notifyObservers();
                 logger.config("Loading track #" + track.getId() + " acquired.");
                 return track;
             }
@@ -91,6 +93,8 @@ public class Station extends ObservableLogging {
     public void releaseLoadingTrack(Track track) {
         track.releaseLock();
         semLoadingTracks.release();
+        setChanged();
+        notifyObservers();
         logger.config("Loading track #" + track.getId() + " released.");
     }
 
@@ -98,6 +102,8 @@ public class Station extends ObservableLogging {
         semUnloadingTracks.acquire();
         for (Track track : unloadingTracks)
             if (track.tryLock()) {
+                setChanged();
+                notifyObservers();
                 logger.config("Unloading track #" + track.getId() + " acquired.");
                 return track;
             }
@@ -108,6 +114,8 @@ public class Station extends ObservableLogging {
     public void releaseUnloadingTrack(Track track) {
         track.releaseLock();
         semUnloadingTracks.release();
+        setChanged();
+        notifyObservers();
         logger.config("Unloading track #" + track.getId() + " released.");
     }
 
@@ -115,6 +123,8 @@ public class Station extends ObservableLogging {
         semTracksDepartureDestination.acquire();
         for (Track track : tracksDepartureDestination)
             if (track.tryLock()) {
+                setChanged();
+                notifyObservers();
                 logger.config("Departure destination track #" + track.getId() + " acquired");
                 return track;
             }
@@ -125,6 +135,8 @@ public class Station extends ObservableLogging {
     public void releaseDepartureDestinationTrack(Track track) {
         track.releaseLock();
         semTracksDepartureDestination.release();
+        setChanged();
+        notifyObservers();
         logger.config("Departure destination track #" + track.getId() + " released");
     }
 
@@ -132,6 +144,8 @@ public class Station extends ObservableLogging {
         semTracksDestinationDeparture.acquire();
         for (Track track : tracksDestinationDeparture)
             if (track.tryLock()) {
+                setChanged();
+                notifyObservers();
                 logger.config("Destination departure track #" + track.getId() + " acquired");
                 return track;
             }
@@ -141,11 +155,47 @@ public class Station extends ObservableLogging {
     public void releaseDestinationDepartureTrack(Track track) {
         track.releaseLock();
         semTracksDestinationDeparture.release();
+        setChanged();
+        notifyObservers();
         logger.config("Destination departure track #" + track.getId() + " released");
     }
 
     @Override
-    public void logFinalInfo() {
+    public void logFinalInfo() {}
 
+    public int getDistance() {
+        return distance;
+    }
+
+    public int getNumberOfLoadingTracks() {
+        return numberOfLoadingTracks;
+    }
+
+    public int getNumberOfUnloadingTracks() {
+        return numberOfUnloadingTracks;
+    }
+
+    public int getNumberOfTracksDepartureDestination() {
+        return numberOfTracksDepartureDestination;
+    }
+
+    public int getNumberOfTracksDestinationDeparture() {
+        return numberOfTracksDestinationDeparture;
+    }
+
+    public int getNumberOfAvailableLoadingTracks() {
+        return numberOfLoadingTracks - semLoadingTracks.availablePermits();
+    }
+
+    public int getNumberOfAvailableUnloadingTracks() {
+        return numberOfUnloadingTracks - semUnloadingTracks.availablePermits();
+    }
+
+    public int getNumberOfAvailableDepartureDestinationTracks() {
+        return numberOfTracksDepartureDestination - semTracksDepartureDestination.availablePermits();
+    }
+
+    public int getNumberOfAvailableDestinationDepartureTracks() {
+        return numberOfTracksDestinationDeparture - semTracksDestinationDeparture.availablePermits();
     }
 }

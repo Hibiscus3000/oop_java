@@ -5,9 +5,7 @@ import ru.nsu.fit.oop.lab4.good.Good;
 import ru.nsu.fit.oop.lab4.good.Storage;
 
 import java.io.IOException;
-import java.util.logging.FileHandler;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Consumer extends ObservableLogging implements Runnable {
 
@@ -27,6 +25,14 @@ public class Consumer extends ObservableLogging implements Runnable {
         return storage.getGoodName();
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public int getNumberOfGoodsConsumed() {
+        return numberOfGoodsConsumed;
+    }
+
     @Override
     public void run() {
         try {
@@ -36,6 +42,8 @@ public class Consumer extends ObservableLogging implements Runnable {
                         good.getId() + ", going to consume it...");
                 good.consume();
                 ++numberOfGoodsConsumed;
+                setChanged();
+                notifyObservers();
                 logger.config("Consumer #" + id + " consumed " + getGoodName() + " #" + good.getId() + ".");
                 if (0 == (numberOfGoodsConsumed % logUpdationFreq)) {
                     logger.info("Consumer #" + id + " consumed " + numberOfGoodsConsumed + " " + getGoodName() + ".");

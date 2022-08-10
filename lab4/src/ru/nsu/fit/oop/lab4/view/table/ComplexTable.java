@@ -1,4 +1,4 @@
-package ru.nsu.fit.oop.lab4.view;
+package ru.nsu.fit.oop.lab4.view.table;
 
 import ru.nsu.fit.oop.lab4.view.table_model.ComplexTableModel;
 
@@ -8,7 +8,7 @@ import java.util.Observer;
 
 public class ComplexTable extends JTable implements Observer {
 
-    private ComplexTableModel tableModel;
+    protected ComplexTableModel tableModel;
 
     public ComplexTable(ComplexTableModel tableModel) {
         super(tableModel);
@@ -20,6 +20,4 @@ public class ComplexTable extends JTable implements Observer {
         updateUI();
     }
 
-    public void showLogs() {
-    }
 }

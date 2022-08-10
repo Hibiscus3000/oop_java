@@ -50,6 +50,7 @@ public class Train extends ObservableLogging implements Runnable {
     }
 
     public Train(Train train, Observer observer) throws InterruptedException {
+        super(train);
         capacity = train.capacity;
         speed = train.speed;
         station = train.station;
@@ -138,7 +139,7 @@ public class Train extends ObservableLogging implements Runnable {
                     currentGoods.add(good);
                     setChanged();
                     notifyObservers();
-                    logger.config("Train #" + id + " loaded " + goodName + "# " + good.getId() + "." +
+                    logger.config("Train #" + id + " loaded " + goodName + " #" + good.getId() + "." +
                             " Train " + goodName +  " occupancy: " + (i + 1) + "/" + entry.getValue() + ".");
                 }
                 logger.info("Train #" + id + " finished loading " + goodName + ".");
@@ -171,7 +172,8 @@ public class Train extends ObservableLogging implements Runnable {
                     track.unloadGood(good);
                     ++goodsTransported;
                     logger.config("Train #" + id + " unloaded " + good.getName() + "." +
-                            " Train occupancy: " + goods.size() + "/" + capacityAll + ".");
+                            "Train " + entry.getKey() + " occupancy: " + entry.getValue().size()
+                            + "/" + capacity.get(entry.getKey()) + ".");
                 }
             }
             station.releaseUnloadingTrack(track);

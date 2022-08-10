@@ -13,6 +13,8 @@ public class ComplexFrame extends JFrame {
 
     private Complex complex;
     private boolean restart = false;
+    private BorderPanel borderPanel;
+
 
     public ComplexFrame() {
         Toolkit kit = Toolkit.getDefaultToolkit();
@@ -29,7 +31,7 @@ public class ComplexFrame extends JFrame {
             e.printStackTrace();
         }
 
-        add(new BorderPanel(complex), BorderLayout.CENTER);
+        add(borderPanel = new BorderPanel(complex), BorderLayout.CENTER);
     }
 
     private void addButtonPanel() {
@@ -66,6 +68,8 @@ public class ComplexFrame extends JFrame {
                 logger.info("Constructing complex...");
                 if (restart) {
                     complex = new Complex();
+                    borderPanel.setVisible(false);
+                    borderPanel = new BorderPanel(complex);
                 }
                 restart = true;
                 logger.info("Complex constructed, complex starts working...");

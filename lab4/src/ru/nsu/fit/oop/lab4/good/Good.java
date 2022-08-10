@@ -42,4 +42,15 @@ public class Good {
         Thread.sleep(unloadingTimeMillis);
     }
 
+    public int getConsumptionTimeMillis() {
+        return consumptionTimeMillis;
+    }
+
+    public int getLoadingTimeMillis() {
+        return loadingTimeMillis;
+    }
+
+    public int getUnloadingTimeMillis() {
+        return unloadingTimeMillis;
+    }
 }

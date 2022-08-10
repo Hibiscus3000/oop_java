@@ -27,13 +27,13 @@ public class BorderPanel extends JPanel {
                 boxPanel.setPanelVisible(event.getActionCommand(),checkBoxMap.
                         get(event.getActionCommand()).isSelected());
             };
+            addCheckBox("goods",listener);
             addCheckBox("station",listener);
             addCheckBox("trains",listener);
-            addCheckBox("consumers",listener);
             addCheckBox("factories",listener);
             addCheckBox("departure storages",listener);
             addCheckBox("destination storages",listener);
-
+            addCheckBox("consumers",listener);
             setBorder(BorderFactory.createEtchedBorder());
         }
 

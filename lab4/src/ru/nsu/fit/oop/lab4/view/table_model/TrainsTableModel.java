@@ -8,25 +8,17 @@ import java.util.List;
 import static ru.nsu.fit.oop.lab4.Util.append;
 import static ru.nsu.fit.oop.lab4.Util.prepend;
 
-public class TrainsTableModel extends ComplexTableModel{
-
-    private final List<Train> trains;
+public class TrainsTableModel extends ObservableLoggingTableModel<Train> {
 
     public TrainsTableModel(List<Train> trains,String... goodNames) {
-        super(append(append(prepend(goodNames,"id"),"state"),"marked for recycling"));
-        this.trains = trains;
-    }
-
-    @Override
-    public int getRowCount() {
-        return trains.size();
+        super(trains,append(append(prepend(goodNames,"id"),"state"),"marked for recycling"));
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        if (null == trains)
+        if (null == list)
             return null;
-        Train train = trains.get(rowIndex);
+        Train train = list.get(rowIndex);
         if (0 == columnIndex) {
             return train.getId();
         }
