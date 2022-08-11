@@ -1,6 +1,7 @@
 package ru.nsu.fit.oop.lab4;
 
 import ru.nsu.fit.oop.lab4.view.ComplexFrame;
+import ru.nsu.fit.oop.lab4.view.WindowHandler;
 
 import java.awt.*;
 import java.util.logging.FileHandler;
@@ -22,7 +23,7 @@ public class Main {
             fileHandler.setLevel(Level.ALL);
             logger.addHandler(fileHandler);
             EventQueue.invokeLater(() -> {
-                ComplexFrame complexFrame = new ComplexFrame();
+                ComplexFrame complexFrame = new ComplexFrame(logger);
                 complexFrame.setVisible(true);
             });
         } catch (Exception e) {

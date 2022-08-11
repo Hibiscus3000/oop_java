@@ -23,6 +23,7 @@ public class Complex {
     private final List<Consumer> consumers = new ArrayList<>();
     private final List<Thread> consumerThreads = new ArrayList<>();
     private final List<String> goodNames = new ArrayList<>();
+    private boolean working = false;
 
     public Complex() throws IOException, InvalidConfigException, BadNumberOfTracks {
         Properties goodsConfig = new Properties();
@@ -103,6 +104,7 @@ public class Complex {
     }
 
     public void start() throws InterruptedException, IOException {
+        working = true;
         depot.start();
         Main.logger.config("Starting depot... ");
         for (Factory factory : factories) {
@@ -164,6 +166,10 @@ public class Complex {
 
     public String[] getGoodNames() {
         return goodNames.toArray(new String[goodNames.size()]);
+    }
+
+    public boolean isWorking() {
+        return working;
     }
 
     public Observer setDepotObserver(Observer observer) {

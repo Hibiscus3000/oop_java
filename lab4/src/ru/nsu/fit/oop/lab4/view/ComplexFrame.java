@@ -6,6 +6,8 @@ import ru.nsu.fit.oop.lab4.view.panel.BorderPanel;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static ru.nsu.fit.oop.lab4.Main.logger;
 
@@ -14,9 +16,20 @@ public class ComplexFrame extends JFrame {
     private Complex complex;
     private boolean restart = false;
     private BorderPanel borderPanel;
+    private JPanel buttonPanel = new JPanel();
+    private StartAction startAction;
+    private StopAction stopAction;
+    private UrgentStopAction urgentStopAction;
+    private final WindowHandler windowHandlerAll;
+    private final WindowHandler windowHandlerInfo;
 
-
-    public ComplexFrame() {
+    public ComplexFrame(Logger mainLogger) {
+        windowHandlerAll = new WindowHandler("all logs");
+        windowHandlerAll.setLevel(Level.ALL);
+        windowHandlerInfo = new WindowHandler("info logs");
+        windowHandlerInfo.setLevel(Level.INFO);
+        mainLogger.addHandler(windowHandlerAll);
+        mainLogger.addHandler(windowHandlerInfo);
         Toolkit kit = Toolkit.getDefaultToolkit();
         Dimension screenSize = kit.getScreenSize();
         setSize(screenSize.width, screenSize.height - 50);
@@ -30,30 +43,23 @@ public class ComplexFrame extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         add(borderPanel = new BorderPanel(complex), BorderLayout.CENTER);
     }
 
     private void addButtonPanel() {
-        JPanel buttonPanel = new JPanel();
-        StartAction startAction = new StartAction();
-        AbstractStopAction stopAction = new StopAction(startAction);
-        AbstractStopAction urgentStopAction = new UrgentStopAction(startAction);
-        stopAction.addAnotherStopAction(urgentStopAction);
-        urgentStopAction.addAnotherStopAction(stopAction);
-        stopAction.disableStopActions();
-        startAction.addStopAction(stopAction).addUrgentStopAction(urgentStopAction);
-        addNewAction(buttonPanel,startAction,"ctrl Z","buttonPanel.start");
-        addNewAction(buttonPanel,stopAction,"ctrl X","buttonPanel.stop");
-        addNewAction(buttonPanel,urgentStopAction,"ctrl C","buttonPanel.urgent_stop");
+        buttonPanel = new JPanel();
+        addActionButtonAndKey(startAction = new StartAction(),"ctrl Z","buttonPanel.start");
+        addActionButtonAndKey(stopAction = new StopAction(),"ctrl X","buttonPanel.stop");
+        addActionButtonAndKey(urgentStopAction = new UrgentStopAction(),"ctrl C","buttonPanel.urgent_stop");
+        stopAction.setEnabled(false);
+        urgentStopAction.setEnabled(false);
+        addActionButtonAndKey(new showAllLogsAction(),"ctrl A","buttonPanel.showAllLogs");
+        addActionButtonAndKey(new showInfoLogsAction(),"ctrl L","buttonPanel.showInfoLogs");
         buttonPanel.setBorder(BorderFactory.createMatteBorder(3, 3, 3, 3, Color.ORANGE));
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
     private class StartAction extends AbstractAction {
-
-        private Action stopAction;
-        private Action urgentStopAction;
 
         public StartAction() {
             putValue(Action.NAME, "start");
@@ -82,45 +88,11 @@ public class ComplexFrame extends JFrame {
                 ex.printStackTrace();
             }
         }
-
-        public StartAction addStopAction(Action stopAction) {
-            this.stopAction = stopAction;
-            return this;
-        }
-
-        public StartAction addUrgentStopAction(Action urgentStopAction) {
-            this.urgentStopAction = urgentStopAction;
-            return this;
-        }
     }
 
-    private abstract class AbstractStopAction extends AbstractAction {
+    private class StopAction extends AbstractAction{
 
-        private Action startAction;
-        private Action anotherStopAction;
-
-        protected AbstractStopAction(Action startAction) {
-            this.startAction = startAction;
-        }
-
-        protected void enableStartAction() {
-            startAction.setEnabled(true);
-        }
-
-        public void disableStopActions() {
-            anotherStopAction.setEnabled(false);
-            setEnabled(false);
-        }
-
-        public void addAnotherStopAction(AbstractStopAction anotherStopAction) {
-            this.anotherStopAction = anotherStopAction;
-        }
-    }
-
-    private class StopAction extends AbstractStopAction {
-
-        public StopAction(Action startAction) {
-            super(startAction);
+        public StopAction() {
             putValue(Action.NAME, "stop");
             putValue(Action.SMALL_ICON, new ImageIcon(new ImageIcon("images/stop.png").getImage().
                     getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
@@ -132,17 +104,18 @@ public class ComplexFrame extends JFrame {
             try {
                 complex.stop();
                 logger.info("Complex stopped working.");
-                enableStartAction();
+                startAction.setEnabled(true);
+                setEnabled(false);
+                urgentStopAction.setEnabled(false);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
     }
 
-    private class UrgentStopAction extends AbstractStopAction {
+    private class UrgentStopAction extends AbstractAction {
 
-        public UrgentStopAction(Action startAction) {
-            super(startAction);
+        public UrgentStopAction() {
             putValue(Action.NAME, "urgent stop");
             putValue(Action.SMALL_ICON, new ImageIcon(new ImageIcon("images/urgent_stop.png").getImage().
                     getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
@@ -153,12 +126,39 @@ public class ComplexFrame extends JFrame {
         public void actionPerformed(ActionEvent e) {
             complex.stopUrgently();
             logger.info("Complex was urgently stopped.");
-            enableStartAction();
-            disableStopActions();
+            startAction.setEnabled(true);
+            setEnabled(false);
+            stopAction.setEnabled(false);
         }
     }
 
-    private void addNewAction(JPanel buttonPanel, Action action, String key, String keyObject) {
+    private class showAllLogsAction extends AbstractAction{
+
+        public showAllLogsAction() {
+            putValue(Action.NAME, "info logs");
+            putValue(Action.SHORT_DESCRIPTION, "stop logs with INFO logging level");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            windowHandlerAll.setVisible(true);
+        }
+    }
+
+    private class showInfoLogsAction extends AbstractAction{
+
+        public showInfoLogsAction() {
+            putValue(Action.NAME, "all logs");
+            putValue(Action.SHORT_DESCRIPTION, "stop logs with all logging levels");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            windowHandlerInfo.setVisible(true);
+        }
+    }
+
+    private void addActionButtonAndKey(Action action, String key, String keyObject) {
         buttonPanel.add(new JButton(action));
         InputMap inputMap = buttonPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         inputMap.put(KeyStroke.getKeyStroke(key),keyObject);
