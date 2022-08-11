@@ -1,6 +1,7 @@
 package ru.nsu.fit.oop.lab4;
 
 import ru.nsu.fit.oop.lab4.view.ComplexFrame;
+import ru.nsu.fit.oop.lab4.view.WindowHandler;
 
 import java.awt.*;
 import java.util.logging.FileHandler;
@@ -16,13 +17,13 @@ public class Main {
         try {
             LogManager.getLogManager().readConfiguration(
                     Main.class.getResourceAsStream("log.properties"));
-            logger = Logger.getLogger("");
+            logger = Logger.getLogger("ru.nsu.fit.oop.lab4");
             logger.setLevel(Level.ALL);
             FileHandler fileHandler = new FileHandler("logs/log_all%g.txt", 1000000, 1, false);
             fileHandler.setLevel(Level.ALL);
             logger.addHandler(fileHandler);
             EventQueue.invokeLater(() -> {
-                ComplexFrame complexFrame = new ComplexFrame();
+                ComplexFrame complexFrame = new ComplexFrame(logger);
                 complexFrame.setVisible(true);
             });
         } catch (Exception e) {

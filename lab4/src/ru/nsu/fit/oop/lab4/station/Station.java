@@ -33,7 +33,7 @@ public class Station extends ObservableLogging {
     public Station(int distance, int numberOfLoadingTracks, int numberOfUnloadingTracks,
                    int numberOfTracksDepartureDestination, int numberOfTracksDestinationDeparture,
                    Map<String, Storage> departureStorages, Map<String, Storage> destinationStorages) throws BadNumberOfTracks, IOException {
-        super(Station.class.getSimpleName());
+        super(Station.class.getName());
         this.distance = distance;
         this.numberOfLoadingTracks = numberOfLoadingTracks;
         if (numberOfLoadingTracks < 1)

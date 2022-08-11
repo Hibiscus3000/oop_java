@@ -1,6 +1,6 @@
 package ru.nsu.fit.oop.lab4.view.table;
 
-import ru.nsu.fit.oop.lab4.view.table_model.ObservableLoggingTableModel;
+import ru.nsu.fit.oop.lab4.view.table.table_model.ObservableLoggingTableModel;
 
 public class ObservableLoggingTable extends ComplexTable{
 

@@ -30,7 +30,7 @@ public class Depot implements Logging {
 
     public Depot(Station station, Properties goodsConfig) throws InvalidConfigException,
             IOException {
-        logger = getLogger(this.getClass().getSimpleName());
+        logger = getLogger(this.getClass().getName());
         trainsConfig = new Properties();
         var stream = this.getClass().getResourceAsStream("trains.properties");
         if (null == stream)

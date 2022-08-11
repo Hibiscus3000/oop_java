@@ -14,35 +14,40 @@ public class BorderPanel extends JPanel {
 
     public BorderPanel(Complex complex) {
         setLayout(new BorderLayout());
-        add(boxPanel = new BoxPanel(complex),BorderLayout.CENTER);
-        add(new CheckBoxPanel(),BorderLayout.NORTH);
+        CheckBoxPanel checkBoxPanel = new CheckBoxPanel();
+        add(checkBoxPanel, BorderLayout.NORTH);
+        add(boxPanel = new BoxPanel(complex, checkBoxPanel), BorderLayout.CENTER);
     }
 
-    private class CheckBoxPanel extends JPanel {
+    class CheckBoxPanel extends JPanel {
 
-        private final Map<String,JCheckBox> checkBoxMap = new HashMap<>();
+        private final Map<String, JCheckBox> checkBoxMap = new HashMap<>();
 
         public CheckBoxPanel() {
             ActionListener listener = event -> {
-                boxPanel.setPanelVisible(event.getActionCommand(),checkBoxMap.
+                boxPanel.setPanelVisible(event.getActionCommand(), checkBoxMap.
                         get(event.getActionCommand()).isSelected());
             };
-            addCheckBox("goods",listener);
-            addCheckBox("station",listener);
-            addCheckBox("trains",listener);
-            addCheckBox("factories",listener);
-            addCheckBox("departure storages",listener);
-            addCheckBox("destination storages",listener);
-            addCheckBox("consumers",listener);
+            addCheckBox("goods", listener, false);
+            addCheckBox("station", listener, true);
+            addCheckBox("trains", listener, true);
+            addCheckBox("factories", listener, true);
+            addCheckBox("departure storages", listener, true);
+            addCheckBox("destination storages", listener, true);
+            addCheckBox("consumers", listener, true);
             setBorder(BorderFactory.createEtchedBorder());
         }
 
-        private void addCheckBox(String name, ActionListener listener) {
+        private void addCheckBox(String name, ActionListener listener, boolean selected) {
             JCheckBox checkBox = new JCheckBox(name);
-            checkBoxMap.put(name,checkBox);
+            checkBoxMap.put(name, checkBox);
             checkBox.addActionListener(listener);
-            checkBox.setSelected(true);
+            checkBox.setSelected(selected);
             add(checkBox);
+        }
+
+        public boolean isSelected(String name) {
+            return checkBoxMap.get(name).isSelected();
         }
     }
 }

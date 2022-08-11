@@ -1,6 +1,6 @@
 package ru.nsu.fit.oop.lab4.view.table;
 
-import ru.nsu.fit.oop.lab4.view.table_model.StationTableModel;
+import ru.nsu.fit.oop.lab4.view.table.table_model.StationTableModel;
 
 public class StationTable extends ObservableLoggingTable{
 

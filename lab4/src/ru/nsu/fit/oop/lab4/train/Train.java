@@ -30,7 +30,7 @@ public class Train extends ObservableLogging implements Runnable {
 
     public Train(Map<String, Integer> capacity, int speed, Station station, int assemblyTimeMillis,
                  int depreciationTimeMillis, int id) throws IOException {
-        super(Train.class.getSimpleName() + id);
+        super(Train.class.getName() + id);
         this.capacity = capacity;
         goods = new HashMap<>();
         for (Map.Entry<String, Integer> entry : capacity.entrySet()) {
@@ -206,8 +206,8 @@ public class Train extends ObservableLogging implements Runnable {
 
     @Override
     public void logFinalInfo() {
-        logger.info("Train #" + id + " transported " + goodsTransported + " goods.\n" +
-                "Then it was interrupted it had " + goods.size() + " in it.");
+        logger.info("Train #" + id + " transported " + goodsTransported + " good units.\n" +
+                "Then it was interrupted, it had " + getAllGoodsQuantity() + " in it.");
     }
 
     public int getGoodCapacity(String goodName) throws UnknownGoodName {
@@ -230,6 +230,14 @@ public class Train extends ObservableLogging implements Runnable {
         } else {
             return goodList.size();
         }
+    }
+
+    public int getAllGoodsQuantity() {
+        int allGoodsQuantity = 0;
+        for (Map.Entry<String, List<Good>> goodType : goods.entrySet()) {
+            allGoodsQuantity += goodType.getValue().size();
+        }
+        return allGoodsQuantity;
     }
 
     public String getState() {

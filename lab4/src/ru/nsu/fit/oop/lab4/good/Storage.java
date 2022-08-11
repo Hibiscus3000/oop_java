@@ -16,7 +16,7 @@ public class Storage extends ObservableLogging {
     private final String placerName;
 
     public Storage(String goodName, int capacity, String place) throws IOException {
-        super(goodName + place + Storage.class.getSimpleName());
+        super(goodName + place + Storage.class.getName());
         if (place == "Departure") {
             takerName = "Train";
             placerName = "Factory";

@@ -1,4 +1,4 @@
-package ru.nsu.fit.oop.lab4.view.table_model;
+package ru.nsu.fit.oop.lab4.view.table.table_model;
 
 import ru.nsu.fit.oop.lab4.ObservableLogging;
 

@@ -25,7 +25,7 @@ public class Factory extends ObservableLogging implements Runnable{
 
     public Factory(String goodName, int productionTimeMillis, int consumptionTimeMillis, int loadingTimeMillis,
                    int unloadingTimeMillis, Storage storage, int goodNumber) throws IOException {
-        super(goodName + Factory.class.getSimpleName());
+        super(goodName + Factory.class.getName());
         this.goodNumber = goodNumber;
         this.goodName = goodName;
         this.productionTimeMillis = productionTimeMillis;

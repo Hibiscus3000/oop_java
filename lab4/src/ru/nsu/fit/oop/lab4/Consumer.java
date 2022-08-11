@@ -15,7 +15,7 @@ public class Consumer extends ObservableLogging implements Runnable {
     private final int logUpdationFreq = 20;
 
     public Consumer(Storage storage, int id) throws IOException {
-        super(Consumer.class.getSimpleName() + storage.getGoodName() + id);
+        super(Consumer.class.getName() + storage.getGoodName() + id);
         this.storage = storage;
         this.id = id;
         logger.config("Consumer #" + id + ", interested in " + getGoodName() + ", created.");
