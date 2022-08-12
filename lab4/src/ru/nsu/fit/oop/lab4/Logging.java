@@ -7,11 +7,11 @@ import java.util.logging.Logger;
 
 public interface Logging {
 
-    default public Logger getLogger(String loggerName)
+    default public Logger getLogger(String loggerName, String pattern)
             throws IOException {
         Logger logger = Logger.getLogger(loggerName);
         logger.setLevel(Level.ALL);
-        FileHandler fileHandler = new FileHandler("logs/" + loggerName + "_log%g.txt",
+        FileHandler fileHandler = new FileHandler("logs/" + pattern + "_log%g.txt",
                 1000000, 1, false);
         fileHandler.setLevel(Level.ALL);
         logger.addHandler(fileHandler);

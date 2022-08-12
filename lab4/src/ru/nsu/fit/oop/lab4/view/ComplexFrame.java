@@ -6,6 +6,8 @@ import ru.nsu.fit.oop.lab4.view.panel.BorderPanel;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,7 +34,7 @@ public class ComplexFrame extends JFrame {
         mainLogger.addHandler(windowHandlerInfo);
         Toolkit kit = Toolkit.getDefaultToolkit();
         Dimension screenSize = kit.getScreenSize();
-        setSize(screenSize.width, screenSize.height - 50);
+        setSize(9 * screenSize.width / 10, 9 * screenSize.height / 10 - 50);
         setLocationRelativeTo(null);
         setResizable(true);
         setTitle("Transport company");
@@ -53,9 +55,17 @@ public class ComplexFrame extends JFrame {
         addActionButtonAndKey(urgentStopAction = new UrgentStopAction(),"ctrl C","buttonPanel.urgent_stop");
         stopAction.setEnabled(false);
         urgentStopAction.setEnabled(false);
-        addActionButtonAndKey(new showAllLogsAction(),"ctrl A","buttonPanel.showAllLogs");
-        addActionButtonAndKey(new showInfoLogsAction(),"ctrl L","buttonPanel.showInfoLogs");
+        addActionButtonAndKey(new ShowAllLogsAction(),"ctrl A","buttonPanel.showAllLogs");
+        addActionButtonAndKey(new ShowInfoLogsAction(),"ctrl L","buttonPanel.showInfoLogs");
+        addActionButtonAndKey(new ShowDepotLogsAction(),"ctrl D","buttonPanel.showDepotLogs");
+        addActionButtonAndKey(new ExitAction(),"ctrl E","buttonPanel.exit");
         buttonPanel.setBorder(BorderFactory.createMatteBorder(3, 3, 3, 3, Color.ORANGE));
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                exit();
+            }
+        });
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
@@ -65,7 +75,7 @@ public class ComplexFrame extends JFrame {
             putValue(Action.NAME, "start");
             putValue(Action.SMALL_ICON, new ImageIcon(new ImageIcon("images/start.png").getImage().
                     getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
-            putValue(Action.SHORT_DESCRIPTION, "start the complex");
+            putValue(Action.SHORT_DESCRIPTION, "start the complex (Ctrl+Z)");
         }
 
         @Override
@@ -96,7 +106,7 @@ public class ComplexFrame extends JFrame {
             putValue(Action.NAME, "stop");
             putValue(Action.SMALL_ICON, new ImageIcon(new ImageIcon("images/stop.png").getImage().
                     getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
-            putValue(Action.SHORT_DESCRIPTION, "stop the complex");
+            putValue(Action.SHORT_DESCRIPTION, "stop the complex  (Ctrl+X)");
         }
 
         @Override
@@ -119,7 +129,7 @@ public class ComplexFrame extends JFrame {
             putValue(Action.NAME, "urgent stop");
             putValue(Action.SMALL_ICON, new ImageIcon(new ImageIcon("images/urgent_stop.png").getImage().
                     getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
-            putValue(Action.SHORT_DESCRIPTION, "stop the complex immediately!");
+            putValue(Action.SHORT_DESCRIPTION, "stop the complex immediately! (Ctrl+C)");
         }
 
         @Override
@@ -132,11 +142,11 @@ public class ComplexFrame extends JFrame {
         }
     }
 
-    private class showAllLogsAction extends AbstractAction{
+    private class ShowAllLogsAction extends AbstractAction{
 
-        public showAllLogsAction() {
+        public ShowAllLogsAction() {
             putValue(Action.NAME, "all logs");
-            putValue(Action.SHORT_DESCRIPTION, "show logs with INFO logging level");
+            putValue(Action.SHORT_DESCRIPTION, "show logs with INFO logging level (Ctrl+L)");
         }
 
         @Override
@@ -145,16 +155,51 @@ public class ComplexFrame extends JFrame {
         }
     }
 
-    private class showInfoLogsAction extends AbstractAction{
+    private class ShowInfoLogsAction extends AbstractAction{
 
-        public showInfoLogsAction() {
+        public ShowInfoLogsAction() {
             putValue(Action.NAME, "info logs");
-            putValue(Action.SHORT_DESCRIPTION, "show logs with all logging levels");
+            putValue(Action.SHORT_DESCRIPTION, "show logs with all logging levels (Ctrl+A)");
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             windowHandlerInfo.setVisible(true);
+        }
+    }
+
+    private class ShowDepotLogsAction extends AbstractAction {
+
+        public ShowDepotLogsAction() {
+            putValue(Action.NAME,"depot logs");
+            putValue(Action.SHORT_DESCRIPTION,"show depot logs (Ctrl+D)");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            complex.setDepotWindowHandlerVisible(true);
+        }
+    }
+
+    private class ExitAction extends AbstractAction{
+
+        public ExitAction() {
+            putValue(Action.NAME,"exit");
+            putValue(Action.SHORT_DESCRIPTION,"terminate the program and leave (Ctrl+E)");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            exit();
+        }
+    }
+
+    private void exit() {
+        if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(ComplexFrame.this,
+                "Are you sure that you want to exit????", "confirm exit",
+                JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE)) {
+            complex.stopUrgently();
+            System.exit(0);
         }
     }
 
@@ -164,5 +209,6 @@ public class ComplexFrame extends JFrame {
         inputMap.put(KeyStroke.getKeyStroke(key),keyObject);
         buttonPanel.getActionMap().put(keyObject,action);
     }
+
 
 }

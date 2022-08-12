@@ -30,7 +30,7 @@ public class Train extends ObservableLogging implements Runnable {
 
     public Train(Map<String, Integer> capacity, int speed, Station station, int assemblyTimeMillis,
                  int depreciationTimeMillis, int id) throws IOException {
-        super(Train.class.getName() + id);
+        super(Train.class.getName() + id,Train.class.getSimpleName() + id);
         this.capacity = capacity;
         goods = new HashMap<>();
         for (Map.Entry<String, Integer> entry : capacity.entrySet()) {

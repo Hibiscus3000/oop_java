@@ -1,7 +1,6 @@
 package ru.nsu.fit.oop.lab4.train;
 
-import ru.nsu.fit.oop.lab4.Logging;
-import ru.nsu.fit.oop.lab4.Main;
+import ru.nsu.fit.oop.lab4.ObservableLogging;
 import ru.nsu.fit.oop.lab4.exception.InvalidConfigException;
 import ru.nsu.fit.oop.lab4.station.Station;
 
@@ -10,11 +9,8 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public class Depot implements Logging {
+public class Depot extends ObservableLogging {
 
     private final int numberOfWorkers = 4;
     private final ScheduledExecutorService workers = Executors.newScheduledThreadPool(numberOfWorkers);
@@ -24,19 +20,18 @@ public class Depot implements Logging {
     private volatile List<Thread> threads;
     private final Station station;
     private final Properties goodsConfig;
-    private final Logger logger;
     private volatile boolean stop = false;
     private Observer observer;
 
     public Depot(Station station, Properties goodsConfig) throws InvalidConfigException,
             IOException {
-        logger = getLogger(this.getClass().getName());
+        super(Depot.class.getName(),Depot.class.getSimpleName());
         trainsConfig = new Properties();
         var stream = this.getClass().getResourceAsStream("trains.properties");
         if (null == stream)
             throw new InvalidConfigException("Wasn't able to open trains config.");
         trainsConfig.load(stream);
-        Main.logger.config("Loaded trains config.");
+        logger.config("Loaded trains config.");
         numberOfTrains = trainsConfig.size() / 4;
         trains = new ArrayList<>(numberOfTrains);
         threads = new ArrayList<>(numberOfTrains);
@@ -124,4 +119,5 @@ public class Depot implements Logging {
     public void setObserver(Observer observer) {
         this.observer = observer;
     }
+
 }

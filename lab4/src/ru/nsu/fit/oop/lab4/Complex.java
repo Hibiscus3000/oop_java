@@ -122,11 +122,13 @@ public class Complex {
     }
 
     public void stop() {
+        Main.logger.info("Complex was stopped");
         depot.stop();
         stopFactoriesAndConsumers();
     }
 
     public void stopUrgently() {
+        Main.logger.info("Complex was urgently stopped");
         depot.stopUrgently();
         stopFactoriesAndConsumers();
     }
@@ -166,6 +168,10 @@ public class Complex {
 
     public String[] getGoodNames() {
         return goodNames.toArray(new String[goodNames.size()]);
+    }
+
+    public void setDepotWindowHandlerVisible(boolean b) {
+        depot.setWindowHandlerVisible(b);
     }
 
     public boolean isWorking() {

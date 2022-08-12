@@ -12,8 +12,8 @@ public abstract class ObservableLogging extends Observable implements Logging {
     protected Logger logger;
     private WindowHandler windowHandler;
 
-    public ObservableLogging(String loggerName) throws IOException {
-        logger = getLogger(loggerName);
+    public ObservableLogging(String loggerName,String pattern) throws IOException {
+        logger = getLogger(loggerName,pattern);
         windowHandler = new WindowHandler(loggerName + " log");
         windowHandler.setLevel(Level.ALL);
         logger.addHandler(windowHandler);

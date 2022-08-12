@@ -15,7 +15,10 @@ public class Consumer extends ObservableLogging implements Runnable {
     private final int logUpdationFreq = 20;
 
     public Consumer(Storage storage, int id) throws IOException {
-        super(Consumer.class.getName() + storage.getGoodName() + id);
+        super(Consumer.class.getName() +
+                Character.toUpperCase(storage.getGoodName().charAt(0)) +
+                storage.getGoodName().substring(1) + id, storage.getGoodName() + Consumer.class.getSimpleName()
+                + id);
         this.storage = storage;
         this.id = id;
         logger.config("Consumer #" + id + ", interested in " + getGoodName() + ", created.");
@@ -53,14 +56,14 @@ public class Consumer extends ObservableLogging implements Runnable {
             logger.warning("Consumer interested in " + getGoodName() + " was interrupted.");
             logFinalInfo();
         } catch (ReusedGoodException e) {
-            logger.log(Level.SEVERE,"Trying to reuse " + getGoodName(),e);
+            logger.log(Level.SEVERE, "Trying to reuse " + getGoodName(), e);
         }
     }
 
     @Override
     public void logFinalInfo() {
         logger.info("Consumer #" + id + " used " + numberOfGoodsConsumed
-        + " units of " + getGoodName() + ".");
+                + " units of " + getGoodName() + ".");
     }
 }
 
