@@ -13,6 +13,11 @@ public abstract class ObservableLoggingTableModel<T extends ObservableLogging> e
         super(observableLoggingList, columNames);
     }
 
+    @Override
+    public Class<?> getColumnClass(int columnIndex) {
+        return getValueAt(0,columnIndex).getClass();
+    }
+
     public void showLogs(int row) {
         list.get(row).setWindowHandlerVisible(true);
     }

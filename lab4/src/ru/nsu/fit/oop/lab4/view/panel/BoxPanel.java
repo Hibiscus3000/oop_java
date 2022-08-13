@@ -10,6 +10,7 @@ import ru.nsu.fit.oop.lab4.station.Station;
 import ru.nsu.fit.oop.lab4.view.table.ComplexTable;
 import ru.nsu.fit.oop.lab4.view.table.ObservableLoggingTable;
 import ru.nsu.fit.oop.lab4.view.table.StationTable;
+import ru.nsu.fit.oop.lab4.view.table.TrainsTable;
 import ru.nsu.fit.oop.lab4.view.table.table_model.*;
 
 import javax.swing.*;
@@ -37,9 +38,8 @@ public class BoxPanel extends JPanel {
                 checkBoxPanel.isSelected("station"));
         setStationObserver(station, stationTable);
         addPanel("trains", new RowLoggingPanel(Color.WHITE, "trains",
-                        (ObservableLoggingTable) complex.setDepotObserver(new ObservableLoggingTable(
-                                new TrainsTableModel(complex.getTrains(), complex.getGoodNames())))),
-                checkBoxPanel.isSelected("trains"));
+                        (ObservableLoggingTable) complex.setDepotObserver(new TrainsTable(complex.getTrains(),
+                                complex.getGoodNames()))), checkBoxPanel.isSelected("trains"));
         ObservableLoggingTable factoriesTable = new ObservableLoggingTable(new FactoryTableModel(factories));
         setObserver(factories, factoriesTable);
         addPanel("factories", new RowLoggingPanel(Color.ORANGE, "factories", factoriesTable),
