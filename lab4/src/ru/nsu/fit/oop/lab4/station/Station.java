@@ -33,20 +33,20 @@ public class Station extends ObservableLogging {
     public Station(int distance, int numberOfLoadingTracks, int numberOfUnloadingTracks,
                    int numberOfTracksDepartureDestination, int numberOfTracksDestinationDeparture,
                    Map<String, Storage> departureStorages, Map<String, Storage> destinationStorages) throws BadNumberOfTracks, IOException {
-        super(Station.class.getName(),Station.class.getSimpleName());
+        super(Station.class.getName(), Station.class.getSimpleName(), "station log");
         this.distance = distance;
         this.numberOfLoadingTracks = numberOfLoadingTracks;
         if (numberOfLoadingTracks < 1)
-            throw new BadNumberOfTracks("loading",numberOfLoadingTracks);
+            throw new BadNumberOfTracks("loading", numberOfLoadingTracks);
         this.numberOfUnloadingTracks = numberOfUnloadingTracks;
         if (numberOfUnloadingTracks < 1)
-            throw new BadNumberOfTracks("unloading",numberOfUnloadingTracks);
+            throw new BadNumberOfTracks("unloading", numberOfUnloadingTracks);
         this.numberOfTracksDepartureDestination = numberOfTracksDepartureDestination;
         if (numberOfTracksDepartureDestination < 1)
-            throw new BadNumberOfTracks("departure destination",numberOfTracksDepartureDestination);
+            throw new BadNumberOfTracks("departure destination", numberOfTracksDepartureDestination);
         this.numberOfTracksDestinationDeparture = numberOfTracksDestinationDeparture;
         if (numberOfTracksDestinationDeparture < 1)
-            throw new BadNumberOfTracks("destination departure",numberOfTracksDestinationDeparture);
+            throw new BadNumberOfTracks("destination departure", numberOfTracksDestinationDeparture);
 
         loadingTracks = new ArrayList<>();
         unloadingTracks = new ArrayList<>();
@@ -54,19 +54,19 @@ public class Station extends ObservableLogging {
         tracksDestinationDeparture = new ArrayList<>();
 
         for (int i = 0; i < numberOfLoadingTracks; ++i)
-            loadingTracks.add(new LoadingTrack(departureStorages,i + 1));
+            loadingTracks.add(new LoadingTrack(i + 1, departureStorages));
         logger.config("Created " + numberOfLoadingTracks + " loading tracks.");
         for (int i = 0; i < numberOfUnloadingTracks; ++i)
-            unloadingTracks.add(new UnloadingTrack(destinationStorages,numberOfLoadingTracks + i + 1));
+            unloadingTracks.add(new UnloadingTrack(numberOfLoadingTracks + i + 1, destinationStorages));
         logger.config("Created " + numberOfUnloadingTracks + " unloading tracks.");
         for (int i = 0; i < numberOfTracksDepartureDestination; ++i)
             tracksDepartureDestination.add(new TrafficTrack(distance, numberOfLoadingTracks + numberOfUnloadingTracks
-            + i + 1));
+                    + i + 1));
         logger.config("Created " + numberOfTracksDepartureDestination +
                 " departure destination tracks.");
         for (int i = 0; i < numberOfTracksDestinationDeparture; ++i)
             tracksDestinationDeparture.add(new TrafficTrack(distance, numberOfLoadingTracks + numberOfUnloadingTracks
-            + numberOfTracksDepartureDestination + i + 1));
+                    + numberOfTracksDepartureDestination + i + 1));
         logger.config("Created " + numberOfTracksDestinationDeparture +
                 " destination departure tracks.");
 
@@ -161,7 +161,8 @@ public class Station extends ObservableLogging {
     }
 
     @Override
-    public void logFinalInfo() {}
+    public void logFinalInfo() {
+    }
 
     public int getDistance() {
         return distance;

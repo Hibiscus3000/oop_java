@@ -17,7 +17,7 @@ public class ComplexTable extends JTable implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        updateUI();
+        resizeAndRepaint();
     }
 
 }

@@ -6,9 +6,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static ru.nsu.fit.oop.lab4.Util.*;
 
 public class Factory extends ObservableLogging implements Runnable{
 
@@ -26,8 +27,9 @@ public class Factory extends ObservableLogging implements Runnable{
 
     public Factory(String goodName, int productionTimeMillis, int consumptionTimeMillis, int loadingTimeMillis,
                    int unloadingTimeMillis, Storage storage, int goodNumber) throws IOException {
-        super(Factory.class.getName() + Character.toUpperCase(goodName.charAt(0)) +
-                goodName.substring(1),goodName + Factory.class.getSimpleName());
+        super(Factory.class.getPackageName() + eraseWhitespaces(toUpperFirstChar(goodName)) +
+                Factory.class.getSimpleName(),toUpperFirstChar(eraseWhitespaces(goodName)) + Factory.class.getSimpleName(),
+                goodName + " factory log");
         this.goodNumber = goodNumber;
         this.goodName = goodName;
         this.productionTimeMillis = productionTimeMillis;

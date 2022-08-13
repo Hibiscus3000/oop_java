@@ -19,7 +19,7 @@ public class Main {
                     Main.class.getResourceAsStream("log.properties"));
             logger = Logger.getLogger("ru.nsu.fit.oop.lab4");
             logger.setLevel(Level.ALL);
-            FileHandler fileHandler = new FileHandler("logs/log_all%g.txt", 1000000, 1, false);
+            FileHandler fileHandler = new FileHandler("logs/Log_all%g.txt", 1000000, 1, false);
             fileHandler.setLevel(Level.ALL);
             logger.addHandler(fileHandler);
             EventQueue.invokeLater(() -> {

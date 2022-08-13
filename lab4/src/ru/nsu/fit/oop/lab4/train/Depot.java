@@ -25,7 +25,7 @@ public class Depot extends ObservableLogging {
 
     public Depot(Station station, Properties goodsConfig) throws InvalidConfigException,
             IOException {
-        super(Depot.class.getName(),Depot.class.getSimpleName());
+        super(Depot.class.getName(),Depot.class.getSimpleName(), "depot log");
         trainsConfig = new Properties();
         var stream = this.getClass().getResourceAsStream("trains.properties");
         if (null == stream)
@@ -73,7 +73,6 @@ public class Depot extends ObservableLogging {
         threads.add(thread);
         thread.start();
         logger.info("Started train #" + train.getId() + ".");
-        sample = train;
         workers.schedule(() -> {
             try {
                 disposeTrain(train, thread);
@@ -81,7 +80,7 @@ public class Depot extends ObservableLogging {
                 workers.shutdownNow();
                 logFinalInfo();
             }
-        }, sample.getDepreciationTimeMillis(), TimeUnit.MILLISECONDS);
+        }, train.getDepreciationTimeMillis(), TimeUnit.MILLISECONDS);
     }
 
     private void disposeTrain(Train train, Thread thread) throws InterruptedException {
@@ -92,6 +91,7 @@ public class Depot extends ObservableLogging {
             }
         }
         logger.info("Depot disposed of the train #" + train.getId() + ".");
+        trains.remove(train);
         threads.remove(thread);
         createTrain(train);
     }

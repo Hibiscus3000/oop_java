@@ -6,7 +6,6 @@ import java.util.List;
 
 public class FactoryTableModel extends ObservableLoggingTableModel<Factory> {
 
-
     public FactoryTableModel(List<Factory> factories) {
         super(factories, "good", "number of goods produced");
     }

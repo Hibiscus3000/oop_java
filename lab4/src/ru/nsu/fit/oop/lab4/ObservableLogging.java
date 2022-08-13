@@ -12,9 +12,9 @@ public abstract class ObservableLogging extends Observable implements Logging {
     protected Logger logger;
     private WindowHandler windowHandler;
 
-    public ObservableLogging(String loggerName,String pattern) throws IOException {
+    public ObservableLogging(String loggerName,String pattern, String windowName) throws IOException {
         logger = getLogger(loggerName,pattern);
-        windowHandler = new WindowHandler(loggerName + " log");
+        windowHandler = new WindowHandler(windowName);
         windowHandler.setLevel(Level.ALL);
         logger.addHandler(windowHandler);
     }

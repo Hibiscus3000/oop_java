@@ -5,13 +5,10 @@ import ru.nsu.fit.oop.lab4.good.Storage;
 
 import java.util.Map;
 
-public class UnloadingTrack extends Track {
+public class UnloadingTrack extends StationTrack {
 
-    private final Map<String, Storage> storages;
-
-    public UnloadingTrack(Map<String, Storage> destinationStorages, int id) {
-        super(id);
-        storages = destinationStorages;
+    public UnloadingTrack(int id,Map<String, Storage> destinationStorages) {
+        super(id,destinationStorages);
     }
 
     public void unloadGood(Good good) throws InterruptedException {

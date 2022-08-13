@@ -5,13 +5,13 @@ import ru.nsu.fit.oop.lab4.train.Train;
 
 import java.util.List;
 
-import static ru.nsu.fit.oop.lab4.Util.append;
-import static ru.nsu.fit.oop.lab4.Util.prepend;
+import static ru.nsu.fit.oop.lab4.Util.*;
 
 public class TrainsTableModel extends ObservableLoggingTableModel<Train> {
 
-    public TrainsTableModel(List<Train> trains,String... goodNames) {
-        super(trains,append(append(prepend(goodNames,"id"),"state"),"marked for recycling"));
+    public TrainsTableModel(List<Train> trains, String... goodNames) {
+        super(trains, append(append(append(prepend(goodNames, "id"),
+                "speed (m/s)"), "state"), "marked for recycling"));
     }
 
     @Override
@@ -27,6 +27,9 @@ public class TrainsTableModel extends ObservableLoggingTableModel<Train> {
         }
         if (getNumberOfColumns() - 2 == columnIndex) {
             return train.getState();
+        }
+        if (getNumberOfColumns() - 3 == columnIndex) {
+            return train.getSpeed();
         }
         try {
             return String.format(format, train.getGoodQuantity(getColumnName(columnIndex)),

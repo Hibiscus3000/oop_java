@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ru.nsu.fit.oop.lab4.Util.*;
+
 public class Storage extends ObservableLogging {
 
     private final String goodName;
@@ -16,8 +18,10 @@ public class Storage extends ObservableLogging {
     private final String placerName;
 
     public Storage(String goodName, int capacity, String place) throws IOException {
-        super(Storage.class.getName() + place + Character.toUpperCase(goodName.charAt(0)) +
-                goodName.substring(1),goodName + Storage.class.getSimpleName());
+        super(Storage.class.getPackageName() + eraseWhitespaces(toUpperFirstChar(goodName)) +
+                place + Storage.class.getSimpleName(),toUpperFirstChar(eraseWhitespaces(goodName)) + place +
+                Storage.class.getSimpleName(), goodName + " " + toLowerFirstChar(place) +
+                " storage log");
         if (place == "Departure") {
             takerName = "Train";
             placerName = "Factory";

@@ -7,6 +7,8 @@ import ru.nsu.fit.oop.lab4.good.Storage;
 import java.io.IOException;
 import java.util.logging.Level;
 
+import static ru.nsu.fit.oop.lab4.Util.*;
+
 public class Consumer extends ObservableLogging implements Runnable {
 
     private final Storage storage;
@@ -15,10 +17,10 @@ public class Consumer extends ObservableLogging implements Runnable {
     private final int logUpdationFreq = 20;
 
     public Consumer(Storage storage, int id) throws IOException {
-        super(Consumer.class.getName() +
-                Character.toUpperCase(storage.getGoodName().charAt(0)) +
-                storage.getGoodName().substring(1) + id, storage.getGoodName() + Consumer.class.getSimpleName()
-                + id);
+        super(Consumer.class.getPackageName() + '.' +
+                eraseWhitespaces(toUpperFirstChar(storage.getGoodName())) + Consumer.class.getSimpleName() + id,
+                toUpperFirstChar(eraseWhitespaces(storage.getGoodName())) + Consumer.class.getSimpleName() + id,
+                storage.getGoodName() + " consumer #" + id + " log");
         this.storage = storage;
         this.id = id;
         logger.config("Consumer #" + id + ", interested in " + getGoodName() + ", created.");

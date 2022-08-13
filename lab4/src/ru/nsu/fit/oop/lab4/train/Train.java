@@ -23,19 +23,21 @@ public class Train extends ObservableLogging implements Runnable {
     private final int depreciationTimeMillis;
     private final int id;
     private final int capacityAll;
-    private int goodsTransported = 0;
+    private int goodsTransported;
     private volatile boolean mark = false;
     private volatile boolean isDisposed = false;
     private TrainState state;
 
     public Train(Map<String, Integer> capacity, int speed, Station station, int assemblyTimeMillis,
                  int depreciationTimeMillis, int id) throws IOException {
-        super(Train.class.getName() + id,Train.class.getSimpleName() + id);
+        super(Train.class.getName() + id,Train.class.getSimpleName() + id,
+                "train #" + id + " log");
         this.capacity = capacity;
         goods = new HashMap<>();
         for (Map.Entry<String, Integer> entry : capacity.entrySet()) {
              goods.put(entry.getKey(),new ArrayList<>(entry.getValue()));
         }
+        goodsTransported = 0;
         int totalCapacity = 0;
         for (Map.Entry<String, Integer> goodCapacity : capacity.entrySet()) {
             totalCapacity += goodCapacity.getValue();
@@ -60,9 +62,11 @@ public class Train extends ObservableLogging implements Runnable {
         capacityAll = train.capacityAll;
         logger = train.logger;
         goods = train.goods;
-        logger.config("Train #" + id + " created.");
+        goodsTransported = train.goodsTransported;
+        logger.info("Train #" + id + " created.");
         state = TrainState.ASSEMBLING;
-        addObserver(observer);
+        if (null != observer)
+            addObserver(observer);
     }
 
     public int getId() {
@@ -85,27 +89,9 @@ public class Train extends ObservableLogging implements Runnable {
                 setChanged();
                 notifyObservers();
                 Thread.sleep(assemblyTimeMillis);
-                logger.info("Train #" + id + " loading goods...");
-                state = TrainState.LOADING;
-                setChanged();
-                notifyObservers();
                 loadGoods();
-                logger.info("Train #" + id + " finished loading goods, driving from departure " +
-                        "station to destination station...");
-                state = TrainState.DRIVING_DEPARTURE_DESTINATION;
-                setChanged();
-                notifyObservers();
                 driveDepartureDestination();
-                logger.info("Train #" + id + " unloading goods...");
-                state = TrainState.UNLOADING;
-                setChanged();
-                notifyObservers();
                 unloadGoods();
-                logger.info("Train #" + id + " finished unloading goods, driving from destination " +
-                        "station to departure station...");
-                state = TrainState.DRIVING_DESTINATION_DEPARTURE;
-                setChanged();
-                notifyObservers();
                 driveDestinationDeparture();
                 if (mark) {
                     dispose();
@@ -123,9 +109,18 @@ public class Train extends ObservableLogging implements Runnable {
         }
     }
 
+    private void updateState(TrainState trainState) {
+        state = trainState;
+        setChanged();
+        notifyObservers();
+    }
+
     private void loadGoods() throws InterruptedException, BadTrackException, UnknownGoodName {
         try {
+            logger.info("Train #" + id + " loading goods...");
+            updateState(TrainState.WAITING_FOR_A_TRACK);
             LoadingTrack track = (LoadingTrack) station.acquireLoadingTrack();
+            updateState(TrainState.LOADING);
             for (Map.Entry<String, Integer> entry : capacity.entrySet()) {
                 String goodName = entry.getKey();
                 logger.info("Train #" + id + " loading " + goodName + ".");
@@ -145,6 +140,8 @@ public class Train extends ObservableLogging implements Runnable {
                 logger.info("Train #" + id + " finished loading " + goodName + ".");
             }
             station.releaseLoadingTrack(track);
+            logger.info("Train #" + id + " finished loading goods, driving from departure " +
+                    "station to destination station...");
         } catch (ClassCastException e) {
             throw new BadTrackException(e);
         }
@@ -152,7 +149,9 @@ public class Train extends ObservableLogging implements Runnable {
 
     private void driveDepartureDestination() throws InterruptedException, BadTrackException {
         try {
+            updateState(TrainState.WAITING_FOR_A_TRACK);
             TrafficTrack track = (TrafficTrack) station.acquireDepartureDestinationTrack();
+            updateState(TrainState.DRIVING_DEPARTURE_DESTINATION);
             track.drive(speed);
             station.releaseDepartureDestinationTrack(track);
         } catch (ClassCastException e) {
@@ -162,21 +161,29 @@ public class Train extends ObservableLogging implements Runnable {
 
     private void unloadGoods() throws InterruptedException, BadTrackException {
         try {
+            updateState(TrainState.WAITING_FOR_A_TRACK);
             UnloadingTrack track = (UnloadingTrack) station.acquireUnloadingTrack();
+            logger.info("Train #" + id + " unloading goods...");
+            updateState(TrainState.UNLOADING);
             for (Map.Entry<String,List<Good>> entry : goods.entrySet()) {
-                for (Good good : entry.getValue()) {
-                    goods.remove(good);
+                List<Good> goodList = entry.getValue();
+                int numberOfGoods = goodList.size();
+                String goodName = entry.getKey();
+                for (int i = 0; i < numberOfGoods; ++i) {
+                    Good good = goodList.remove(0);
                     setChanged();
                     notifyObservers();
                     good.unload();
                     track.unloadGood(good);
                     ++goodsTransported;
-                    logger.config("Train #" + id + " unloaded " + good.getName() + "." +
-                            "Train " + entry.getKey() + " occupancy: " + entry.getValue().size()
-                            + "/" + capacity.get(entry.getKey()) + ".");
+                    logger.config("Train #" + id + " unloaded " + goodName + " #" + good.getId() + "."
+                            + "Train " + goodName + " occupancy: " + goodList.size()
+                            + "/" + capacity.get(goodName) + ".");
                 }
             }
             station.releaseUnloadingTrack(track);
+            logger.info("Train #" + id + " finished unloading goods, driving from destination " +
+                    "station to departure station...");
         } catch (ClassCastException e) {
             throw new BadTrackException(e);
         }
@@ -184,7 +191,9 @@ public class Train extends ObservableLogging implements Runnable {
 
     private void driveDestinationDeparture() throws InterruptedException, BadTrackException {
         try {
+            updateState(TrainState.WAITING_FOR_A_TRACK);
             TrafficTrack track = (TrafficTrack) station.acquireDestinationDepartureTrack();
+            updateState(TrainState.DRIVING_DESTINATION_DEPARTURE);
             track.drive(speed);
             station.releaseDestinationDepartureTrack(track);
         } catch (ClassCastException e) {
@@ -246,5 +255,9 @@ public class Train extends ObservableLogging implements Runnable {
 
     public boolean isMarked() {
         return mark;
+    }
+
+    public int getSpeed() {
+        return speed;
     }
 }

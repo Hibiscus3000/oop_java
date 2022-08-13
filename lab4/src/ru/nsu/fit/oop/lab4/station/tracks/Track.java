@@ -3,7 +3,7 @@ package ru.nsu.fit.oop.lab4.station.tracks;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class Track {
+public abstract class Track {
 
     private final int id;
 
