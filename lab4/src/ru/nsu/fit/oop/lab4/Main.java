@@ -1,7 +1,6 @@
 package ru.nsu.fit.oop.lab4;
 
 import ru.nsu.fit.oop.lab4.view.ComplexFrame;
-import ru.nsu.fit.oop.lab4.view.WindowHandler;
 
 import java.awt.*;
 import java.util.logging.FileHandler;
@@ -15,6 +14,7 @@ public class Main {
 
     public static void main(String[] args) {
         try {
+            Util.clearLogsDirectory();
             LogManager.getLogManager().readConfiguration(
                     Main.class.getResourceAsStream("log.properties"));
             logger = Logger.getLogger("ru.nsu.fit.oop.lab4");

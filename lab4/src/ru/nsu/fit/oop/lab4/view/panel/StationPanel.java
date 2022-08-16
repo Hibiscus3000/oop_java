@@ -6,17 +6,22 @@ import ru.nsu.fit.oop.lab4.view.table.StationTable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.Rectangle2D;
 
 public class StationPanel extends ObservableLoggingPanel{
 
     private final StationTable stationTable;
     private final JTextArea textArea;
+    private final String message;
 
     public StationPanel(Station station, StationTable table, double boxPanelSizeScale) {
         super(Color.CYAN, "station", table, boxPanelSizeScale);
+        message = "distance between departure and destination station = "
+                + station.getDistance() +  " m.";
         stationTable = table;
-        textArea = new JTextArea("distance between departure and destination station = "
-                + station.getDistance() +  " m.");
+        textArea = new JTextArea();
+        textArea.setText(message);
         textArea.setLineWrap(true);
         textArea.setEditable(false);
         add(textArea,BorderLayout.NORTH);
@@ -26,7 +31,9 @@ public class StationPanel extends ObservableLoggingPanel{
     @Override
     public Dimension getPreferredSize() {
         Dimension size = super.getPreferredSize();
-        size.width = Math.max(textArea.getWidth(),stationTable.getWidth());
+        FontRenderContext context = getFontMetrics(getFont()).getFontRenderContext();
+        Rectangle2D bounds = getFont().getStringBounds(message,context);
+        size.width = (int) Math.max(bounds.getWidth(),stationTable.getWidth());
         return size;
     }
 }

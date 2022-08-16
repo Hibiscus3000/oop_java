@@ -25,12 +25,15 @@ public class ComplexTable extends JTable implements Observer {
         super(tableModel);
         this.tableModel = tableModel;
         preferredColumnsWidth = new int[getColumnCount()];
-        Arrays.fill(preferredColumnsWidth,minWidth);
         setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        Arrays.fill(preferredColumnsWidth,minWidth);
         resizeColumnsSize();
     }
 
     private void resizeColumnsSize() {
+        final JPanel parent = (JPanel) SwingUtilities.getAncestorOfClass(JPanel.class,this);
+        int parentWidth = parent.getWidth();
+        int emptyWidth = parentWidth;
         final TableColumnModel tableColumnModel = getColumnModel();
         final JTableHeader tableHeader = getTableHeader();
         final FontMetrics headerFontMetrics = tableHeader.getFontMetrics(tableHeader.getFont());

@@ -1,6 +1,6 @@
 package ru.nsu.fit.oop.lab4.good;
 
-import ru.nsu.fit.oop.lab4.ObservableLogging;
+import ru.nsu.fit.oop.lab4.logging.ObservableLogging;
 
 import java.io.IOException;
 import java.util.ArrayList;

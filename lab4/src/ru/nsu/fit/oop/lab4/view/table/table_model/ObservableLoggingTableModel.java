@@ -1,6 +1,6 @@
 package ru.nsu.fit.oop.lab4.view.table.table_model;
 
-import ru.nsu.fit.oop.lab4.ObservableLogging;
+import ru.nsu.fit.oop.lab4.logging.ObservableLogging;
 
 import java.util.List;
 

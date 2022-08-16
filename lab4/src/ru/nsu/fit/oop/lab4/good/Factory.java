@@ -1,6 +1,6 @@
 package ru.nsu.fit.oop.lab4.good;
 
-import ru.nsu.fit.oop.lab4.ObservableLogging;
+import ru.nsu.fit.oop.lab4.logging.ObservableLogging;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -76,7 +76,7 @@ public class Factory extends ObservableLogging implements Runnable{
                 }
             }
         } catch (InterruptedException e) {
-            logger.info(goodName + " factory interrupted.");
+            logger.warning(goodName + " factory interrupted.");
             logFinalInfo();
         }
     }

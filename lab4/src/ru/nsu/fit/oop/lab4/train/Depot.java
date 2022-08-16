@@ -1,6 +1,6 @@
 package ru.nsu.fit.oop.lab4.train;
 
-import ru.nsu.fit.oop.lab4.ObservableLogging;
+import ru.nsu.fit.oop.lab4.logging.ObservableLogging;
 import ru.nsu.fit.oop.lab4.exception.InvalidConfigException;
 import ru.nsu.fit.oop.lab4.station.Station;
 

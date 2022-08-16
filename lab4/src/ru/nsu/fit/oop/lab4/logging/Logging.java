@@ -1,4 +1,4 @@
-package ru.nsu.fit.oop.lab4;
+package ru.nsu.fit.oop.lab4.logging;
 
 import java.io.IOException;
 import java.util.logging.FileHandler;

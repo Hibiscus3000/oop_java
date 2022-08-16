@@ -1,6 +1,6 @@
 package ru.nsu.fit.oop.lab4.station;
 
-import ru.nsu.fit.oop.lab4.ObservableLogging;
+import ru.nsu.fit.oop.lab4.logging.ObservableLogging;
 import ru.nsu.fit.oop.lab4.exception.BadNumberOfTracks;
 import ru.nsu.fit.oop.lab4.good.Storage;
 import ru.nsu.fit.oop.lab4.station.tracks.LoadingTrack;

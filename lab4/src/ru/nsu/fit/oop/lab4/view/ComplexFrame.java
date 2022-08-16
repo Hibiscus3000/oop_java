@@ -1,6 +1,7 @@
 package ru.nsu.fit.oop.lab4.view;
 
 import ru.nsu.fit.oop.lab4.Complex;
+import ru.nsu.fit.oop.lab4.Util;
 import ru.nsu.fit.oop.lab4.view.panel.BorderPanel;
 import ru.nsu.fit.oop.lab4.view.panel.ButtonPanel;
 
@@ -40,6 +41,13 @@ public class ComplexFrame extends JFrame {
         setResizable(true);
         setTitle("Transport company");
         setIconImage(new ImageIcon("images/train.png").getImage());
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                exit();
+            }
+        });
         addButtonPanel();
         try {
             complex = new Complex();
@@ -62,12 +70,6 @@ public class ComplexFrame extends JFrame {
         addActionButtonAndKey(new ShowDepotLogsAction(),"ctrl D","buttonPanel.showDepotLogs");
         addActionButtonAndKey(new ExitAction(),"ctrl E","buttonPanel.exit");
         buttonPanel.setBorder(BorderFactory.createMatteBorder(3, 3, 3, 3, Color.ORANGE));
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                exit();
-            }
-        });
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
@@ -86,8 +88,11 @@ public class ComplexFrame extends JFrame {
                 logger.info("Constructing complex...");
                 if (restart) {
                     complex = new Complex();
-                    borderPanel.setVisible(false);
-                    borderPanel = new BorderPanel(complex,buttonPanel.getSizeScale(),sizeScale);
+                    remove(borderPanel);
+                    add(borderPanel = new BorderPanel(complex,buttonPanel.getSizeScale(),sizeScale),
+                            BorderLayout.CENTER);
+                    validate();
+                    repaint();
                 }
                 restart = true;
                 logger.info("Complex constructed, complex starts working...");
@@ -118,7 +123,6 @@ public class ComplexFrame extends JFrame {
                 logger.info("Complex stopped working.");
                 startAction.setEnabled(true);
                 setEnabled(false);
-                urgentStopAction.setEnabled(false);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

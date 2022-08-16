@@ -12,12 +12,13 @@ public class ComplexPanel extends JPanel {
     protected final int numberOfRows = 3;
 
     public ComplexPanel(Color color, String name, ComplexTable table, double boxPanelSizeScale) {
-        sizeScale = boxPanelSizeScale / 3;
+        sizeScale = boxPanelSizeScale / numberOfRows;
         complexTable = table;
         setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), name));
         setBackground(color);
         setLayout(new BorderLayout());
-        add(new JScrollPane(table), BorderLayout.CENTER);
+        add(new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package ru.nsu.fit.oop.lab4;
 
+import java.io.File;
 import java.util.Arrays;
 
 public class Util {
@@ -42,5 +43,13 @@ public class Util {
                 toUpperCase = true;
         }
         return new String(stringBuilder);
+    }
+
+    public static void clearLogsDirectory() {
+        File logsDirectory = new File("logs/");
+        boolean suc;
+        for (File file : logsDirectory.listFiles()) {
+            suc = file.delete();
+        }
     }
 }

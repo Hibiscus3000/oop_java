@@ -2,7 +2,7 @@ package ru.nsu.fit.oop.lab4.view.panel;
 
 import ru.nsu.fit.oop.lab4.Complex;
 import ru.nsu.fit.oop.lab4.Consumer;
-import ru.nsu.fit.oop.lab4.ObservableLogging;
+import ru.nsu.fit.oop.lab4.logging.ObservableLogging;
 import ru.nsu.fit.oop.lab4.good.Factory;
 import ru.nsu.fit.oop.lab4.good.Good;
 import ru.nsu.fit.oop.lab4.good.Storage;

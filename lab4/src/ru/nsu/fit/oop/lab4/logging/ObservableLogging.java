@@ -1,4 +1,4 @@
-package ru.nsu.fit.oop.lab4;
+package ru.nsu.fit.oop.lab4.logging;
 
 import ru.nsu.fit.oop.lab4.view.WindowHandler;
 

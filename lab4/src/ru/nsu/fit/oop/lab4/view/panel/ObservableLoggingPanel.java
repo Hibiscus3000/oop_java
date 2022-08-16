@@ -13,6 +13,7 @@ public abstract class ObservableLoggingPanel extends ComplexPanel {
                                   double boxPanelSizeScale) {
         super(color, name, table, boxPanelSizeScale);
         logPanel = new JPanel();
+        logPanel.setBackground(color);
         add(logPanel, BorderLayout.SOUTH);
     }
 
