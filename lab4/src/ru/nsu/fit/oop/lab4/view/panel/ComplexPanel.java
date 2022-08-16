@@ -16,4 +16,9 @@ public class ComplexPanel extends JPanel {
         setLayout(new BorderLayout());
         add(new JScrollPane(table), BorderLayout.CENTER);
     }
+
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(complexTable.getHeight(),complexTable.getWidth());
+    }
 }

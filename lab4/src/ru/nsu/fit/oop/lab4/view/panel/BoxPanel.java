@@ -21,9 +21,12 @@ import java.util.List;
 public class BoxPanel extends JPanel {
 
     private final Map<String, JPanel> panelMap = new HashMap<>();
+    private final List<JPanel> panels = new ArrayList<>();
+    private final int maxNumberOfPanels = 3;
+    private int panelCount = 0;
 
     public BoxPanel(Complex complex, BorderPanel.CheckBoxPanel checkBoxPanel) {
-        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         List<Factory> factories = complex.getFactories();
         List<Good> samples = new ArrayList<>();
         for (Factory factory : factories) {
@@ -61,10 +64,21 @@ public class BoxPanel extends JPanel {
                 consumersTable), checkBoxPanel.isSelected("consumers"));
     }
 
-    private void addPanel(String name, ComplexPanel panel, boolean isVisible) {
-        panel.setVisible(isVisible);
+    private void addPanel(String name, ComplexPanel newPanel, boolean isVisible) {
+        if (0 == panelCount % maxNumberOfPanels)
+            createNewPanel();
+        JPanel xPanel = panels.get(panels.size() - 1);
+        newPanel.setVisible(isVisible);
+        xPanel.add(newPanel);
+        panelMap.put(name, newPanel);
+        ++panelCount;
+    }
+
+    private void createNewPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel,BoxLayout.X_AXIS));
+        panels.add(panel);
         add(panel);
-        panelMap.put(name, panel);
     }
 
     private void setObserver(List<? extends ObservableLogging> observableLoggingList, Observer observer) {

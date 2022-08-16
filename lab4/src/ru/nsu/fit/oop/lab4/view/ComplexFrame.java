@@ -35,7 +35,6 @@ public class ComplexFrame extends JFrame {
         Toolkit kit = Toolkit.getDefaultToolkit();
         Dimension screenSize = kit.getScreenSize();
         setSize(9 * screenSize.width / 10, 9 * screenSize.height / 10 - 50);
-        setLocationRelativeTo(null);
         setResizable(true);
         setTitle("Transport company");
         setIconImage(new ImageIcon("images/train.png").getImage());
@@ -46,6 +45,7 @@ public class ComplexFrame extends JFrame {
             e.printStackTrace();
         }
         add(borderPanel = new BorderPanel(complex), BorderLayout.CENTER);
+        setLocationRelativeTo(null);
     }
 
     private void addButtonPanel() {
