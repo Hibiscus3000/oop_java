@@ -17,7 +17,7 @@ public class TrainsTable extends ObservableLoggingTable {
 
     public TrainsTable(List<Train> trains, String... goodNames) {
         super(new TrainsTableModel(trains, goodNames));
-        sorter = new TableRowSorter<TrainsTableModel>((TrainsTableModel) this.getModel());
+        sorter = new TableRowSorter<>((TrainsTableModel) this.getModel());
         this.setRowSorter(sorter);
         sortKeys = new ArrayList<>();
         sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));

@@ -2,6 +2,7 @@ package ru.nsu.fit.oop.lab4.view;
 
 import ru.nsu.fit.oop.lab4.Complex;
 import ru.nsu.fit.oop.lab4.view.panel.BorderPanel;
+import ru.nsu.fit.oop.lab4.view.panel.ButtonPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,12 +19,13 @@ public class ComplexFrame extends JFrame {
     private Complex complex;
     private boolean restart = false;
     private BorderPanel borderPanel;
-    private JPanel buttonPanel = new JPanel();
+    private ButtonPanel buttonPanel;
     private StartAction startAction;
     private StopAction stopAction;
     private UrgentStopAction urgentStopAction;
     private final WindowHandler windowHandlerAll;
     private final WindowHandler windowHandlerInfo;
+    private final double sizeScale = 0.9;
 
     public ComplexFrame(Logger mainLogger) {
         windowHandlerAll = new WindowHandler("config logs");
@@ -34,7 +36,7 @@ public class ComplexFrame extends JFrame {
         mainLogger.addHandler(windowHandlerInfo);
         Toolkit kit = Toolkit.getDefaultToolkit();
         Dimension screenSize = kit.getScreenSize();
-        setSize(9 * screenSize.width / 10, 9 * screenSize.height / 10 - 50);
+        setSize((int) (sizeScale * screenSize.width), (int) (sizeScale * screenSize.height));
         setResizable(true);
         setTitle("Transport company");
         setIconImage(new ImageIcon("images/train.png").getImage());
@@ -44,12 +46,12 @@ public class ComplexFrame extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        add(borderPanel = new BorderPanel(complex), BorderLayout.CENTER);
+        add(borderPanel = new BorderPanel(complex,buttonPanel.getSizeScale(),sizeScale), BorderLayout.CENTER);
         setLocationRelativeTo(null);
     }
 
     private void addButtonPanel() {
-        buttonPanel = new JPanel();
+        buttonPanel = new ButtonPanel(sizeScale);
         addActionButtonAndKey(startAction = new StartAction(),"ctrl Z","buttonPanel.start");
         addActionButtonAndKey(stopAction = new StopAction(),"ctrl X","buttonPanel.stop");
         addActionButtonAndKey(urgentStopAction = new UrgentStopAction(),"ctrl C","buttonPanel.urgent_stop");
@@ -85,7 +87,7 @@ public class ComplexFrame extends JFrame {
                 if (restart) {
                     complex = new Complex();
                     borderPanel.setVisible(false);
-                    borderPanel = new BorderPanel(complex);
+                    borderPanel = new BorderPanel(complex,buttonPanel.getSizeScale(),sizeScale);
                 }
                 restart = true;
                 logger.info("Complex constructed, complex starts working...");

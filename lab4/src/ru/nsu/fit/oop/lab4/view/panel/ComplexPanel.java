@@ -8,8 +8,11 @@ import java.awt.*;
 public class ComplexPanel extends JPanel {
 
     protected ComplexTable complexTable;
+    protected final double sizeScale;
+    protected final int numberOfRows = 3;
 
-    public ComplexPanel(Color color, String name, ComplexTable table) {
+    public ComplexPanel(Color color, String name, ComplexTable table, double boxPanelSizeScale) {
+        sizeScale = boxPanelSizeScale / 3;
         complexTable = table;
         setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), name));
         setBackground(color);
@@ -19,6 +22,8 @@ public class ComplexPanel extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(complexTable.getHeight(),complexTable.getWidth());
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        return new Dimension(complexTable.getWidth(),
+                (int) (toolkit.getScreenSize().height * sizeScale));
     }
 }
