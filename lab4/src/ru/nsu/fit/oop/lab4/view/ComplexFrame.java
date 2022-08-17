@@ -94,6 +94,7 @@ public class ComplexFrame extends JFrame {
                     validate();
                     repaint();
                 }
+                borderPanel.resizeAllPanels();
                 restart = true;
                 logger.info("Complex constructed, complex starts working...");
                 complex.start();

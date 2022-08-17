@@ -20,7 +20,7 @@ import java.util.List;
 
 public class BoxPanel extends JPanel {
 
-    private final Map<String, JPanel> panelMap = new HashMap<>();
+    private final Map<String, ComplexPanel> panelMap = new HashMap<>();
     private final List<JPanel> panels = new ArrayList<>();
     private final int maxNumberOfPanels = 3;
     private int panelCount = 0;
@@ -64,11 +64,18 @@ public class BoxPanel extends JPanel {
                 consumersTable, sizeReduction), checkBoxPanel.isSelected("consumers"));
     }
 
+    public void resizeAllPanels() {
+        for (Map.Entry<String, ComplexPanel> entry : panelMap.entrySet()) {
+            entry.getValue().resizeComplexTable();
+        }
+    }
+
     private void addPanel(String name, ComplexPanel newPanel, boolean isVisible) {
         if (0 == panelCount % maxNumberOfPanels)
             createNewPanel();
         JPanel xPanel = panels.get(panels.size() - 1);
         newPanel.setVisible(isVisible);
+        newPanel.resizeComplexTable();
         xPanel.add(newPanel);
         panelMap.put(name, newPanel);
         ++panelCount;

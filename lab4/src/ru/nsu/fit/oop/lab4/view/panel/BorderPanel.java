@@ -73,4 +73,8 @@ public class BorderPanel extends JPanel {
         return new Dimension((int) (screenSize.width * frameSizeScale * (1 - checkboxPanelSizeScale - buttonPanelSizeScale)),
                 (int) (screenSize.height * frameSizeScale * (1 - checkboxPanelSizeScale - buttonPanelSizeScale)));
     }
+
+    public void resizeAllPanels() {
+        boxPanel.resizeAllPanels();
+    }
 }

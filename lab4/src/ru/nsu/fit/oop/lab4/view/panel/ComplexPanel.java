@@ -19,6 +19,11 @@ public class ComplexPanel extends JPanel {
         setLayout(new BorderLayout());
         add(new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
+        table.resizeColumnsSize();
+    }
+
+    public void resizeComplexTable() {
+        complexTable.resizeColumnsSize();
     }
 
     @Override
