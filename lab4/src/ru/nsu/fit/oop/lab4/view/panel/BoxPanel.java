@@ -20,12 +20,13 @@ import java.util.List;
 
 public class BoxPanel extends JPanel {
 
-    private final Map<String, JPanel> panelMap = new HashMap<>();
+    private final Map<String, ComplexPanel> panelMap = new HashMap<>();
     private final List<JPanel> panels = new ArrayList<>();
     private final int maxNumberOfPanels = 3;
     private int panelCount = 0;
 
-    public BoxPanel(Complex complex, BorderPanel.CheckBoxPanel checkBoxPanel, double sizeReduction) {
+    public BoxPanel(Complex complex, BorderPanel.CheckBoxPanel checkBoxPanel, double sizeReduction,
+                    double frameSizeScale) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         List<Factory> factories = complex.getFactories();
         List<Good> samples = new ArrayList<>();
@@ -33,35 +34,42 @@ public class BoxPanel extends JPanel {
             samples.add(factory.getSample());
         }
         addPanel("goods", new ComplexPanel(Color.GREEN, "goods",
-                new ComplexTable(new GoodsTableModel(samples)), sizeReduction), checkBoxPanel.isSelected("goods"));
+                new ComplexTable(new GoodsTableModel(samples),frameSizeScale), sizeReduction,
+                frameSizeScale), checkBoxPanel.isSelected("goods"));
         Station station = complex.getStation();
         StationTable stationTable;
         addPanel("station", new StationPanel(station,
-                stationTable = new StationTable(new StationTableModel(station)),
-                sizeReduction), checkBoxPanel.isSelected("station"));
+                stationTable = new StationTable(new StationTableModel(station),frameSizeScale),
+                sizeReduction, frameSizeScale), checkBoxPanel.isSelected("station"));
         setStationObserver(station, stationTable);
         addPanel("trains", new RowLoggingPanel(Color.WHITE, "trains",
-                (ObservableLoggingTable) complex.setDepotObserver(new TrainsTable(complex.getTrains(),
-                        complex.getGoodNames())), sizeReduction), checkBoxPanel.isSelected("trains"));
-        ObservableLoggingTable factoriesTable = new ObservableLoggingTable(new FactoryTableModel(factories));
+                (ObservableLoggingTable) complex.setDepotObserver(new TrainsTable(complex.getTrains(),frameSizeScale,
+                        complex.getGoodNames())), sizeReduction, frameSizeScale), checkBoxPanel.isSelected("trains"));
+        ObservableLoggingTable factoriesTable = new ObservableLoggingTable(new FactoryTableModel(factories),frameSizeScale);
         setObserver(factories, factoriesTable);
         addPanel("factories", new RowLoggingPanel(Color.ORANGE, "factories", factoriesTable,
-                sizeReduction), checkBoxPanel.isSelected("factories"));
+                sizeReduction, frameSizeScale), checkBoxPanel.isSelected("factories"));
         List<Storage> departureStorages = new ArrayList<>(complex.getDepartureStorages().values());
-        ObservableLoggingTable departureStoragesTable = new ObservableLoggingTable(new StorageTableModel(departureStorages));
+        ObservableLoggingTable departureStoragesTable = new ObservableLoggingTable(new StorageTableModel(departureStorages),frameSizeScale);
         setObserver(departureStorages, departureStoragesTable);
         addPanel("departure storages", new RowLoggingPanel(Color.LIGHT_GRAY, "departure storages",
-                departureStoragesTable, sizeReduction), checkBoxPanel.isSelected("departure storages"));
+                departureStoragesTable, sizeReduction, frameSizeScale), checkBoxPanel.isSelected("departure storages"));
         List<Storage> destinationStorages = new ArrayList<>(complex.getDestinationStorages().values());
-        ObservableLoggingTable destinationStoragesTable = new ObservableLoggingTable(new StorageTableModel(destinationStorages));
+        ObservableLoggingTable destinationStoragesTable = new ObservableLoggingTable(new StorageTableModel(destinationStorages),frameSizeScale);
         setObserver(destinationStorages, destinationStoragesTable);
         addPanel("destination storages", new RowLoggingPanel(Color.LIGHT_GRAY, "destination storages",
-                destinationStoragesTable, sizeReduction), checkBoxPanel.isSelected("destination storages"));
+                destinationStoragesTable, sizeReduction, frameSizeScale), checkBoxPanel.isSelected("destination storages"));
         List<Consumer> consumers = complex.getConsumers();
-        ObservableLoggingTable consumersTable = new ObservableLoggingTable(new ConsumersTableModel(consumers));
+        ObservableLoggingTable consumersTable = new ObservableLoggingTable(new ConsumersTableModel(consumers),frameSizeScale);
         setObserver(consumers, consumersTable);
         addPanel("consumers", new RowLoggingPanel(Color.PINK, "consumers",
-                consumersTable, sizeReduction), checkBoxPanel.isSelected("consumers"));
+                consumersTable, sizeReduction, frameSizeScale), checkBoxPanel.isSelected("consumers"));
+    }
+
+    public void resizeAllPanels() {
+        for (Map.Entry<String, ComplexPanel> entry : panelMap.entrySet()) {
+            entry.getValue().resizeComplexTable();
+        }
     }
 
     private void addPanel(String name, ComplexPanel newPanel, boolean isVisible) {

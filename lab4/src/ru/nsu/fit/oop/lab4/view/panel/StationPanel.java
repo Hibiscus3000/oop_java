@@ -15,8 +15,9 @@ public class StationPanel extends ObservableLoggingPanel{
     private final JTextArea textArea;
     private final String message;
 
-    public StationPanel(Station station, StationTable table, double boxPanelSizeScale) {
-        super(Color.CYAN, "station", table, boxPanelSizeScale);
+    public StationPanel(Station station, StationTable table, double boxPanelSizeScale,
+                        double frameSizeScale) {
+        super(Color.CYAN, "station", table, boxPanelSizeScale, frameSizeScale);
         message = "distance between departure and destination station = "
                 + station.getDistance() +  " m.";
         stationTable = table;
@@ -26,14 +27,5 @@ public class StationPanel extends ObservableLoggingPanel{
         textArea.setEditable(false);
         add(textArea,BorderLayout.NORTH);
         logPanel.add(new JButton(new ShowStationLogAction(table)), BorderLayout.SOUTH);
-    }
-
-    @Override
-    public Dimension getPreferredSize() {
-        Dimension size = super.getPreferredSize();
-        FontRenderContext context = getFontMetrics(getFont()).getFontRenderContext();
-        Rectangle2D bounds = getFont().getStringBounds(message,context);
-        size.width = (int) Math.max(bounds.getWidth(),stationTable.getWidth());
-        return size;
     }
 }

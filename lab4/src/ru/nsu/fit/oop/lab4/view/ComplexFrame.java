@@ -55,6 +55,7 @@ public class ComplexFrame extends JFrame {
             e.printStackTrace();
         }
         add(borderPanel = new BorderPanel(complex,buttonPanel.getSizeScale(),sizeScale), BorderLayout.CENTER);
+        borderPanel.resizeAllPanels();
         setLocationRelativeTo(null);
     }
 
@@ -91,6 +92,7 @@ public class ComplexFrame extends JFrame {
                     remove(borderPanel);
                     add(borderPanel = new BorderPanel(complex,buttonPanel.getSizeScale(),sizeScale),
                             BorderLayout.CENTER);
+                    borderPanel.resizeAllPanels();
                     validate();
                     repaint();
                 }

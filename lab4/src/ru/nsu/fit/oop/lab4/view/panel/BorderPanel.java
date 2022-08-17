@@ -22,8 +22,8 @@ public class BorderPanel extends JPanel {
         CheckBoxPanel checkBoxPanel = new CheckBoxPanel();
         add(checkBoxPanel, BorderLayout.NORTH);
         add(boxPanel = new BoxPanel(complex, checkBoxPanel,
-                        frameSizeScale * (1 - buttonPanelSizeScale - checkboxPanelSizeScale)),
-                BorderLayout.CENTER);
+                        frameSizeScale * (1 - buttonPanelSizeScale - checkboxPanelSizeScale),
+                frameSizeScale),BorderLayout.CENTER);
     }
 
     class CheckBoxPanel extends JPanel {
@@ -34,6 +34,7 @@ public class BorderPanel extends JPanel {
             ActionListener listener = event -> {
                 boxPanel.setPanelVisible(event.getActionCommand(), checkBoxMap.
                         get(event.getActionCommand()).isSelected());
+                boxPanel.resizeAllPanels();
             };
             addCheckBox("goods", listener, false);
             addCheckBox("station", listener, true);
@@ -72,5 +73,9 @@ public class BorderPanel extends JPanel {
         Dimension screenSize = toolkit.getScreenSize();
         return new Dimension((int) (screenSize.width * frameSizeScale * (1 - checkboxPanelSizeScale - buttonPanelSizeScale)),
                 (int) (screenSize.height * frameSizeScale * (1 - checkboxPanelSizeScale - buttonPanelSizeScale)));
+    }
+
+    public void resizeAllPanels() {
+        boxPanel.resizeAllPanels();
     }
 }

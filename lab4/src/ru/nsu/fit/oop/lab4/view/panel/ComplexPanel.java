@@ -10,8 +10,11 @@ public class ComplexPanel extends JPanel {
     protected ComplexTable complexTable;
     protected final double sizeScale;
     protected final int numberOfRows = 3;
+    protected final double frameSizeScale;
 
-    public ComplexPanel(Color color, String name, ComplexTable table, double boxPanelSizeScale) {
+    public ComplexPanel(Color color, String name, ComplexTable table, double boxPanelSizeScale,
+                        double frameSizeScale) {
+        this.frameSizeScale = frameSizeScale;
         sizeScale = boxPanelSizeScale / numberOfRows;
         complexTable = table;
         setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), name));
@@ -21,10 +24,27 @@ public class ComplexPanel extends JPanel {
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
     }
 
+    public void resizeComplexTable() {
+        complexTable.resizeAndRepaint();
+    }
+
+    public int getNumberOfVisibleComponentsInRow() {
+        final JPanel parent = (JPanel) SwingUtilities.getAncestorOfClass(
+                JPanel.class, this);
+        if (null == parent)
+            return -1;
+        int numberOfVisibleComponentsInRow = 0;
+        for (Component c : parent.getComponents()) {
+            if (c.isVisible())
+                ++numberOfVisibleComponentsInRow;
+        }
+        return numberOfVisibleComponentsInRow;
+    }
+
     @Override
     public Dimension getPreferredSize() {
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-        return new Dimension(complexTable.getWidth(),
-                (int) (toolkit.getScreenSize().height * sizeScale));
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        return new Dimension((int)(frameSizeScale * screenSize.width / getNumberOfVisibleComponentsInRow()),
+                (int) (screenSize.height * sizeScale));
     }
 }
