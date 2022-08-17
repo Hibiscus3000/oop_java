@@ -23,9 +23,12 @@ public class StationPanel extends ObservableLoggingPanel{
         stationTable = table;
         textArea = new JTextArea();
         textArea.setText(message);
+        textArea.setFont(new Font("Arial Rounded MT Bold",Font.PLAIN,14));
         textArea.setLineWrap(true);
         textArea.setEditable(false);
         add(textArea,BorderLayout.NORTH);
-        logPanel.add(new JButton(new ShowStationLogAction(table)), BorderLayout.SOUTH);
+        JButton button = new JButton(new ShowStationLogAction(table));
+        button.setFont(font);
+        logPanel.add(button, BorderLayout.SOUTH);
     }
 }

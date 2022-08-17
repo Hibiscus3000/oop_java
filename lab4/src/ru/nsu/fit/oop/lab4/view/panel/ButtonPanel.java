@@ -10,6 +10,7 @@ public class ButtonPanel extends JPanel {
 
     public ButtonPanel(double frameSizeScale) {
         this.frameSizeScale = frameSizeScale;
+        setBorder(BorderFactory.createMatteBorder(3, 3, 3, 3, Color.ORANGE));
     }
 
     @Override

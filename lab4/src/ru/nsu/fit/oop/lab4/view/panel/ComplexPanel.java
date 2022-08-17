@@ -3,6 +3,8 @@ package ru.nsu.fit.oop.lab4.view.panel;
 import ru.nsu.fit.oop.lab4.view.table.ComplexTable;
 
 import javax.swing.*;
+import javax.swing.border.AbstractBorder;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 public class ComplexPanel extends JPanel {
@@ -17,7 +19,9 @@ public class ComplexPanel extends JPanel {
         this.frameSizeScale = frameSizeScale;
         sizeScale = boxPanelSizeScale / numberOfRows;
         complexTable = table;
-        setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), name));
+        TitledBorder border = BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), name);
+        border.setTitleFont(new Font("Eras Demi ITC",Font.PLAIN,14));
+        setBorder(border);
         setBackground(color);
         setLayout(new BorderLayout());
         add(new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,

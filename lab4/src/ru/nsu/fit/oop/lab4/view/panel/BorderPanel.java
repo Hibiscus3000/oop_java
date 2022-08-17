@@ -48,6 +48,7 @@ public class BorderPanel extends JPanel {
 
         private void addCheckBox(String name, ActionListener listener, boolean selected) {
             JCheckBox checkBox = new JCheckBox(name);
+            checkBox.setFont(new Font("Eras Demi ITC",Font.BOLD,12));
             checkBoxMap.put(name, checkBox);
             checkBox.addActionListener(listener);
             checkBox.setSelected(selected);

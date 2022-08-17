@@ -70,7 +70,6 @@ public class ComplexFrame extends JFrame {
         addActionButtonAndKey(new ShowInfoLogsAction(),"ctrl L","buttonPanel.showInfoLogs");
         addActionButtonAndKey(new ShowDepotLogsAction(),"ctrl D","buttonPanel.showDepotLogs");
         addActionButtonAndKey(new ExitAction(),"ctrl E","buttonPanel.exit");
-        buttonPanel.setBorder(BorderFactory.createMatteBorder(3, 3, 3, 3, Color.ORANGE));
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
@@ -213,7 +212,9 @@ public class ComplexFrame extends JFrame {
     }
 
     private void addActionButtonAndKey(Action action, String key, String keyObject) {
-        buttonPanel.add(new JButton(action));
+        JButton button = new JButton(action);
+        button.setFont(new Font("Franklin Gothic Heavy",Font.PLAIN,16));
+        buttonPanel.add(button);
         InputMap inputMap = buttonPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         inputMap.put(KeyStroke.getKeyStroke(key),keyObject);
         buttonPanel.getActionMap().put(keyObject,action);

@@ -18,8 +18,8 @@ import static java.lang.Math.max;
 public class ComplexTable extends JTable implements Observer {
 
     protected ComplexTableModel tableModel;
-    private final int minWidth = 15;
-    private final int maxWidth = 250;
+    private final int minWidth = 30;
+    private final int maxWidth = 400;
     private final int widthIncrease = 30;
     private final int maxEmptyWidth = 40;
     private final int[] preferredColumnsWidth;
@@ -27,6 +27,8 @@ public class ComplexTable extends JTable implements Observer {
 
     public ComplexTable(ComplexTableModel tableModel, double frameSizeScale) {
         super(tableModel);
+        setFont(new Font("Arial Rounded MT Bold",Font.PLAIN,15));
+        getTableHeader().setFont(new Font("Arial Black",Font.PLAIN,15));
         this.frameSizeScale = frameSizeScale;
         this.tableModel = tableModel;
         preferredColumnsWidth = new int[getColumnCount()];
