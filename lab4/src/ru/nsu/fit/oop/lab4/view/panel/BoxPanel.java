@@ -77,6 +77,7 @@ public class BoxPanel extends JPanel {
             createNewPanel();
         JPanel xPanel = panels.get(panels.size() - 1);
         newPanel.setVisible(isVisible);
+        newPanel.resizeComplexTable();
         xPanel.add(newPanel);
         panelMap.put(name, newPanel);
         ++panelCount;
