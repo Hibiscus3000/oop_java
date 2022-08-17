@@ -72,11 +72,18 @@ public class BoxPanel extends JPanel {
         }
     }
 
+    public void resizeAllPanels() {
+        for (Map.Entry<String, ComplexPanel> entry : panelMap.entrySet()) {
+            entry.getValue().resizeComplexTable();
+        }
+    }
+
     private void addPanel(String name, ComplexPanel newPanel, boolean isVisible) {
         if (0 == panelCount % maxNumberOfPanels)
             createNewPanel();
         JPanel xPanel = panels.get(panels.size() - 1);
         newPanel.setVisible(isVisible);
+        newPanel.resizeComplexTable();
         xPanel.add(newPanel);
         panelMap.put(name, newPanel);
         ++panelCount;
